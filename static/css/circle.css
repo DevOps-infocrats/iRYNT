@@ -1,0 +1,53 @@
+.company-preview { font-size: 14px; }
+.company-preview .text-muted { font-size: 13px; color: #8C8681; }
+
+.btn-gradient { 
+    background: linear-gradient(90deg, #FF7A18 0%, #FF4D8D 100%); 
+    color: #fff; 
+    border: none;
+    box-shadow: 0 12px 32px rgba(255, 122, 24, 0.12);
+    transition: box-shadow 0.2s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(90deg, #FF7A18 0%, #FF4D8D 100%);
+    color: #fff;
+    box-shadow: 0 16px 40px rgba(255, 122, 24, 0.16);
+}
+
+.card {
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(232, 228, 224, 0.6);
+    backdrop-filter: blur(16px);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(232, 228, 224, 0.6);
+    padding: 1rem 1.25rem;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.kpi-label {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #8C8681;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2A211E;
+    margin-bottom: 0.25rem;
+}
+
+@media (min-width: 992px) {
+    /* two-column layout adjustments */
+}

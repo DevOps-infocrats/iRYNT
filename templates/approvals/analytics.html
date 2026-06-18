@@ -1,0 +1,259 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Approval Analytics{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Approval Analytics Dashboard</h2>
+                </div>
+                <div class="col-auto">
+                    <a href="{{ url_for('approvals.index') }}" class="btn btn-secondary">
+                        <span class="material-symbols-outlined">arrow_back</span> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <!-- Key Metrics -->
+            <div class="row row-deck row-cards mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-secondary">Total Approvals</div>
+                                    <h3 class="card-title">{{ metrics.total_stats.total }}</h3>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="material-symbols-outlined text-secondary" style="font-size: 2rem;">description</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-secondary">Approval Rate</div>
+                                    {% set total = metrics.total_stats.total %}
+                                    {% set approved = metrics.total_stats.approved %}
+                                    {% set rate = (approved / total * 100) if total > 0 else 0 %}
+                                    <h3 class="card-title">{{ "%.1f"|format(rate) }}%</h3>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="material-symbols-outlined text-success" style="font-size: 2rem;">trending_up</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Distribution -->
+            <div class="row row-deck row-cards mb-4">
+                <div class="col-md-3">
+                    <div class="card border-info">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title card-title-lg text-info">{{ metrics.total_stats.pending }}</h3>
+                                <div class="text-secondary">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-info">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title card-title-lg text-info">{{ metrics.total_stats.under_review }}</h3>
+                                <div class="text-secondary">Under Review</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title card-title-lg text-success">{{ metrics.total_stats.approved }}</h3>
+                                <div class="text-secondary">Approved</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-danger">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title card-title-lg text-danger">{{ metrics.total_stats.rejected }}</h3>
+                                <div class="text-secondary">Rejected</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critical Issues -->
+            <div class="row row-deck row-cards mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">SLA Breached Approvals</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table card-table table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Approval ID</th>
+                                        <th>Request Title</th>
+                                        <th>Priority</th>
+                                        <th>Breached By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if breached_approvals %}
+                                        {% for approval in breached_approvals %}
+                                        <tr>
+                                            <td><small>{{ approval.id[:8] }}</small></td>
+                                            <td>{{ approval.request_title[:50] }}</td>
+                                            <td>
+                                                {% if approval.priority == 'Critical' %}
+                                                    <span class="badge bg-danger">{{ approval.priority }}</span>
+                                                {% elif approval.priority == 'High' %}
+                                                    <span class="badge bg-warning">{{ approval.priority }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ approval.priority }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-danger"><strong>ACTION REQUIRED</strong></td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-secondary py-3">
+                                            No SLA breached approvals
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Escalated Approvals</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table card-table table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Approval ID</th>
+                                        <th>Request Title</th>
+                                        <th>Priority</th>
+                                        <th>Escalated At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if escalated_approvals %}
+                                        {% for approval in escalated_approvals %}
+                                        <tr>
+                                            <td><small>{{ approval.id[:8] }}</small></td>
+                                            <td>{{ approval.request_title[:50] }}</td>
+                                            <td>
+                                                {% if approval.priority == 'Critical' %}
+                                                    <span class="badge bg-danger">{{ approval.priority }}</span>
+                                                {% elif approval.priority == 'High' %}
+                                                    <span class="badge bg-warning">{{ approval.priority }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ approval.priority }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ approval.escalated_at.strftime('%d %b %Y') if approval.escalated_at else 'N/A' }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-secondary py-3">
+                                            No escalated approvals
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="row row-deck row-cards">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Summary Statistics</h3>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <div class="stat-name">Total Pending</div>
+                                        <div class="stat-value">{{ metrics.total_pending }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <div class="stat-name">Critical Pending</div>
+                                        <div class="stat-value text-warning">{{ metrics.critical_pending }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <div class="stat-name">SLA Breached</div>
+                                        <div class="stat-value text-danger">{{ metrics.sla_breached }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <div class="stat-name">Escalated</div>
+                                        <div class="stat-value text-info">{{ metrics.escalated }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+        border-right: 1px solid #e8eaed;
+    }
+    .stat-item:last-child {
+        border-right: none;
+    }
+    .stat-name {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 10px;
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}

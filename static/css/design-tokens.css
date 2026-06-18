@@ -1,0 +1,512 @@
+/* =====================================================
+   ENTERPRISE DESIGN TOKENS
+   ===================================================== */
+
+:root {
+    /* ---- LAYOUT ---- */
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --sidebar-mobile-width: 260px;
+    --container-max-width: 1480px;
+    
+    /* ---- COLORS: Backgrounds ---- */
+    --bg-page: #E9E4DF;
+    --bg-white: #FFFFFF;
+    --bg-soft: rgba(255, 255, 255, 0.88);
+    --bg-card: rgba(255, 255, 255, 0.86);
+    --bg-overlay: rgba(0, 0, 0, 0.04);
+    
+    /* ---- COLORS: Neutral Panels ---- */
+    --panel-dark: #2A211E;
+    --panel-dark-2: #1B1412;
+    --panel-light: #F5F3F0;
+    
+    /* ---- COLORS: Text ---- */
+    --text-primary: #1F2530;
+    --text-secondary: #565454;
+    --text-muted: #8C8681;
+    --text-disabled: #BFBBB7;
+    --text-white: #FFFFFF;
+    --text-white-secondary: rgba(255, 255, 255, 0.82);
+    --text-white-muted: rgba(255, 255, 255, 0.64);
+    
+    /* ---- COLORS: Accents ---- */
+    --accent-primary: #FF7A18;
+    --accent-secondary: #FF4D8D;
+    --accent-success: #2FBF71;
+    --accent-warning: #F4A261;
+    --accent-danger: #E63946;
+    --accent-info: #4D96FF;
+    
+    /* ---- COLORS: Borders ---- */
+    --border-light: 1px solid rgba(232, 228, 224, 0.5);
+    --border-normal: 1px solid rgba(232, 228, 224, 0.72);
+    --border-strong: 1px solid rgba(232, 228, 224, 0.9);
+    --border-dark: 1px solid rgba(0, 0, 0, 0.12);
+    
+    /* ---- GRADIENTS ---- */
+    --gradient-primary: linear-gradient(135deg, rgba(255, 122, 24, 0.95), rgba(255, 77, 141, 0.95));
+    --gradient-success: linear-gradient(135deg, rgba(47, 191, 113, 0.95), rgba(123, 223, 157, 0.9));
+    --gradient-warning: linear-gradient(135deg, rgba(244, 162, 97, 0.95), rgba(255, 194, 102, 0.9));
+    --gradient-danger: linear-gradient(135deg, rgba(230, 57, 70, 0.95), rgba(245, 101, 118, 0.9));
+    --gradient-info: linear-gradient(135deg, rgba(77, 150, 255, 0.95), rgba(104, 196, 255, 0.9));
+    --gradient-pink: linear-gradient(135deg, rgba(255, 77, 141, 0.95), rgba(255, 155, 192, 0.85));
+    
+    /* ---- SHADOWS ---- */
+    --shadow-sm: 0 2px 8px rgba(31, 37, 48, 0.06);
+    --shadow-md: 0 8px 24px rgba(31, 37, 48, 0.08);
+    --shadow-lg: 0 16px 48px rgba(31, 37, 48, 0.1);
+    --shadow-xl: 0 24px 64px rgba(31, 37, 48, 0.12);
+    --shadow-sidebar: 12px 0 48px rgba(14, 10, 8, 0.12);
+    
+    /* ---- TYPOGRAPHY: Font Family ---- */
+    --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-family-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+    
+    /* ---- TYPOGRAPHY: Font Sizes ---- */
+    --font-size-xs: 11px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-md: 15px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 20px;
+    --font-size-3xl: 24px;
+    --font-size-4xl: 28px;
+    --font-size-5xl: 32px;
+    --font-size-6xl: 36px;
+    
+    /* ---- TYPOGRAPHY: Line Heights ---- */
+    --line-height-tight: 1.1;
+    --line-height-snug: 1.2;
+    --line-height-normal: 1.4;
+    --line-height-relaxed: 1.6;
+    
+    /* ---- TYPOGRAPHY: Font Weights ---- */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    
+    /* ---- BORDERS: Radius ---- */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+    --radius-full: 999px;
+    
+    /* ---- TRANSITIONS ---- */
+    --transition-fast: 120ms ease-in-out;
+    --transition-normal: 200ms ease-in-out;
+    --transition-slow: 300ms ease-in-out;
+    
+    /* ---- SPACING SCALE ---- */
+    --spacing-0: 0;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 28px;
+    --spacing-8: 32px;
+    --spacing-9: 36px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+}
+
+/* ---- DARK THEME ---- */
+html[data-bs-theme="dark"] {
+    /* ---- COLORS: Backgrounds ---- */
+    --bg-page: #151515;
+    --bg-white: #222222;
+    --bg-soft: rgba(34, 34, 34, 0.88);
+    --bg-card: rgba(40, 40, 40, 0.86);
+    --bg-overlay: rgba(255, 255, 255, 0.04);
+    
+    /* ---- COLORS: Neutral Panels ---- */
+    --panel-dark: #1E1715;
+    --panel-dark-2: #120C0A;
+    --panel-light: #2A2422;
+    --panel-white: #222222;
+    --panel-soft: rgba(34, 34, 34, 0.82);
+    
+    /* ---- COLORS: Text ---- */
+    --text-primary: #F0EDE9;
+    --text-secondary: #C4C0BC;
+    --text-muted: #9E9893;
+    --text-disabled: #6E6863;
+    --text-dark: #F0EDE9;
+    --text-soft: #C4C0BC;
+    
+    /* ---- COLORS: Borders ---- */
+    --border-light: 1px solid rgba(255, 255, 255, 0.05);
+    --border-normal: 1px solid rgba(255, 255, 255, 0.08);
+    --border-strong: 1px solid rgba(255, 255, 255, 0.12);
+    --border-dark: 1px solid rgba(255, 255, 255, 0.2);
+    --border: rgba(255, 255, 255, 0.08);
+    
+    /* ---- SHADOWS ---- */
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- GLOBAL COMPONENT OVERRIDES FOR DARK MODE ---- */
+html[data-bs-theme="dark"] {
+    color-scheme: dark;
+}
+
+html[data-bs-theme="dark"] .text-dark,
+html[data-bs-theme="dark"] a.text-dark,
+html[data-bs-theme="dark"] .text-dark a {
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .text-muted,
+html[data-bs-theme="dark"] .text-soft {
+    color: var(--text-muted) !important;
+}
+
+/* Compliance Module Specific Overrides */
+html[data-bs-theme="dark"] .compliance-page {
+    background: var(--bg-page) !important;
+}
+
+html[data-bs-theme="dark"] .compliance-metric,
+html[data-bs-theme="dark"] .compliance-summary > div,
+html[data-bs-theme="dark"] .compliance-doc-card,
+html[data-bs-theme="dark"] .compliance-panel {
+    background: var(--bg-white) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .compliance-metric strong,
+html[data-bs-theme="dark"] .compliance-summary strong,
+html[data-bs-theme="dark"] .compliance-doc-card dd,
+html[data-bs-theme="dark"] .panel-title,
+html[data-bs-theme="dark"] .compliance-table td,
+html[data-bs-theme="dark"] .timeline-item strong {
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .compliance-metric span,
+html[data-bs-theme="dark"] .summary-label,
+html[data-bs-theme="dark"] .doc-card-label,
+html[data-bs-theme="dark"] .compliance-doc-card dt,
+html[data-bs-theme="dark"] .compliance-table th,
+html[data-bs-theme="dark"] .timeline-item span {
+    color: var(--text-muted) !important;
+}
+
+html[data-bs-theme="dark"] .timeline-item p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-bs-theme="dark"] .compliance-alert-strip span {
+    background: var(--bg-white) !important;
+    border-color: var(--border) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Roles & Access Control Module Specific Overrides */
+html[data-bs-theme="dark"] .node-box {
+    background: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-bs-theme="dark"] .node-box:hover {
+    background: var(--panel-light) !important;
+    border-color: var(--accent-orange) !important;
+}
+
+html[data-bs-theme="dark"] .table thead,
+html[data-bs-theme="dark"] .table thead th {
+    background-color: var(--panel-light) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: var(--panel-light) !important;
+}
+
+html[data-bs-theme="dark"] code {
+    background-color: var(--panel-light) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .badge.bg-light {
+    background-color: var(--panel-light) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Project Module Specific Overrides */
+html[data-bs-theme="dark"] .config-row {
+    background: var(--panel-light) !important;
+}
+
+html[data-bs-theme="dark"] .config-row:hover {
+    background: var(--bg-card) !important;
+}
+
+/* Dashboard Module Specific Overrides */
+html[data-bs-theme="dark"] .card-glass,
+html[data-bs-theme="dark"] .kpi-grid .kpi-card,
+html[data-bs-theme="dark"] .kpi-grid .kpi-card-wrapper > .kpi-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .kpi-value {
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .filter-panel {
+    background: var(--bg-white) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-bs-theme="dark"] .kpi-card:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-bs-theme="dark"] .dashboard-table thead th {
+    border-color: var(--border) !important;
+}
+
+/* Vehicle Module Specific Overrides */
+html[data-bs-theme="dark"] {
+    --vehicle-panel-bg: var(--bg-card);
+    --vehicle-panel-border: var(--border);
+}
+
+html[data-bs-theme="dark"] .glass-panel {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .glass-panel h5,
+html[data-bs-theme="dark"] .glass-panel td,
+html[data-bs-theme="dark"] .glass-panel th {
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .section-label {
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .info-box {
+    background: var(--panel-light) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-bs-theme="dark"] .badge-soft-info {
+    background: rgba(91, 141, 239, 0.15) !important;
+    color: var(--accent-info) !important;
+}
+
+html[data-bs-theme="dark"] .table-light {
+    background-color: var(--panel-light) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Drivers Module Specific Overrides */
+html[data-bs-theme="dark"] .card.filter-card,
+html[data-bs-theme="dark"] .card.table-card,
+html[data-bs-theme="dark"] .card.profile-header,
+html[data-bs-theme="dark"] .card.section-card,
+html[data-bs-theme="dark"] .card.kpi-grid,
+html[data-bs-theme="dark"] .card.sticky-sidebar,
+html[data-bs-theme="dark"] .kpi-card,
+html[data-bs-theme="dark"] .profile-header,
+html[data-bs-theme="dark"] .section-card,
+html[data-bs-theme="dark"] .performance-grid div {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-bs-theme="dark"] .profile-tabs .nav-tabs .nav-link {
+    color: var(--text-muted) !important;
+}
+
+html[data-bs-theme="dark"] .profile-tabs .nav-tabs .nav-link.active {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Inputs & Form Controls hardcoded styles overrides */
+html[data-bs-theme="dark"] .form-control,
+html[data-bs-theme="dark"] .form-select {
+    background-color: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+}
+
+
+
+/* ---- HTML ROOT ---- */
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- BODY ---- */
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--text-primary);
+    background-color: var(--bg-page);
+    margin: 0;
+    padding: 0;
+}
+
+/* ---- TYPOGRAPHY: HEADINGS ---- */
+h1, .h1 {
+    font-size: var(--font-size-5xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    margin: 0;
+}
+
+h2, .h2 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    margin: 0;
+}
+
+h3, .h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    margin: 0;
+}
+
+h4, .h4 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    margin: 0;
+}
+
+h5, .h5 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    margin: 0;
+}
+
+h6, .h6 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    margin: 0;
+}
+
+/* ---- TYPOGRAPHY: BODY TEXT ---- */
+p {
+    margin: 0;
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-soft {
+    color: var(--text-muted);
+}
+
+.text-disabled {
+    color: var(--text-disabled);
+}
+
+/* ---- TYPOGRAPHY: UTILITY SIZES ---- */
+.text-xs {
+    font-size: var(--font-size-xs);
+}
+
+.text-sm {
+    font-size: var(--font-size-sm);
+}
+
+.text-md {
+    font-size: var(--font-size-md);
+}
+
+.text-lg {
+    font-size: var(--font-size-lg);
+}
+
+.text-xl {
+    font-size: var(--font-size-xl);
+}
+
+.text-2xl {
+    font-size: var(--font-size-2xl);
+}
+
+/* ---- TYPOGRAPHY: WEIGHTS ---- */
+.font-light {
+    font-weight: var(--font-weight-light);
+}
+
+.font-normal {
+    font-weight: var(--font-weight-normal);
+}
+
+.font-medium {
+    font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+    font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+    font-weight: var(--font-weight-bold);
+}
+
+.font-extrabold {
+    font-weight: var(--font-weight-extrabold);
+}
+
+/* ---- LABELS ---- */
+label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: var(--spacing-2);
+}
+
+/* ---- SMALL TEXT ---- */
+small {
+    font-size: var(--font-size-sm);
+}
+
+/* ---- CODE ---- */
+code, pre {
+    font-family: var(--font-family-mono);
+}

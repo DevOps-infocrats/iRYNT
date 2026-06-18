@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dashboard-page client-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="d-flex flex-column flex-md-row gap-3 align-items-start align-items-md-center justify-content-between mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Client Master</p>
+                        <h1 class="dashboard-title">Enterprise Client Registry</h1>
+                        <p class="dashboard-subtitle text-soft">Manage clients across companies and circles with operational visibility and strict enterprise context.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('clients.create') }}" class="btn btn-gradient">Create Client</a>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="summary-card card text-white bg-primary p-3 h-100">
+                            <div class="card-body">
+                                <p class="summary-card-label">Total Clients</p>
+                                <h2 class="summary-card-value">{{ total_clients }}</h2>
+                                <p class="summary-card-note">Tracked across the platform.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="summary-card card text-white bg-success p-3 h-100">
+                            <div class="card-body">
+                                <p class="summary-card-label">Active Clients</p>
+                                <h2 class="summary-card-value">{{ active_clients }}</h2>
+                                <p class="summary-card-note">Clients currently enabled.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="summary-card card text-white bg-warning p-3 h-100">
+                            <div class="card-body">
+                                <p class="summary-card-label">Inactive Clients</p>
+                                <h2 class="summary-card-value">{{ inactive_clients }}</h2>
+                                <p class="summary-card-note">Clients requiring attention.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="summary-card card text-white bg-secondary p-3 h-100">
+                            <div class="card-body">
+                                <p class="summary-card-label">Companies Served</p>
+                                <h2 class="summary-card-value">{{ company_count }}</h2>
+                                <p class="summary-card-note">Companies with client records.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-0">Client Portfolio</h5>
+                            <p class="text-soft mb-0">Browse active clients and their company/circle scope.</p>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Client Code</th>
+                                        <th>Company</th>
+                                        <th>Circle</th>
+                                        <th>Contact</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if clients %}
+                                        {% for client in clients %}
+                                            <tr>
+                                                <td>{{ client.client_name }}</td>
+                                                <td>{{ client.client_code }}</td>
+                                                <td>{{ company_map.get(client.company_id, 'N/A') }}</td>
+                                                <td>{{ circle_map.get(client.circle_id, 'N/A') }}</td>
+                                                <td>
+                                                    <div>{{ client.primary_contact or '—' }}</div>
+                                                    <div class="text-soft small">{{ client.email or 'No email' }}</div>
+                                                </td>
+                                                <td>{{ client.status }}</td>
+                                                <td class="text-end">
+                                                    <a href="{{ url_for('clients.details', client_id=client.id) }}" class="btn btn-sm btn-outline-secondary me-1">View</a>
+                                                    <a href="{{ url_for('clients.edit', client_id=client.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5 text-muted">No clients have been added yet.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

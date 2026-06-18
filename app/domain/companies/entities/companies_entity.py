@@ -1,0 +1,1 @@
+# companies domain entity

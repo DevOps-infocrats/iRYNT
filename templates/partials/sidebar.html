@@ -1,0 +1,38 @@
+{% from 'components/sidebar_menu.html' import render_sidebar_item %}
+<aside class="dashboard-sidebar" id="dashboardSidebar" aria-label="Main navigation">
+    <div class="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
+        <div class="brand-icon">
+            <div class="brand-mark">VIL</div>
+            <div class="brand-title">
+                <span>VIL</span>
+                <small>Command</small>
+            </div>
+        </div>
+        <button class="sidebar-toggle btn btn-icon" id="sidebarToggle" aria-label="Toggle sidebar" type="button">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+    </div>
+    <nav class="sidebar-nav" aria-label="Sidebar navigation">
+        <ul class="nav flex-column">
+            {% for section in sidebar_menu %}
+            {% set section_id = 'section-' + section.key %}
+            {% set section_open = section.children | selectattr('page', 'equalto', active_page) | list | length > 0 %}
+            <li class="nav-item sidebar-section-dropdown">
+                <button class="nav-link section-toggle {% if section_open %}active{% endif %}" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#{{ section_id }}"
+                    aria-expanded="{{ 'true' if section_open else 'false' }}" data-section="{{ section.key }}">
+                    <span class="material-symbols-outlined">{{ section.icon }}</span>
+                    <span class="nav-text section-title">{{ section.title }}</span>
+                    <span class="material-symbols-outlined section-chevron">expand_more</span>
+                </button>
+                <ul class="nav flex-column collapse{% if section_open %} show{% endif %}" id="{{ section_id }}">
+                    {% for item in section.children %}
+                    {{ render_sidebar_item(item, active_page) }}
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>

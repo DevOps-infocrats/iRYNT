@@ -1,0 +1,31 @@
+{
+  "role_name": "Driver",
+  "level": 2,
+  "tier": "field",
+  "description": "Field operator - Vehicle driver with operational responsibilities",
+  "permissions": [
+    "attendance.mark", "attendance.view",
+    "deployments.view",
+    "vehicles.view",
+    "documents.upload",
+    "profile.view", "profile.edit"
+  ],
+  "workflow_rights": {
+    "can_approve": false,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 0
+  },
+  "sidebar_access": [
+    "attendance",
+    "my_vehicle",
+    "my_deployment",
+    "documents",
+    "profile"
+  ],
+  "scope": "operational",
+  "is_predefined": true,
+  "is_system": false
+}

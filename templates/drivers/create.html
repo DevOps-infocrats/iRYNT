@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Driver</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/drivers.css') }}">
+</head>
+<body class="dashboard-page driver-list-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+                    <div>
+                        <p class="dashboard-title-label">Driver Management</p>
+                        <h1 class="dashboard-title">Add Driver</h1>
+                        <p class="dashboard-subtitle text-soft">Create a new driver profile from an existing user account.</p>
+                    </div>
+                </div>
+
+                <div class="card filter-card mb-4">
+                    <div class="card-body p-4">
+                        <form method="post" action="{{ url_for('drivers.create') }}" enctype="multipart/form-data">
+                            {{ form.hidden_tag() }}
+
+                            {% if form.errors %}
+                                <div class="alert alert-danger shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px; background: rgba(230, 57, 70, 0.1); color: #E63946;">
+                                    <div class="d-flex align-items-center gap-2 mb-2" style="font-weight: 600;">
+                                        <span class="material-symbols-outlined align-middle">error</span>
+                                        <span>Please correct the following errors:</span>
+                                    </div>
+                                    <ul class="mb-0 ps-3 small">
+                                    {% for field, errors in form.errors.items() %}
+                                        {% for error in errors %}
+                                            {% if field not in ['driving_license_file', 'aadhaar_file', 'pan_file'] or error != 'This field is required.' %}
+                                                <li>{{ form[field].label.text if field in form else field }}: {{ error }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.identifier.id }}">User (email or username)</label>
+                                    {{ form.identifier(id=form.identifier.id) }}
+                                    {% if form.identifier.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.identifier.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.phone.id }}">Phone Number</label>
+                                    {{ form.phone(id=form.phone.id) }}
+                                    {% if form.phone.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.phone.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.driver_code.id }}">Driver Code (optional)</label>
+                                    {{ form.driver_code(id=form.driver_code.id) }}
+                                    {% if form.driver_code.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.driver_code.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <!-- Operational hierarchy: Company -> Circle -> Client -> Project -> Subzone -->
+                                <div class="col-12">
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label" for="{{ form.company_id.id }}">Company</label>
+                                            {{ form.company_id(id='companySelect', class='form-select') }}
+                                            {% if form.company_id.errors %}
+                                                <div class="invalid-feedback d-block">{{ form.company_id.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label" for="{{ form.circle_id.id }}">Circle</label>
+                                            {{ form.circle_id(id='circleSelect', class='form-select') }}
+                                            {% if form.circle_id.errors %}
+                                                <div class="invalid-feedback d-block">{{ form.circle_id.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label" for="{{ form.client_id.id }}">Client</label>
+                                            {{ form.client_id(id='clientSelect', class='form-select') }}
+                                            {% if form.client_id.errors %}
+                                                <div class="invalid-feedback d-block">{{ form.client_id.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label" for="{{ form.project_id.id }}">Project</label>
+                                            {{ form.project_id(id='projectSelect', class='form-select') }}
+                                            {% if form.project_id.errors %}
+                                                <div class="invalid-feedback d-block">{{ form.project_id.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label" for="{{ form.subzone_id.id }}">Subzone</label>
+                                            {{ form.subzone_id(id='subzoneSelect', class='form-select') }}
+                                            {% if form.subzone_id.errors %}
+                                                <div class="invalid-feedback d-block">{{ form.subzone_id.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.dob.id }}">Date of Birth</label>
+                                    {{ form.dob(id=form.dob.id) }}
+                                    {% if form.dob.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.dob.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.gender.id }}">Gender</label>
+                                    {{ form.gender(id=form.gender.id) }}
+                                    {% if form.gender.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.gender.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.blood_group.id }}">Blood Group</label>
+                                    {{ form.blood_group(id=form.blood_group.id) }}
+                                    {% if form.blood_group.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.blood_group.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.nationality.id }}">Nationality</label>
+                                    {{ form.nationality(id=form.nationality.id) }}
+                                    {% if form.nationality.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.nationality.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.address.id }}">Address</label>
+                                    {{ form.address(id=form.address.id) }}
+                                    {% if form.address.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.address.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.emergency_contact_name.id }}">Emergency Contact Name</label>
+                                    {{ form.emergency_contact_name(id=form.emergency_contact_name.id) }}
+                                    {% if form.emergency_contact_name.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.emergency_contact_name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ form.emergency_contact_phone.id }}">Emergency Contact Phone</label>
+                                    {{ form.emergency_contact_phone(id=form.emergency_contact_phone.id) }}
+                                    {% if form.emergency_contact_phone.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.emergency_contact_phone.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.experience_years.id }}">Experience (years)</label>
+                                    {{ form.experience_years(id=form.experience_years.id) }}
+                                    {% if form.experience_years.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.experience_years.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.join_date.id }}">Join Date</label>
+                                    {{ form.join_date(id=form.join_date.id) }}
+                                    {% if form.join_date.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.join_date.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.license_number.id }}">License Number</label>
+                                    {{ form.license_number(id=form.license_number.id) }}
+                                    {% if form.license_number.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.license_number.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.vehicle_classes.id }}">Vehicle Classes</label>
+                                    {{ form.vehicle_classes(id=form.vehicle_classes.id) }}
+                                    {% if form.vehicle_classes.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.vehicle_classes.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.issue_date.id }}">Issue Date</label>
+                                    {{ form.issue_date(id=form.issue_date.id) }}
+                                    {% if form.issue_date.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.issue_date.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ form.expiry_date.id }}">Expiry Date</label>
+                                    {{ form.expiry_date(id=form.expiry_date.id) }}
+                                    {% if form.expiry_date.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.expiry_date.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Driver Documents Section -->
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h5 class="form-section-title mb-3 d-flex align-items-center" style="font-weight: 600; color: #1F2530; border-bottom: 2px solid rgba(255, 122, 24, 0.1); padding-bottom: 8px;">
+                                        <span class="material-symbols-outlined align-middle me-2" style="font-size: 24px; color: #FF7A18;">folder_shared</span>
+                                        Driver Documents
+                                    </h5>
+                                    <p class="text-soft small mb-3">Please upload mandatory verification documents. Supported files: PDF, PNG, JPG, JPEG. Max file size: 4MB.</p>
+                                    
+                                    <div class="row g-3">
+                                        <!-- Driving License Card -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">badge</span>
+                                                </div>
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Driving License *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload DL copy</p>
+                                                {{ form.driving_license_file(id=form.driving_license_file.id, class="form-control form-control-sm") }}
+                                                {% if form.driving_license_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.driving_license_file.errors[0] }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Aadhaar Card -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">fingerprint</span>
+                                                </div>
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Aadhaar Card *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload Aadhaar copy</p>
+                                                {{ form.aadhaar_file(id=form.aadhaar_file.id, class="form-control form-control-sm") }}
+                                                {% if form.aadhaar_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.aadhaar_file.errors[0] }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- PAN Card -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">credit_card</span>
+                                                </div>
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">PAN Card *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload PAN copy</p>
+                                                {{ form.pan_file(id=form.pan_file.id, class="form-control form-control-sm") }}
+                                                {% if form.pan_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.pan_file.errors[0] }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Medical Certificate (Placeholder) -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">medical_services</span>
+                                                </div>
+                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Medical Certificate</h6>
+                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
+                                                {{ form.medical_certificate_file(id=form.medical_certificate_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Police Verification (Placeholder) -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">local_police</span>
+                                                </div>
+                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Police Verification</h6>
+                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
+                                                {{ form.police_verification_file(id=form.police_verification_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Training Certificate (Placeholder) -->
+                                        <div class="col-12 col-md-4">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                                <div class="mb-2">
+                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">workspace_premium</span>
+                                                </div>
+                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Training Certificate</h6>
+                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
+                                                {{ form.training_certificate_file(id=form.training_certificate_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    {{ form.submit() }}
+                                    <a href="{{ url_for('drivers.index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="module">
+        import initVehiclePage from "{{ url_for('static', filename='js/vehicles/vehicle.js') }}";
+        document.addEventListener('DOMContentLoaded', initVehiclePage);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+</html>

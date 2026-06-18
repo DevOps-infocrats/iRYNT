@@ -1,0 +1,61 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Deployment Requests{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Pending Deployment Requests</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Route</th>
+                                <th>Type</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if deployments %}
+                                {% for deployment in deployments %}
+                                <tr>
+                                    <td><strong>{{ deployment.vehicle_number }}</strong></td>
+                                    <td>{{ deployment.driver_name or 'Unassigned' }}</td>
+                                    <td>{{ deployment.route_name or '-' }}</td>
+                                    <td>{{ deployment.deployment_type }}</td>
+                                    <td><small>{{ deployment.created_at[:10] }}</small></td>
+                                    <td>
+                                        <a href="{{ url_for('deployments.detail', deployment_id=deployment.id) }}" class="btn btn-sm btn-ghost-primary">View</a>
+                                        {% if has_permission(current_user, 'deployments.approve') %}
+                                        <a href="{{ url_for('deployments.approve', deployment_id=deployment.id) }}" class="btn btn-sm btn-ghost-success">Approve</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">No pending requests</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

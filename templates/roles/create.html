@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Role</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/roles.css') }}">
+</head>
+<body class="dashboard-page role-create-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Administration</p>
+                        <h1 class="dashboard-title">Create New Role</h1>
+                        <p class="subtitle-text">Define role metadata, permission groups, workflows, and scope access.</p>
+                        <nav class="breadcrumb-panel" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ url_for('roles.index') }}">Roles</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Create Role</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form id="roleCreateForm" method="post" action="{{ url_for('roles.create') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="row g-4">
+                                <div class="col-12 col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Role Name</label>
+                                        <input type="text" name="name" class="form-control" placeholder="e.g. Field Supervisor" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Description</label>
+                                        <textarea name="description" class="form-control" rows="4" placeholder="Describe the role's responsibilities and access scope."></textarea>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label">System Role</label>
+                                            <select name="is_system" class="form-select">
+                                                <option value="0" selected>No</option>
+                                                <option value="1">Yes</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label">Scope Type</label>
+                                            <select name="scope_type" class="form-select">
+                                                {% for scope in scope_types %}
+                                                    <option value="{{ scope.id }}">{{ scope.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Permission Group</label>
+                                        <select name="permission_group" class="form-select">
+                                            {% for group in permission_groups %}
+                                                <option value="{{ group.id }}">{{ group.name }} — {{ group.category }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Role Code</label>
+                                        <input type="text" name="code" class="form-control" placeholder="role_code_identifier">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mt-4">
+                                <button type="submit" class="btn btn-gradient">Save Role</button>
+                                <a href="{{ url_for('roles.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/roles/roles.js') }}"></script>
+</body>
+</html>

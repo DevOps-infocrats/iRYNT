@@ -1,0 +1,29 @@
+{
+  "role_name": "Circle Customer",
+  "level": 3,
+  "tier": "circle",
+  "description": "Circle level customer with operational visibility",
+  "permissions": [
+    "projects.view",
+    "vehicles.view",
+    "deployments.view",
+    "attendance.view",
+    "reports.view"
+  ],
+  "workflow_rights": {
+    "can_approve": false,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 0
+  },
+  "sidebar_access": [
+    "dashboard",
+    "deployments",
+    "operations"
+  ],
+  "scope": "circle",
+  "is_predefined": true,
+  "is_system": false
+}

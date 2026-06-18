@@ -1,0 +1,30 @@
+{
+  "role_name": "Corporate Customer",
+  "level": 8,
+  "tier": "corporate",
+  "description": "Corporate customer with operational visibility",
+  "permissions": [
+    "projects.view",
+    "vehicles.view",
+    "deployments.view",
+    "attendance.view",
+    "reports.view", "reports.export"
+  ],
+  "workflow_rights": {
+    "can_approve": false,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 0
+  },
+  "sidebar_access": [
+    "dashboard",
+    "deployments",
+    "operations",
+    "reporting"
+  ],
+  "scope": "company",
+  "is_predefined": true,
+  "is_system": false
+}

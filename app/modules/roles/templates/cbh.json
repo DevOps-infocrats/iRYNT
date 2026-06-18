@@ -1,0 +1,34 @@
+{
+  "role_name": "CBH",
+  "level": 6,
+  "tier": "circle",
+  "description": "Circle Business Head with operational approval authority",
+  "permissions": [
+    "clients.view", "clients.edit",
+    "projects.view", "projects.edit",
+    "vehicles.view", "vehicles.assign",
+    "deployments.view", "deployments.create", "deployments.approve",
+    "helper_assignments.view",
+    "attendance.view", "attendance.approve",
+    "reports.view", "reports.export",
+    "notifications.view"
+  ],
+  "workflow_rights": {
+    "can_approve": true,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 1
+  },
+  "sidebar_access": [
+    "dashboard",
+    "masters",
+    "deployments",
+    "operations",
+    "reporting"
+  ],
+  "scope": "circle",
+  "is_predefined": true,
+  "is_system": false
+}

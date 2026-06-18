@@ -1,0 +1,444 @@
+/* ============================================================
+   PROJECT DASHBOARD - DETAILED STYLING
+   ============================================================ */
+
+/* ============================================================
+   PROJECT DETAIL HEADER
+   ============================================================ */
+
+.project-detail-header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 2rem;
+}
+
+.project-detail-header .dashboard-title {
+    color: var(--text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.project-detail-header .dashboard-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.project-detail-header .badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+}
+
+/* ============================================================
+   STATUS DETAIL CARDS
+   ============================================================ */
+
+.status-detail-card {
+    background: var(--panel-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.status-detail-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.status-detail-card .card-body {
+    padding: 1.5rem;
+}
+
+.status-detail-card .text-soft {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.status-detail-card strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* ============================================================
+   QUICK ACTIONS
+   ============================================================ */
+
+.quick-actions {
+    margin: 2rem 0 1.5rem 0;
+}
+
+.quick-actions h6 {
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: var(--panel-white);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+    gap: 0.75rem;
+}
+
+.action-btn:hover {
+    border-color: var(--accent-orange);
+    background: rgba(255, 122, 24, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 122, 24, 0.15);
+    color: var(--accent-orange);
+}
+
+.action-btn .material-symbols-outlined {
+    font-size: 1.75rem;
+}
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+
+.kpi-card {
+    background: var(--panel-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--button-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.kpi-card:hover::before {
+    opacity: 1;
+}
+
+.kpi-card .card-body {
+    padding: 1.5rem;
+}
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.kpi-label {
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.kpi-icon {
+    font-size: 1.75rem;
+    color: var(--accent-orange);
+    opacity: 0.3;
+}
+
+.kpi-value {
+    color: var(--text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-trend {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+/* ============================================================
+   PROJECT TABS
+   ============================================================ */
+
+.project-tabs {
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.project-tabs .nav-link {
+    color: var(--text-soft);
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    bottom: -2px;
+}
+
+.project-tabs .nav-link:hover {
+    color: var(--accent-orange);
+}
+
+.project-tabs .nav-link.active {
+    color: var(--text-dark);
+    border-bottom-color: var(--accent-orange);
+    background: transparent;
+}
+
+/* ============================================================
+   INFORMATION ROWS
+   ============================================================ */
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row label {
+    color: var(--text-soft);
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.info-row p {
+    color: var(--text-dark);
+    font-weight: 500;
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+    .info-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .info-row p {
+        text-align: left;
+    }
+}
+
+/* ============================================================
+   FEATURES GRID
+   ============================================================ */
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f7f6;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.feature-item:hover {
+    background: var(--panel-white);
+    border-color: var(--accent-orange);
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+}
+
+.feature-item:has(> .feature-icon:contains("✓")) .feature-icon {
+    color: var(--success);
+}
+
+.feature-item:has(> .feature-icon:contains("✗")) .feature-icon {
+    color: var(--text-soft);
+}
+
+.feature-item span:last-child {
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* ============================================================
+   RESPONSIVE DASHBOARD
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .action-buttons-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .project-detail-header .d-flex {
+        flex-direction: column;
+    }
+
+    .project-detail-header .d-flex > div:last-child {
+        width: 100%;
+    }
+
+    .project-detail-header .d-flex > div:last-child .btn {
+        width: 100%;
+    }
+
+    .project-tabs {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+
+    .project-tabs .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .action-buttons-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-btn {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+
+    .action-btn .material-symbols-outlined {
+        font-size: 1.5rem;
+    }
+
+    .kpi-value {
+        font-size: 1.5rem;
+    }
+
+    .kpi-label {
+        font-size: 0.75rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .project-detail-header .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .project-detail-header .dashboard-subtitle {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .project-tabs .nav-link {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .status-detail-card .card-body {
+        padding: 1rem;
+    }
+
+    .info-row {
+        padding: 0.75rem 0;
+    }
+}
+
+/* ============================================================
+   ANIMATIONS FOR DASHBOARD
+   ============================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.kpi-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.kpi-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.kpi-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.kpi-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.kpi-card:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+/* ============================================================
+   TAB CONTENT ANIMATIONS
+   ============================================================ */
+
+.tab-pane {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.tab-pane.active {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+    .quick-actions,
+    .project-detail-header .d-flex > div:last-child,
+    .project-tabs {
+        display: none;
+    }
+
+    .project-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .status-detail-card {
+        page-break-inside: avoid;
+    }
+}

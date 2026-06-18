@@ -1,0 +1,269 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Approval Details{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Approval Details</h2>
+                </div>
+                <div class="col-auto">
+                    <a href="{{ url_for('approvals.index') }}" class="btn btn-secondary">
+                        <span class="material-symbols-outlined">arrow_back</span> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-md-8">
+                    <!-- Approval Details Card -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h4>Request Details</h4>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Approval Type:</dt>
+                                        <dd class="col-sm-8">
+                                            <span class="badge bg-blue-lt">{{ approval.approval_type }}</span>
+                                        </dd>
+                                        <dt class="col-sm-4">Title:</dt>
+                                        <dd class="col-sm-8">{{ approval.request_title }}</dd>
+                                        <dt class="col-sm-4">Module:</dt>
+                                        <dd class="col-sm-8">{{ approval.module_name }}</dd>
+                                        <dt class="col-sm-4">Entity Type:</dt>
+                                        <dd class="col-sm-8">{{ approval.entity_type }}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Status & Timeline</h4>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Status:</dt>
+                                        <dd class="col-sm-8">
+                                            {% if approval.approval_status == 'Approved' %}
+                                                <span class="badge bg-success">{{ approval.approval_status }}</span>
+                                            {% elif approval.approval_status == 'Rejected' %}
+                                                <span class="badge bg-danger">{{ approval.approval_status }}</span>
+                                            {% elif approval.approval_status == 'Escalated' %}
+                                                <span class="badge bg-warning">{{ approval.approval_status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-info">{{ approval.approval_status }}</span>
+                                            {% endif %}
+                                        </dd>
+                                        <dt class="col-sm-4">Priority:</dt>
+                                        <dd class="col-sm-8">
+                                            {% if approval.priority == 'Critical' %}
+                                                <span class="badge bg-danger">{{ approval.priority }}</span>
+                                            {% elif approval.priority == 'High' %}
+                                                <span class="badge bg-warning">{{ approval.priority }}</span>
+                                            {% elif approval.priority == 'Medium' %}
+                                                <span class="badge bg-info">{{ approval.priority }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ approval.priority }}</span>
+                                            {% endif %}
+                                        </dd>
+                                        <dt class="col-sm-4">Submitted:</dt>
+                                        <dd class="col-sm-8">{{ approval.submitted_at.strftime('%d %b %Y, %H:%M') if approval.submitted_at else 'N/A' }}</dd>
+                                        {% if approval.sla_due_at %}
+                                        <dt class="col-sm-4">SLA Due:</dt>
+                                        <dd class="col-sm-8">
+                                            <span {% if approval.is_sla_breached() %}class="text-danger font-weight-bold"{% endif %}>
+                                                {{ approval.sla_due_at.strftime('%d %b %Y, %H:%M') }}
+                                                {% if approval.is_sla_breached() %}<span class="badge bg-danger ms-2">BREACHED</span>{% endif %}
+                                            </span>
+                                        </dd>
+                                        {% endif %}
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <h4>Description</h4>
+                            <p>{{ approval.request_description or 'No description provided' }}</p>
+
+                            {% if approval.remarks %}
+                            <hr>
+                            <h4>Remarks</h4>
+                            <p>{{ approval.remarks }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Approval History -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title">Approval History</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if history %}
+                            <div class="timeline timeline-simple">
+                                {% for entry in history %}
+                                <div class="timeline-item">
+                                    <div class="timeline-time">
+                                        <span class="badge badge-primary">{{ entry.action_taken }}</span>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <p class="text-secondary">
+                                            <strong>{{ entry.action_by.username if entry.action_by else 'System' }}</strong>
+                                            on {{ entry.action_time.strftime('%d %b %Y, %H:%M') }}
+                                        </p>
+                                        {% if entry.previous_status and entry.new_status %}
+                                        <p class="text-secondary">
+                                            {{ entry.previous_status }} → {{ entry.new_status }}
+                                        </p>
+                                        {% endif %}
+                                        {% if entry.remarks %}
+                                        <p>{{ entry.remarks }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-secondary">No history available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Comments</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Add Comment -->
+                            {% if approval.approval_status not in ['Approved', 'Rejected'] %}
+                            <form method="POST" action="{{ url_for('approvals.add_comment', approval_id=approval.id) }}" class="mb-4">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="form-group">
+                                    <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="material-symbols-outlined">send</span> Post Comment
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <!-- Comments List -->
+                            {% if comments %}
+                            <div class="comments-list">
+                                {% for comment in comments %}
+                                <div class="comment mb-3 pb-3 border-bottom">
+                                    <div class="comment-header d-flex justify-content-between">
+                                        <strong>{{ comment.user.username }}</strong>
+                                        <small class="text-secondary">{{ comment.created_at.strftime('%d %b %Y, %H:%M') }}</small>
+                                    </div>
+                                    <p class="mt-2">{{ comment.comment }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-secondary">No comments yet</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar - Actions -->
+                <div class="col-md-4">
+                    <div class="card sticky-top" style="top: 20px;">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Approval Actions</h4>
+
+                            {% if approval.approval_status in ['Pending', 'Under Review', 'Escalated'] %}
+                                {% if has_permission('workflows.approve') and approval.assigned_approver_id == current_user.id %}
+                                <form method="POST" action="{{ url_for('approvals.approve', approval_id=approval.id) }}" class="mb-3">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Approval Remarks (Optional)</label>
+                                        <textarea name="remarks" class="form-control" rows="3" placeholder="Add remarks..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <span class="material-symbols-outlined">check_circle</span> Approve
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="{{ url_for('approvals.reject', approval_id=approval.id) }}" class="mb-3">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Rejection Reason</label>
+                                        <textarea name="remarks" class="form-control" rows="3" placeholder="Reason for rejection..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        <span class="material-symbols-outlined">cancel</span> Reject
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% if has_permission('workflows.approve') %}
+                                <form method="POST" action="{{ url_for('approvals.escalate', approval_id=approval.id) }}" class="mb-3">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Escalation Reason (Optional)</label>
+                                        <textarea name="remarks" class="form-control" rows="3" placeholder="Reason for escalation..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        <span class="material-symbols-outlined">trending_up</span> Escalate
+                                    </button>
+                                </form>
+                                {% endif %}
+                            {% else %}
+                            <div class="alert alert-info">
+                                <span class="material-symbols-outlined">info</span>
+                                This approval is {{ approval.approval_status|lower }} and cannot be modified.
+                            </div>
+                            {% endif %}
+
+                            <hr>
+
+                            <h5 class="mb-3">Approver Information</h5>
+                            <dl class="row">
+                                <dt class="col-sm-5">Requested By:</dt>
+                                <dd class="col-sm-7">
+                                    {{ approval.requested_by.username if approval.requested_by else 'N/A' }}
+                                </dd>
+                                <dt class="col-sm-5">Assigned To:</dt>
+                                <dd class="col-sm-7">
+                                    {{ approval.assigned_approver.username if approval.assigned_approver else 'Unassigned' }}
+                                </dd>
+                            </dl>
+
+                            {% if approval.company_id or approval.circle_id or approval.project_id %}
+                            <hr>
+                            <h5 class="mb-3">Hierarchy Scope</h5>
+                            <dl class="row">
+                                {% if approval.company_id %}
+                                <dt class="col-sm-5">Company:</dt>
+                                <dd class="col-sm-7">{{ approval.company_id }}</dd>
+                                {% endif %}
+                                {% if approval.circle_id %}
+                                <dt class="col-sm-5">Circle:</dt>
+                                <dd class="col-sm-7">{{ approval.circle_id }}</dd>
+                                {% endif %}
+                                {% if approval.project_id %}
+                                <dt class="col-sm-5">Project:</dt>
+                                <dd class="col-sm-7">{{ approval.project_id }}</dd>
+                                {% endif %}
+                                {% if approval.subzone_id %}
+                                <dt class="col-sm-5">Subzone:</dt>
+                                <dd class="col-sm-7">{{ approval.subzone_id }}</dd>
+                                {% endif %}
+                            </dl>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/company.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dashboard-page company-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="d-flex flex-column flex-md-row gap-3 align-items-start align-items-md-center justify-content-between mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Company Master</p>
+                        <h1 class="dashboard-title">All Companies</h1>
+                        <p class="dashboard-subtitle text-soft">Manage the full company master list and access detail pages.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('companies.create') }}" class="btn btn-gradient">Create Company</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">City</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col" class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if companies %}
+                                        {% for company in companies %}
+                                            <tr>
+                                                <td>{{ company.company_name }}</td>
+                                                <td>{{ company.company_code }}</td>
+                                                <td>{{ company.status }}</td>
+                                                <td>{{ company.city_id or 'N/A' }}</td>
+                                                <td>{{ company.phone or 'N/A' }}</td>
+                                                <td>{{ company.email or 'N/A' }}</td>
+                                                <td class="text-end">
+                                                    <a href="{{ url_for('companies.edit', company_id=company.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5 text-muted">No companies have been created yet.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

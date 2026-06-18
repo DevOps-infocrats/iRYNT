@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workforce Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users/users.css') }}">
+</head>
+<body class="dashboard-page users-profile-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Enterprise Workforce Profile</p>
+                        <h1 class="dashboard-title">{{ profile.user.username }}</h1>
+                        <p class="dashboard-subtitle text-soft">Operational identity, hierarchy, access rights, deployment readiness, and workforce intelligence in one profile page.</p>
+                    </div>
+                    <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+                        {% if can_edit %}
+                            <a href="{{ url_for('users.edit', user_id=profile.user.id) }}" class="btn btn-gradient">Edit User</a>
+                        {% endif %}
+                        <a href="{{ url_for('users.index') }}" class="btn btn-outline-secondary">Back to Users</a>
+                    </div>
+                </div>
+
+                <div class="row gx-3 gy-4">
+                    <div class="col-12 col-xl-8">
+                        <div class="card profile-summary p-4 mb-4">
+                            <div class="d-flex flex-column flex-md-row gap-4 align-items-start align-items-md-center justify-content-between">
+                                <div class="d-flex gap-3 align-items-center">
+                                    <div class="profile-avatar shadow-sm">{{ profile.user.username[0]|upper }}</div>
+                                    <div>
+                                        <p class="text-soft mb-1">{{ profile.user.email }}</p>
+                                        <h2 class="mb-0">{{ profile.user.username }}</h2>
+                                        <span class="badge badge-pill bg-success me-2">{{ profile.user.primary_role.name if profile.user.primary_role else 'Unassigned' }}</span>
+                                        <span class="badge badge-pill bg-info">{{ profile.attendance_status }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <p class="text-soft mb-1">Live status</p>
+                                    <h3 class="mb-0">{{ 'Online' if profile.online else 'Offline' }}</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Basic Information</h4>
+                                    <dl class="row mb-0">
+                                        <dt class="col-5 text-soft">Employee ID</dt>
+                                        <dd class="col-7">{{ profile.user.id[:8].upper() }}</dd>
+                                        <dt class="col-5 text-soft">Phone</dt>
+                                        <dd class="col-7">{{ profile.user.phone or 'N/A' }}</dd>
+                                        <dt class="col-5 text-soft">Email</dt>
+                                        <dd class="col-7">{{ profile.user.email }}</dd>
+                                        <dt class="col-5 text-soft">Verified</dt>
+                                        <dd class="col-7">{{ 'Yes' if profile.user.is_verified else 'No' }}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Organization Hierarchy</h4>
+                                    <div class="chip-list">
+                                        <span class="chip">{{ profile.hierarchy.company }}</span>
+                                        <span class="chip">{{ profile.hierarchy.circle }}</span>
+                                        <span class="chip">{{ profile.hierarchy.client }}</span>
+                                        <span class="chip">{{ profile.hierarchy.project }}</span>
+                                        <span class="chip">{{ profile.hierarchy.subzone }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Role & Access</h4>
+                                    <p class="text-soft mb-2">Role</p>
+                                    <h5>{{ profile.user.primary_role.name if profile.user.primary_role else 'Unassigned' }}</h5>
+                                    <p class="text-soft mb-2 mt-3">Scope</p>
+                                    <p>{{ profile.approval_rights }}</p>
+                                    <p class="text-soft mb-2 mt-3">Permissions</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for perm in profile.permissions[:5] %}
+                                            <span class="badge bg-secondary text-white">{{ perm }}</span>
+                                        {% endfor %}
+                                        {% if profile.permissions|length > 5 %}
+                                            <span class="badge bg-soft-secondary">+{{ profile.permissions|length - 5 }} more</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Operational Status</h4>
+                                    <div class="status-grid">
+                                        <div>
+                                            <span class="status-label">Attendance</span>
+                                            <strong>{{ profile.attendance_status }}</strong>
+                                        </div>
+                                        <div>
+                                            <span class="status-label">Deployment</span>
+                                            <strong>{{ profile.deployment_status }}</strong>
+                                        </div>
+                                        <div>
+                                            <span class="status-label">Availability</span>
+                                            <strong>{{ profile.operational_status }}</strong>
+                                        </div>
+                                        <div>
+                                            <span class="status-label">Assigned Vehicle</span>
+                                            <strong>{{ profile.assigned_vehicle.vehicle_number if profile.assigned_vehicle else 'None' }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if profile.user.primary_role and profile.user.primary_role.name.lower() == 'driver' %}
+                            <div class="card glass-panel p-4 mb-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h4 class="mb-0">Driver Profile</h4>
+                                    <span class="badge bg-info">Driver Level</span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <p class="text-soft mb-1">Assigned Vehicle</p>
+                                        <strong>{{ profile.assigned_vehicle.vehicle_number if profile.assigned_vehicle else 'Unassigned' }}</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="text-soft mb-1">GPS Status</p>
+                                        <strong>{{ 'Connected' if profile.assigned_vehicle and profile.assigned_vehicle.gps_enabled else 'Unavailable' }}</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="text-soft mb-1">Trip Status</p>
+                                        <strong>{{ profile.assigned_vehicle.current_deployment if profile.assigned_vehicle and profile.assigned_vehicle.current_deployment else 'Idle' }}</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="text-soft mb-1">Compliance</p>
+                                        <strong>{{ profile.assigned_vehicle.verification_status if profile.assigned_vehicle else 'N/A' }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Documents</h4>
+                                    <ul class="list-unstyled document-list mb-0">
+                                        <li>ID Proof <span class="badge bg-success">Uploaded</span></li>
+                                        <li>License <span class="badge bg-warning">Pending</span></li>
+                                        <li>Certificates <span class="badge bg-secondary">Not uploaded</span></li>
+                                        <li>Verification Documents <span class="badge bg-primary">Ready</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="card glass-panel p-4">
+                                    <h4 class="mb-3">Incident Panel</h4>
+                                    <div class="incident-list">
+                                        <div class="incident-item">
+                                            <span class="incident-title">GPS Violation</span>
+                                            <span class="text-danger">0</span>
+                                        </div>
+                                        <div class="incident-item">
+                                            <span class="incident-title">Operational Incident</span>
+                                            <span class="text-warning">1</span>
+                                        </div>
+                                        <div class="incident-item">
+                                            <span class="incident-title">Policy Alerts</span>
+                                            <span class="text-info">2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass-panel p-4 mb-4">
+                            <h4 class="mb-3">Attendance History</h4>
+                            <div class="table-responsive">
+                                <table class="table table-borderless mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Event</th>
+                                            <th>Timestamp</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for event in profile.attendance_history %}
+                                            <tr>
+                                                <td>{{ event.event }}</td>
+                                                <td>{{ event.timestamp }}</td>
+                                                <td>{{ event.note }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="3" class="text-muted">No attendance activity found.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-4">
+                        <div class="card analytics-card p-4 mb-4">
+                            <h4 class="mb-3">Profile Analytics</h4>
+                            <p class="text-soft">Operational performance and role distribution insights.</p>
+                            <canvas id="profileAttendanceChart" height="220"></canvas>
+                        </div>
+                        <div class="card analytics-card p-4 mb-4">
+                            <h4 class="mb-3">Deployment Intelligence</h4>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex justify-content-between"><span>Current Availability</span><strong>{{ profile.deployment_status }}</strong></li>
+                                <li class="d-flex justify-content-between"><span>Approval Rights</span><strong>{{ profile.approval_rights }}</strong></li>
+                                <li class="d-flex justify-content-between"><span>Last Activity</span><strong>{{ profile.user.last_login_at.strftime('%Y-%m-%d %H:%M') if profile.user.last_login_at else 'N/A' }}</strong></li>
+                            </ul>
+                        </div>
+                        <div class="card glass-panel p-4">
+                            <h4 class="mb-3">User Tabs</h4>
+                            <div class="nav nav-pills flex-column gap-2">
+                                <a class="nav-link active" href="#overview">Overview</a>
+                                <a class="nav-link" href="#attendance">Attendance</a>
+                                <a class="nav-link" href="#deployments">Deployments</a>
+                                <a class="nav-link" href="#vehicle">Vehicle Assignment</a>
+                                <a class="nav-link" href="#documents">Documents</a>
+                                <a class="nav-link" href="#analytics">Analytics</a>
+                                <a class="nav-link" href="#settings">Settings</a>
+                                <a class="nav-link" href="#audit">Audit Logs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/users/users.js') }}"></script>
+    <script>
+        const profileAnalytics = {{ profile.analytics|tojson }};
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('profileAttendanceChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: profileAnalytics.attendance_labels,
+                        datasets: [{
+                            label: 'Attendance %',
+                            backgroundColor: 'rgba(77, 150, 255, 0.16)',
+                            borderColor: '#4D96FF',
+                            fill: true,
+                            tension: 0.32,
+                            data: profileAnalytics.attendance_values,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, grid: { color: 'rgba(31,37,48,0.08)' } },
+                        },
+                    },
+                });
+            }
+        });
+    </script>
+</body>
+</html>

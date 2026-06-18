@@ -1,0 +1,60 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Active Deployments{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Active Deployments</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Helper Count</th>
+                                <th>Assigned Helpers</th>
+                                <th>Started</th>
+                                <th>Current Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if deployments %}
+                                {% for deployment in deployments %}
+                                <tr>
+                                    <td><strong>{{ deployment.vehicle_number }}</strong></td>
+                                    <td>{{ deployment.driver_name or 'Unassigned' }}</td>
+                                    <td><span class="badge bg-blue">{{ deployment.helper_count or 0 }}</span></td>
+                                    <td>{{ deployment.assigned_helpers or 'None' }}</td>
+                                    <td><small>{{ deployment.actual_start[:10] if deployment.actual_start else '-' }}</small></td>
+                                    <td>{{ deployment.current_location or '-' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('deployments.detail', deployment_id=deployment.id) }}" class="btn btn-sm btn-ghost-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No active deployments</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

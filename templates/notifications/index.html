@@ -1,0 +1,180 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+<main class="container py-4">
+    <h1 class="mb-3" id="pageTitle">{{ page_title or 'Notifications Center' }}</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card p-3">
+                <strong>Unread</strong>
+                <div id="summaryUnread" style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">0</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <strong>Critical</strong>
+                <div id="summaryCritical" style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">0</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <strong>Pending Approvals</strong>
+                <div id="summaryApprovals" style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">0</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <strong>Escalations</strong>
+                <div id="summaryEscalations" style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+                <div>
+                    <button class="btn btn-sm btn-primary" data-filter="all">All</button>
+                    <button class="btn btn-sm btn-outline-secondary" data-filter="unread">Unread</button>
+                    <button class="btn btn-sm btn-outline-warning" data-filter="approvals">Approvals</button>
+                    <button class="btn btn-sm btn-outline-danger" data-filter="critical">Critical</button>
+                </div>
+                <div>
+                    <input type="search" id="notificationSearch" class="form-control form-control-sm" placeholder="Search notifications" style="width: 250px;">
+                </div>
+            </div>
+
+            <div id="notificationsTable">
+                <table class="table table-sm table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Message</th>
+                            <th>Priority</th>
+                            <th>Module</th>
+                            <th>Triggered By</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notificationsBody">
+                        <tr><td colspan="7" class="text-center text-muted py-4">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    let allItems = [];
+    let currentFilter = 'all';
+
+    async function loadNotificationsCenter() {
+        const category = '{{ category or "" }}';
+        const url = `/notifications/feed?per_page=50${category ? '&category=' + category : ''}`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        if (data.summary) {
+            document.getElementById('summaryUnread').textContent = data.summary.unread;
+            document.getElementById('summaryCritical').textContent = data.summary.critical;
+            document.getElementById('summaryApprovals').textContent = data.summary.approvals;
+            document.getElementById('summaryEscalations').textContent = data.summary.escalations;
+        }
+
+        allItems = data.items || [];
+        renderItems();
+    }
+
+    function renderItems() {
+        const body = document.getElementById('notificationsBody');
+        const searchQuery = document.getElementById('notificationSearch').value.toLowerCase().trim();
+
+        let filtered = allItems;
+
+        // Apply filters
+        if (currentFilter === 'unread') {
+            filtered = filtered.filter(item => !item.is_read);
+        } else if (currentFilter === 'approvals') {
+            filtered = filtered.filter(item => item.type === 'approval');
+        } else if (currentFilter === 'critical') {
+            filtered = filtered.filter(item => item.priority === 'Critical');
+        }
+
+        // Apply text search
+        if (searchQuery) {
+            filtered = filtered.filter(item => 
+                item.message.toLowerCase().includes(searchQuery) ||
+                (item.module && item.module.toLowerCase().includes(searchQuery)) ||
+                item.type.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        if (filtered.length === 0) {
+            body.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No notifications found</td></tr>';
+            return;
+        }
+
+        body.innerHTML = filtered.map(item => {
+            const href = item.route || '/notifications/';
+            const triggeredBy = item.metadata && item.metadata.triggered_by ? item.metadata.triggered_by : '';
+            const statusBadge = item.is_read ? '<span class="badge bg-secondary">Read</span>' : '<span class="badge bg-primary">Unread</span>';
+            const priorityBadge = item.priority === 'Critical' ? '<span class="badge bg-danger">Critical</span>' : 
+                                 item.priority === 'High' ? '<span class="badge bg-warning text-dark">High</span>' :
+                                 item.priority === 'Medium' ? '<span class="badge bg-info text-white">Medium</span>' :
+                                 `<span class="badge bg-light text-dark">${item.priority}</span>`;
+            return `
+            <tr class="${item.is_read ? 'opacity-75' : 'fw-bold'}">
+                <td><span class="badge bg-light text-dark text-capitalize">${item.type}</span></td>
+                <td><a href="${href}" class="text-decoration-none ${item.is_read ? 'text-muted' : 'text-dark'}">${item.message}</a></td>
+                <td>${priorityBadge}</td>
+                <td><span class="text-muted text-capitalize">${item.module || ''}</span></td>
+                <td>${triggeredBy || '<span class="text-muted">—</span>'}</td>
+                <td><span class="small text-muted">${new Date(item.created_at).toLocaleString()}</span></td>
+                <td>${statusBadge}</td>
+            </tr>
+        `;
+        }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadNotificationsCenter();
+
+        // Search input
+        document.getElementById('notificationSearch').addEventListener('input', renderItems);
+
+        // Filter buttons
+        document.querySelectorAll('[data-filter]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Remove active styling from all buttons
+                document.querySelectorAll('[data-filter]').forEach(b => {
+                    const f = b.getAttribute('data-filter');
+                    b.className = 'btn btn-sm';
+                    if (f === 'all') b.classList.add('btn-outline-primary');
+                    else if (f === 'unread') b.classList.add('btn-outline-secondary');
+                    else if (f === 'approvals') b.classList.add('btn-outline-warning');
+                    else if (f === 'critical') b.classList.add('btn-outline-danger');
+                });
+
+                currentFilter = e.target.getAttribute('data-filter');
+                
+                // Add active styling
+                e.target.className = 'btn btn-sm';
+                if (currentFilter === 'all') {
+                    e.target.classList.add('btn-primary');
+                } else if (currentFilter === 'unread') {
+                    e.target.classList.add('btn-secondary');
+                } else if (currentFilter === 'approvals') {
+                    e.target.classList.add('btn-warning');
+                } else if (currentFilter === 'critical') {
+                    e.target.classList.add('btn-danger');
+                }
+
+                renderItems();
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+@media (max-width: 1199px) {
+    .analytics-card .card-value {
+        font-size: 1.85rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .dashboard-title {
+        font-size: 1.75rem;
+    }
+
+    .page-header,
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 767px) {
+    .glass-panel {
+        border-radius: 18px;
+        padding: 1.5rem !important;
+    }
+
+    .section-label,
+    .section-header h5 {
+        font-size: 1rem;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        width: 100%;
+    }
+}

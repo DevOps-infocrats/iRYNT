@@ -1,0 +1,114 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+    <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+        <div>
+            <p class="dashboard-title-label">Attendance Management</p>
+            <h1 class="dashboard-title">Check-In Monitoring</h1>
+            <p class="dashboard-subtitle text-soft">Monitor team check-in coverage and identify attendance gaps in real time.</p>
+        </div>
+        <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ url_for('attendance.live') }}" class="btn btn-outline-secondary">Live Attendance</a>
+            <a href="{{ url_for('attendance.history') }}" class="btn btn-outline-secondary">Attendance History</a>
+            <a href="{{ url_for('attendance.shift_reports') }}" class="btn btn-outline-secondary">Shift Reports</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-3">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Total Drivers</h5>
+                    <span class="badge bg-secondary">All</span>
+                </div>
+                <h2>{{ summary.total_drivers }}</h2>
+                <p class="text-soft mb-0">Total driver profiles in scope.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Checked In</h5>
+                    <span class="badge bg-success">Live</span>
+                </div>
+                <h2>{{ summary.checked_in }}</h2>
+                <p class="text-soft mb-0">Drivers checked in today.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Checked Out</h5>
+                    <span class="badge bg-primary">Completed</span>
+                </div>
+                <h2>{{ summary.checked_out }}</h2>
+                <p class="text-soft mb-0">Drivers already checked out today.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Pending</h5>
+                    <span class="badge bg-warning text-dark">Open</span>
+                </div>
+                <h2>{{ summary.pending_checkins }}</h2>
+                <p class="text-soft mb-0">Drivers who have not checked in yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Geo Verified</h5>
+                    <span class="badge bg-success">Inside</span>
+                </div>
+                <h2>{{ summary.geo_verified }}</h2>
+                <p class="text-soft mb-0">Attendance records verified inside assigned geofence today.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Outside Geofence</h5>
+                    <span class="badge bg-warning text-dark">Review</span>
+                </div>
+                <h2>{{ summary.outside_geofence }}</h2>
+                <p class="text-soft mb-0">Attendance records flagged for KAM or CBH review.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card summary-card h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Low Accuracy</h5>
+                    <span class="badge bg-info text-white">GPS</span>
+                </div>
+                <h2>{{ summary.low_accuracy }}</h2>
+                <p class="text-soft mb-0">Attendance records submitted with weak location accuracy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card table-card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h2 class="card-title mb-1">Attendance Monitoring Summary</h2>
+                <p class="text-soft mb-0">Overview of attendance status for today.</p>
+            </div>
+            <div class="badge bg-info text-white py-2 px-3">Monitoring</div>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-12">
+                    <p class="mb-2">Attendance coverage for today is <strong>{{ summary.coverage_percent }}%</strong>.</p>
+                    <div class="progress" style="height: 12px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ summary.coverage_percent }}%;" aria-valuenow="{{ summary.coverage_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

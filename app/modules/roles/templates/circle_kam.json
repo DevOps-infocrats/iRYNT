@@ -1,0 +1,50 @@
+{
+  "role_name": "Circle KAM",
+  "level": 5,
+  "tier": "circle",
+  "description": "Circle level Key Account Manager",
+  "permissions": [
+    "clients.view",
+    "projects.view",
+    "projects.edit",
+    "vehicles.view",
+    "deployments.view",
+    "deployments.create",
+    "helper_assignments.view",
+    "helper_assignments.create",
+    "helper_assignments.edit",
+    "helper_assignments.delete",
+    "attendance.view",
+    "reports.view",
+    "attendance.approve",
+    "workflows.view",
+    "workflows.manage",
+    "workflows.approve",
+    "workflows.override",
+    "attendance.export",
+    "reports.export"
+  ],
+  "workflow_rights": {
+    "can_approve": true,
+    "can_reject": true,
+    "can_escalate": true,
+    "can_override": true,
+    "can_close_workflow": true,
+    "approval_level": 1
+  },
+  "sidebar_access": [
+    "dashboard",
+    "masters",
+    "user_management",
+    "deployments",
+    "operations",
+    "workflows",
+    "analytics",
+    "reporting",
+    "settings",
+    "admin"
+  ],
+  "scope": "circle",
+  "is_predefined": true,
+  "is_system": false
+}

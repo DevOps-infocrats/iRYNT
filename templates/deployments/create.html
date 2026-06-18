@@ -1,0 +1,161 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Create Deployment{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Create New Deployment</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form method="POST" class="card">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Deployment Details</h3>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.vehicle_id.label(class="form-label") }}
+                                        {{ form.vehicle_id(class="form-select") }}
+                                        {% if form.vehicle_id.errors %}
+                                        <div class="invalid-feedback" style="display:block;">
+                                            {{ form.vehicle_id.errors[0] }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.driver_id.label(class="form-label") }}
+                                        {{ form.driver_id(class="form-select") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.project_id.label(class="form-label") }}
+                                        {{ form.project_id(class="form-select") }}
+                                        {% if form.project_id.errors %}
+                                        <div class="invalid-feedback" style="display:block;">
+                                            {{ form.project_id.errors[0] }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.subzone_id.label(class="form-label") }}
+                                        {{ form.subzone_id(class="form-select") }}
+                                        {% if form.subzone_id.errors %}
+                                        <div class="invalid-feedback" style="display:block;">
+                                            {{ form.subzone_id.errors[0] }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.deployment_type.label(class="form-label") }}
+                                        {{ form.deployment_type(class="form-select") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.route_name.label(class="form-label") }}
+                                        {{ form.route_name(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.pickup_location.label(class="form-label") }}
+                                        {{ form.pickup_location(class="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.dropoff_location.label(class="form-label") }}
+                                        {{ form.dropoff_location(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 class="card-title mt-4 mb-3">Compliance Checks</h3>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        {{ form.vehicle_fitness_verified(class="form-check-input") }}
+                                        {{ form.vehicle_fitness_verified.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        {{ form.driver_license_verified(class="form-check-input") }}
+                                        {{ form.driver_license_verified.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        {{ form.insurance_verified(class="form-check-input") }}
+                                        {{ form.insurance_verified.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        {{ form.safety_checklist_completed(class="form-check-input") }}
+                                        {{ form.safety_checklist_completed.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 class="card-title mt-4 mb-3">Additional Information</h3>
+
+                            <div class="mb-3">
+                                {{ form.special_instructions.label(class="form-label") }}
+                                {{ form.special_instructions(class="form-control") }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.notes.label(class="form-label") }}
+                                {{ form.notes(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-end">
+                            <a href="{{ url_for('deployments.index') }}" class="btn btn-secondary">Cancel</a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/deployments.js') }}"></script>
+{% endblock %}

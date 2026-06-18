@@ -1,0 +1,277 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<div class="permissions-container">
+    <!-- Header Section -->
+    <div class="permissions-header">
+        <div class="header-content">
+            <h1 class="header-title">Permissions & Access Governance</h1>
+            <p class="header-subtitle">Manage enterprise permissions, module access, workflow authority, operational
+                controls, and authorization policies.</p>
+        </div>
+        <div class="header-actions">
+            {% if has_permission('permissions.create') %}
+            <a href="{{ url_for('permissions.create_permission') }}" class="btn btn-gradient">
+                <i class="bi bi-plus-lg"></i> New Permission
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Administration</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Permissions</li>
+        </ol>
+    </nav>
+
+    <!-- KPI Dashboard -->
+    <div class="kpi-dashboard">
+        <div class="kpi-container">
+            <!-- Total Permissions -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Permissions</span>
+                    <i class="bi bi-shield-check kpi-icon"></i>
+                </div>
+                <div class="kpi-value" data-target="{{ kpis.total_permissions }}">0</div>
+                <div class="kpi-description">All permissions defined</div>
+                <div class="kpi-indicator positive">
+                    <i class="bi bi-arrow-up"></i> <span>Active system</span>
+                </div>
+            </div>
+
+            <!-- Active Permissions -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Active Permissions</span>
+                    <i class="bi bi-toggle-on kpi-icon"></i>
+                </div>
+                <div class="kpi-value" data-target="{{ kpis.active_permissions }}">0</div>
+                <div class="kpi-description">Currently enabled</div>
+                <div class="kpi-indicator positive">
+                    <i class="bi bi-check-circle"></i> <span>Operational</span>
+                </div>
+            </div>
+
+            <!-- Permission Groups -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Permission Groups</span>
+                    <i class="bi bi-collection kpi-icon"></i>
+                </div>
+                <div class="kpi-value" data-target="{{ kpis.permission_groups }}">0</div>
+                <div class="kpi-description">Organized categories</div>
+                <div class="kpi-indicator neutral">
+                    <i class="bi bi-info-circle"></i> <span>Grouped access</span>
+                </div>
+            </div>
+
+            <!-- Workflow Permissions -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Workflow Permissions</span>
+                    <i class="bi bi-diagram-3 kpi-icon"></i>
+                </div>
+                <div class="kpi-value" data-target="{{ kpis.workflow_permissions }}">0</div>
+                <div class="kpi-description">Approval authorities</div>
+                <div class="kpi-indicator neutral">
+                    <i class="bi bi-arrow-repeat"></i> <span>Workflow enabled</span>
+                </div>
+            </div>
+
+            <!-- Restricted Permissions -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Restricted Permissions</span>
+                    <i class="bi bi-exclamation-triangle kpi-icon"></i>
+                </div>
+                <div class="kpi-value critical" data-target="{{ kpis.restricted_permissions }}">0</div>
+                <div class="kpi-description">Critical access control</div>
+                <div class="kpi-indicator warning">
+                    <i class="bi bi-shield-exclamation"></i> <span>High security</span>
+                </div>
+            </div>
+
+            <!-- Assigned Roles -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Assigned Roles</span>
+                    <i class="bi bi-person-badge kpi-icon"></i>
+                </div>
+                <div class="kpi-value" data-target="{{ kpis.assigned_roles }}">0</div>
+                <div class="kpi-description">Total roles configured</div>
+                <div class="kpi-indicator neutral">
+                    <i class="bi bi-people"></i> <span>Role-based</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permission Categories Panel -->
+    <section class="permissions-section categories-section">
+        <div class="section-header">
+            <h2 class="section-title">Permission Categories</h2>
+            <p class="section-description">Organized permission grouping by functional area</p>
+        </div>
+
+        <div class="categories-grid">
+            {% if categories %}
+            {% for category in categories %}
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="bi {{ category.icon or 'bi-tag' }}"></i>
+                </div>
+                <div class="category-content">
+                    <h3 class="category-name">{{ category.name }}</h3>
+                    <p class="category-description">{{ category.description or 'No description' }}</p>
+                </div>
+                <div class="category-meta">
+                    <span class="badge badge-primary">View</span>
+                </div>
+                <a href="{{ url_for('permissions.permission_registry', category=category.id) }}"
+                    class="category-link"></a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <span>No permission categories configured yet</span>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="permissions-section actions-section">
+        <div class="section-header">
+            <h2 class="section-title">Quick Access</h2>
+        </div>
+
+        <div class="actions-grid">
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <h3 class="action-title">Permission Registry</h3>
+                <p class="action-description">View and manage all permissions</p>
+                <a href="{{ url_for('permissions.permission_registry') }}" class="btn btn-sm btn-outline">
+                    View Registry <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-grid-3x3"></i>
+                </div>
+                <h3 class="action-title">Permission Matrix</h3>
+                <p class="action-description">Interactive role-permission matrix</p>
+                <a href="{{ url_for('permissions.permission_matrix') }}" class="btn btn-sm btn-outline">
+                    View Matrix <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <h3 class="action-title">Workflow Access</h3>
+                <p class="action-description">Manage workflow authorities</p>
+                <a href="{{ url_for('permissions.workflow_access') }}" class="btn btn-sm btn-outline">
+                    Manage <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-chart-bar"></i>
+                </div>
+                <h3 class="action-title">Analytics</h3>
+                <p class="action-description">Permission usage analytics</p>
+                <a href="{{ url_for('permissions.analytics') }}" class="btn btn-sm btn-outline">
+                    View Analytics <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            {% if has_permission('permissions.view_audit') %}
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h3 class="action-title">Audit Logs</h3>
+                <p class="action-description">Permission changes and access events</p>
+                <a href="{{ url_for('permissions.audit_logs') }}" class="btn btn-sm btn-outline">
+                    View Logs <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+
+            {% if has_permission('permissions.manage_settings') %}
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <h3 class="action-title">Settings</h3>
+                <p class="action-description">Permission configuration settings</p>
+                <a href="{{ url_for('permissions.settings') }}" class="btn btn-sm btn-outline">
+                    Configure <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="permissions-section recent-section">
+        <div class="section-header">
+            <h2 class="section-title">Recent Activity</h2>
+            <a href="{{ url_for('permissions.audit_logs') }}" class="view-all-link">View All <i
+                    class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="activity-feed">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <span>Permission activity will appear here as permissions are created, updated, and assigned to
+                    roles.</span>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Animate counters
+    document.addEventListener('DOMContentLoaded', function () {
+        const counterElements = document.querySelectorAll('.kpi-value[data-target]');
+
+        counterElements.forEach(el => {
+            const target = parseInt(el.dataset.target);
+            if (target > 0) {
+                animateCounter(el, target);
+            }
+        });
+    });
+
+    function animateCounter(el, target) {
+        const duration = 1000;
+        const startTime = Date.now();
+        const startValue = 0;
+
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentValue = Math.floor(startValue + (target - startValue) * progress);
+            el.textContent = currentValue;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+</script>
+
+{% endblock %}

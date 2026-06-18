@@ -1,0 +1,35 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+    <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+        <div>
+            <p class="dashboard-title-label">Attendance Management</p>
+            <h1 class="dashboard-title">Shift Reports</h1>
+            <p class="dashboard-subtitle text-soft">Generate shift-level attendance summaries and view activity trends.</p>
+        </div>
+        <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ url_for('attendance.live') }}" class="btn btn-outline-secondary">Live Attendance</a>
+            <a href="{{ url_for('attendance.history') }}" class="btn btn-outline-secondary">Attendance History</a>
+            <a href="{{ url_for('attendance.monitoring') }}" class="btn btn-outline-secondary">Monitoring</a>
+        </div>
+    </div>
+
+    <div class="card table-card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h2 class="card-title mb-1">Shift Attendance Reports</h2>
+                <p class="text-soft mb-0">Latest shift summaries for your active workforce.</p>
+            </div>
+            <div class="badge bg-info text-white py-2 px-3">Reports</div>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-12">
+                    <p class="mb-2">This page is reserved for attendance summary reports. Implementation is pending the first stage of live attendance capture.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

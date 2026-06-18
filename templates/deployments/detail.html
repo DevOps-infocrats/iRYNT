@@ -1,0 +1,156 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Deployment Details{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Deployment Details</h2>
+                </div>
+                <div class="col-auto">
+                    <a href="{{ url_for('deployments.index') }}" class="btn btn-outline-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Core Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Vehicle:</strong><br>
+                                    {{ deployment.vehicle_number }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Driver:</strong><br>
+                                    {{ deployment.driver_name or 'Unassigned' }}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Project:</strong><br>
+                                    {{ deployment.project_name }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Subzone:</strong><br>
+                                    {{ deployment.subzone_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Route Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Route Name:</strong><br>
+                                    {{ deployment.route_name or '-' }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Type:</strong><br>
+                                    {{ deployment.deployment_type }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Pickup Location:</strong><br>
+                                    {{ deployment.pickup_location or '-' }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Dropoff Location:</strong><br>
+                                    {{ deployment.dropoff_location or '-' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if approval_logs %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Approval History</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table card-table">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Actor</th>
+                                        <th>Reason</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in approval_logs %}
+                                    <tr>
+                                        <td><strong>{{ log.action|capitalize }}</strong></td>
+                                        <td>{{ log.actor }}</td>
+                                        <td>{{ log.reason or '-' }}</td>
+                                        <td><small>{{ log.timestamp[:10] }}</small></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Status</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Operational Status:</strong><br>
+                                <span class="badge bg-{{ 'success' if deployment.status == 'Active' else 'warning' if deployment.status == 'Pending' else 'secondary' }}">
+                                    {{ deployment.status }}
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Approval Status:</strong><br>
+                                <span class="badge bg-{{ 'success' if deployment.approval_status == 'Approved' else 'danger' if deployment.approval_status == 'Rejected' else 'warning' }}">
+                                    {{ deployment.approval_status }}
+                                </span>
+                            </div>
+                            <hr>
+                            {% if deployment.approval_status == 'Pending' and has_permission(current_user, 'deployments.approve') %}
+                            <a href="{{ url_for('deployments.approve', deployment_id=deployment.id) }}" class="btn btn-primary w-100">
+                                Approve / Reject
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Metadata</h3>
+                        </div>
+                        <div class="card-body text-sm">
+                            <div class="mb-2">
+                                <strong>Created:</strong> {{ deployment.created_at[:10] }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Updated:</strong> {{ deployment.updated_at[:10] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

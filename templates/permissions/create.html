@@ -1,0 +1,116 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+<div class="permissions-container">
+    <div class="permissions-header mb-4">
+        <div>
+            <h1>Create Permission</h1>
+            <p class="text-muted">Define a new permission code, assign it to a category, and configure workflow access.</p>
+        </div>
+    </div>
+
+    {% if errors %}
+    <div class="alert alert-danger">
+        <strong>There are problems with your submission:</strong>
+        <ul class="mb-0">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('permissions.create_permission') }}" class="permission-form">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="code">Permission Code</label>
+                <input type="text" class="form-control" id="code" name="code" placeholder="module.action" value="{{ data.code if data else '' }}" required>
+                <div class="form-text">Use lowercase module.action format, e.g. users.create.</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="description">Description</label>
+                <input type="text" class="form-control" id="description" name="description" value="{{ data.description if data else '' }}" placeholder="Permission description">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="module">Module</label>
+                <input type="text" class="form-control" id="module" name="module" value="{{ data.module if data else '' }}" placeholder="users, vehicles, projects" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="action">Action</label>
+                <select class="form-select" id="action" name="action" required>
+                    <option value="">Select action</option>
+                    {% for action in ['view', 'create', 'edit', 'delete', 'approve', 'reject', 'export', 'assign', 'block', 'override', 'escalate', 'close', 'manage'] %}
+                    <option value="{{ action }}" {% if data and data.action == action %}selected{% endif %}>{{ action|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="scope_type">Scope Type</label>
+                <select class="form-select" id="scope_type" name="scope_type" required>
+                    <option value="">Select scope</option>
+                    {% for scope in ['global', 'company', 'circle', 'client', 'project', 'subzone', 'operational'] %}
+                    <option value="{{ scope }}" {% if data and data.scope_type == scope %}selected{% endif %}>{{ scope|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="security_level">Security Level</label>
+                <select class="form-select" id="security_level" name="security_level" required>
+                    <option value="">Select level</option>
+                    {% for level in ['low', 'medium', 'critical'] %}
+                    <option value="{{ level }}" {% if data and data.security_level == level %}selected{% endif %}>{{ level|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="category_id">Category</label>
+                <select class="form-select" id="category_id" name="category_id">
+                    <option value="">None</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if data and data.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if data and data.is_active != false %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">Active</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="can_delegate" name="can_delegate" {% if data and data.can_delegate %}checked{% endif %}>
+                    <label class="form-check-label" for="can_delegate">Can Delegate</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="requires_mfa" name="requires_mfa" {% if data and data.requires_mfa %}checked{% endif %}>
+                    <label class="form-check-label" for="requires_mfa">Requires MFA</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-gradient">Create Permission</button>
+            <a href="{{ url_for('permissions.permission_registry') }}" class="btn btn-outline ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .permission-form .form-label {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .permission-form .form-control,
+    .permission-form .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--panel-white);
+    }
+    .permission-form .form-text {
+        font-size: 12px;
+        color: var(--text-soft);
+    }
+</style>
+{% endblock %}

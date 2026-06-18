@@ -1,0 +1,46 @@
+{
+  "role_name": "Key Account Manager",
+  "level": 10,
+  "tier": "corporate",
+  "description": "KAM responsible for key accounts with operational oversight",
+  "permissions": [
+    "users.view",
+    "clients.view",
+    "clients.edit",
+    "projects.view",
+    "projects.create",
+    "projects.edit",
+    "vehicles.view",
+    "vehicles.assign",
+    "deployments.view",
+    "deployments.create",
+    "deployments.approve",
+    "helper_assignments.view",
+    "attendance.view",
+    "attendance.approve",
+    "reports.view",
+    "reports.export",
+    "workflows.view",
+    "workflows.manage",
+    "workflows.approve"
+  ],
+  "workflow_rights": {
+    "can_approve": true,
+    "can_reject": true,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 1
+  },
+  "sidebar_access": [
+    "dashboard",
+    "masters",
+    "deployments",
+    "operations",
+    "workflows",
+    "reporting"
+  ],
+  "scope": "company",
+  "is_predefined": true,
+  "is_system": false
+}

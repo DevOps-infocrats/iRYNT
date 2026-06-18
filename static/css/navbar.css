@@ -1,0 +1,209 @@
+:root {
+    --panel-white: #FFFFFF;
+    --panel-soft: rgba(255,255,255,0.82);
+    --text-dark: #1F2530;
+    --text-muted: #81868A;
+    --text-soft: #8C8681;
+    --border: rgba(226,221,217,0.88);
+    --shadow-soft: 0 8px 24px rgba(33, 29, 25, 0.08);
+}
+
+html[data-bs-theme="dark"] {
+    --panel-white: #222222;
+    --panel-soft: rgba(34,34,34,0.82);
+    --text-dark: #F0EDE9;
+    --text-muted: #9E9893;
+    --text-soft: #9E9893;
+    --border: rgba(255,255,255,0.12);
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-navbar {
+    background: var(--panel-soft);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    padding: 0.75rem 1rem;
+}
+
+.navbar-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    max-width: 1480px;
+    margin: 0 auto;
+}
+
+.navbar-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: var(--text-soft);
+}
+
+.breadcrumb-label {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.breadcrumb-current {
+    font-weight: 500;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.navbar-search {
+    min-width: 280px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-search .form-control {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+    background: var(--panel-white);
+    font-size: 14px;
+}
+
+.navbar-search .form-control:focus {
+    border-color: #FF7A18;
+    box-shadow: 0 0 0 0.2rem rgba(255,122,24,0.12);
+}
+
+.navbar-scope-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 13px;
+    padding: 0.5rem 0.75rem;
+    background: var(--panel-soft);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.scope-label {
+    color: var(--text-soft);
+    font-weight: 500;
+}
+
+.navbar-actions {
+    align-items: center;
+    gap: 0.5rem;
+    display: flex;
+}
+
+.icon-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--panel-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    transition: background 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.icon-button:hover {
+    background: var(--panel-white);
+    color: var(--text-dark);
+    border-color: var(--border);
+}
+
+.notification-button {
+    position: relative;
+}
+
+.notification-button .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #FF4D8D;
+    border: 2px solid #fff;
+}
+
+.profile-dropdown .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 14px;
+}
+
+.avatar-text {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255,122,24,0.95), rgba(255,77,141,0.95));
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.profile-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.profile-label {
+    display: inline-block;
+    text-align: left;
+}
+
+.profile-label strong {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dark);
+}
+
+.profile-label small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.btn-soft-secondary {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    color: var(--text-dark);
+    font-size: 13px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.btn-soft-secondary:hover {
+    background: var(--panel-white);
+    border-color: var(--border);
+}
+
+@media (max-width: 991px) {
+    .navbar-grid {
+        grid-template-columns: auto 1fr auto;
+        gap: 0.75rem;
+    }
+    
+    .navbar-search {
+        grid-column: 1 / -1;
+        min-width: 100%;
+    }
+}

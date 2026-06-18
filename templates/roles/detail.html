@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Details | {{ role.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/roles.css') }}">
+</head>
+<body class="dashboard-page role-detail-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Administration</p>
+                        <h1 class="dashboard-title">Role Details</h1>
+                        <p class="subtitle-text">Inspect permissions, workflow authority, and scope assignments for <strong>{{ role.name }}</strong>.</p>
+                        <nav class="breadcrumb-panel" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ url_for('roles.index') }}">Roles</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ role.name }}</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+                        <a href="{{ url_for('roles.create') }}" class="btn btn-gradient">Create Role</a>
+                        <a href="{{ url_for('roles.compare') }}?role1={{ role.id }}" class="btn btn-outline-secondary">Compare</a>
+                        <button class="btn btn-outline-secondary">Export Permissions</button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-xl-8">
+                        <div class="card detail-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Role Summary</h2>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row gy-3">
+                                    <dt class="col-sm-4">Name</dt>
+                                    <dd class="col-sm-8">{{ role.name }}</dd>
+
+                                    <dt class="col-sm-4">Description</dt>
+                                    <dd class="col-sm-8">{{ role.description or 'No description provided.' }}</dd>
+
+                                    <dt class="col-sm-4">System Role</dt>
+                                    <dd class="col-sm-8">
+                                        <span class="badge bg-{{ 'success' if role.is_system else 'secondary' }}">{{ 'Yes' if role.is_system else 'No' }}</span>
+                                    </dd>
+
+                                    <dt class="col-sm-4">Hierarchy Level</dt>
+                                    <dd class="col-sm-8">
+                                        {% if role.hierarchy %}
+                                            <span class="badge bg-info">L{{ role.hierarchy.level }} / {{ role.hierarchy.tier }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Not configured</span>
+                                        {% endif %}
+                                    </dd>
+
+                                    <dt class="col-sm-4">Assigned Users</dt>
+                                    <dd class="col-sm-8"><strong>{{ role.users_count }}</strong></dd>
+
+                                    <dt class="col-sm-4">Last Updated</dt>
+                                    <dd class="col-sm-8">{{ role.updated_at or 'N/A' }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-4">
+                        <div class="card metrics-card h-100">
+                            <div class="card-header">
+                                <h2 class="card-title">Role Health</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="metric-row d-flex justify-content-between mb-3">
+                                    <span>Permission Count</span>
+                                    <strong>{{ role.permission_count }}</strong>
+                                </div>
+                                <div class="metric-row d-flex justify-content-between mb-3">
+                                    <span>Workflow Authorities</span>
+                                    <strong>{{ role.workflows | length }}</strong>
+                                </div>
+                                <div class="metric-row d-flex justify-content-between mb-3">
+                                    <span>Scope Assignments</span>
+                                    <strong>{{ role.scopes | length }}</strong>
+                                </div>
+                                <div class="metric-row d-flex justify-content-between">
+                                    <span>Audit Entries</span>
+                                    <strong>{{ role.audit_logs | length }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-xl-6">
+                        <div class="card permissions-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Permission Snapshot</h2>
+                                <p class="text-soft mb-0">Review assigned permissions and use cases for access enforcement.</p>
+                            </div>
+                            <div class="card-body">
+                                {% if role.permissions %}
+                                    <ul class="list-group list-group-flush">
+                                        {% for permission in role.permissions %}
+                                            <li class="list-group-item">{{ permission.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <div class="text-center py-5 text-muted">No permissions assigned.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <div class="card workflow-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Workflow Authority</h2>
+                                <p class="text-soft mb-0">Approval rights, escalation and override controls.</p>
+                            </div>
+                            <div class="card-body">
+                                {% if role.workflows %}
+                                    <div class="list-group list-group-flush">
+                                        {% for workflow in role.workflows %}
+                                            <div class="list-group-item">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <strong>{{ workflow.workflow_type }}</strong>
+                                                    <span class="badge bg-{{ 'success' if workflow.can_approve else 'secondary' }}">Approval {{ 'Yes' if workflow.can_approve else 'No' }}</span>
+                                                </div>
+                                                <div class="small text-muted">
+                                                    Approve: {{ workflow.can_approve }}, Reject: {{ workflow.can_reject }}, Escalate: {{ workflow.can_escalate }}, Override: {{ workflow.can_override }}, Close: {{ workflow.can_close_workflow }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-5 text-muted">No workflow permissions configured.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="card module-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Module Access Matrix</h2>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless mb-0 align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Module</th>
+                                                <th>View</th>
+                                                <th>Create</th>
+                                                <th>Edit</th>
+                                                <th>Delete</th>
+                                                <th>Approve</th>
+                                                <th>Export</th>
+                                                <th>Assign</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for module in role.modules %}
+                                                <tr>
+                                                    <td>{{ module.module }}</td>
+                                                    <td>{{ '✔' if module.view else '—' }}</td>
+                                                    <td>{{ '✔' if module.create else '—' }}</td>
+                                                    <td>{{ '✔' if module.edit else '—' }}</td>
+                                                    <td>{{ '✔' if module.delete else '—' }}</td>
+                                                    <td>{{ '✔' if module.approve else '—' }}</td>
+                                                    <td>{{ '✔' if module.export else '—' }}</td>
+                                                    <td>{{ '✔' if module.assign else '—' }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

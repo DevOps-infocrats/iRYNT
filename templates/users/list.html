@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workforce & User Operations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users/users.css') }}">
+</head>
+
+<body class="dashboard-page users-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Workforce & User Operations</p>
+                        <h1 class="dashboard-title">Manage workforce identity, operational hierarchy, permissions,
+                            attendance visibility, deployment readiness, and realtime workforce activity.</h1>
+
+                    </div>
+                    <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+                        <a href="{{ url_for('users.create') }}" class="btn btn-gradient btn-lg">Add User</a>
+                        <button class="btn btn-outline-secondary btn-lg">Bulk Import</button>
+                        <button class="btn btn-outline-secondary btn-lg">Export Workforce</button>
+                        <button class="btn btn-outline-secondary btn-lg">Assign Role</button>
+                        <button class="btn btn-outline-secondary btn-lg">Assign Deployment</button>
+                    </div>
+                </div>
+
+                <section class="kpi-grid mb-4">
+                    {% for item in kpis %}
+                    <div class="kpi-card-wrapper">
+                        <article class="kpi-card p-4 h-100">
+                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                <div>
+                                    <p class="card-label">{{ item.title }}</p>
+                                    <h2 class="kpi-value">{{ item.value }}</h2>
+                                    <p class="kpi-meta mb-0">{{ item.description }}</p>
+                                </div>
+                                <div class="kpi-avatar bg-gradient-primary text-white shadow-sm">
+                                    <span class="material-symbols-outlined">{{ item.icon }}</span>
+                                </div>
+                            </div>
+                            <div class="kpi-footnote mt-3">Trend <strong>{{ item.trend }}</strong></div>
+                        </article>
+                    </div>
+                    {% endfor %}
+                </section>
+
+                <div class="card filter-card mb-4">
+                    <div class="card-body p-4">
+                        <div
+                            class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-3">
+                            <div>
+                                <h2 class="section-title">Advanced Workforce Filters</h2>
+                                <p class="text-soft mb-0">Use dependent dropdowns, role filters, and realtime search to
+                                    narrow operational staffing visibility.</p>
+                            </div>
+                            <div class="search-box flex-fill flex-md-grow-0 position-relative">
+                                <label class="form-label text-soft" for="workforceSearch">Search workforce</label>
+                                <input id="workforceSearch" class="form-control form-control-lg" type="search"
+                                    placeholder="Search name, employee ID, email, phone, vehicle number"
+                                    autocomplete="off">
+                                <div id="searchSuggestions" class="search-suggestions"></div>
+                            </div>
+                        </div>
+
+                        <form id="filterForm" class="row gx-3 gy-3" method="get" action="{{ url_for('users.index') }}">
+                            <div class="col-12 col-xl-2 select2-wrapper">
+                                <label class="filter-label">Company</label>
+                                <select id="company_id" name="company_id" class="form-select select2">
+                                    {% for id, label in companies %}
+                                    <option value="{{ id }}" {% if filters.company_id==id %}selected{% endif %}>{{ label
+                                        }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2 select2-wrapper">
+                                <label class="filter-label">Circle</label>
+                                <select id="circle_id" name="circle_id" class="form-select select2">
+                                    {% for id, label in circles %}
+                                    <option value="{{ id }}" {% if filters.circle_id==id %}selected{% endif %}>{{ label
+                                        }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2 select2-wrapper">
+                                <label class="filter-label">Client</label>
+                                <select id="client_id" name="client_id" class="form-select select2">
+                                    {% for id, label in clients %}
+                                    <option value="{{ id }}" {% if filters.client_id==id %}selected{% endif %}>{{ label
+                                        }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2 select2-wrapper">
+                                <label class="filter-label">Project</label>
+                                <select id="project_id" name="project_id" class="form-select select2">
+                                    {% for id, label in projects %}
+                                    <option value="{{ id }}" {% if filters.project_id==id %}selected{% endif %}>{{ label
+                                        }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2 select2-wrapper">
+                                <label class="filter-label">Subzone</label>
+                                <select id="subzone_id" name="subzone_id" class="form-select select2">
+                                    {% for id, label in subzones %}
+                                    <option value="{{ id }}" {% if filters.subzone_id==id %}selected{% endif %}>{{ label
+                                        }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2">
+                                <label class="filter-label">Role</label>
+                                <select name="role_id" class="form-select select2">
+                                    {% for id, label in roles %}
+                                    <option value="{{ id }}" {% if filters.role_id==id %}selected{% endif %}>{{ label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2">
+                                <label class="filter-label">Access Scope</label>
+                                <select name="access_scope" class="form-select select2">
+                                    <option value="">Select access</option>
+                                    {% for option in access_scopes %}
+                                    <option value="{{ option.id }}" {% if filters.access_scope==option.id %}selected{%
+                                        endif %}>{{ option.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2">
+                                <label class="filter-label">Operational Type</label>
+                                <select name="operational_type" class="form-select select2">
+                                    <option value="">Select type</option>
+                                    {% for option in operational_types %}
+                                    <option value="{{ option.id }}">{{ option.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2">
+                                <label class="filter-label">Status</label>
+                                <select name="status" class="form-select select2">
+                                    <option value="">Any status</option>
+                                    {% for option in status_options %}
+                                    <option value="{{ option.id }}" {% if filters.status==option.id %}selected{% endif
+                                        %}>{{ option.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-gradient w-100">Apply Filters</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-xl-8">
+                        <div class="card table-card h-100">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h2 class="card-title mb-1">Users Registry</h2>
+                                    <p class="text-soft mb-0">Operational user records with hierarchy, role, attendance,
+                                        deployment, and vehicle insights.</p>
+                                </div>
+                                <span class="badge bg-info text-white">{{ total }} records</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless align-middle mb-0">
+                                        <thead class="table-light sticky-top">
+                                            <tr>
+                                                <th>Profile</th>
+                                                <th>Employee ID</th>
+                                                <th>Role</th>
+                                                <th>Hierarchy</th>
+                                                <th>Assigned Vehicle</th>
+                                                <th>Attendance</th>
+                                                <th>Deployment</th>
+                                                <th>Status</th>
+                                                <th>Last Activity</th>
+                                                <th class="text-end">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if users %}
+                                            {% for user in users %}
+                                            <tr class="user-row">
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <div
+                                                            class="avatar avatar-small {{ 'online' if user.online else 'offline' }}">
+                                                            {{ user.name[0]|upper }}</div>
+                                                        <div>
+                                                            <span class="fw-semibold d-block">{{ user.name }}</span>
+                                                            <small class="text-soft">{{ user.email }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ user.employee_id }}</td>
+                                                <td>
+                                                    <span class="role-chip">{{ user.role }}</span>
+                                                    {% if user.verified %}
+                                                    <span class="badge badge-pill bg-success ms-1">Verified</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="hierarchy-chip">{{ user.hierarchy.company }}</div>
+                                                    <div class="hierarchy-chip">{{ user.hierarchy.circle }}</div>
+                                                </td>
+                                                <td>{{ user.assigned_vehicle }}</td>
+                                                <td><span
+                                                        class="status-pill {{ 'status-success' if user.attendance_status == 'Checked In' else 'status-warning' }}">{{
+                                                        user.attendance_status }}</span></td>
+                                                <td><span
+                                                        class="status-pill {{ 'status-info' if user.deployment_status == 'Ready' else 'status-success' if user.deployment_status == 'Deployed' else 'status-muted' }}">{{
+                                                        user.deployment_status }}</span></td>
+                                                <td><span
+                                                        class="status-pill {{ 'status-success' if user.operational_status == 'On Duty' else 'status-muted' if user.operational_status == 'Offline' else 'status-danger' }}">{{
+                                                        user.operational_status }}</span></td>
+                                                <td>{{ user.last_activity or 'N/A' }}</td>
+                                                <td class="text-end">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-soft-secondary dropdown-toggle"
+                                                            type="button" data-bs-toggle="dropdown"
+                                                            aria-expanded="false">Actions</button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li><a class="dropdown-item"
+                                                                    href="{{ url_for('users.profile', user_id=user.id) }}">View
+                                                                    Profile</a></li>
+                                                            <li><a class="dropdown-item"
+                                                                    href="{{ url_for('users.edit', user_id=user.id) }}">Edit
+                                                                    User</a></li>
+                                                            <li><a class="dropdown-item" href="#">Assign Vehicle</a>
+                                                            </li>
+                                                            <li><a class="dropdown-item" href="#">View Attendance</a>
+                                                            </li>
+                                                            <li><a class="dropdown-item" href="#">Reset Password</a>
+                                                            </li>
+                                                            <li><a class="dropdown-item text-danger" href="#">Suspend
+                                                                    User</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="10" class="text-center py-5 text-muted">No workforce
+                                                    records match the current filter selection.</td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div
+                                class="card-footer d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
+                                <p class="mb-0 text-soft">Showing {{ users|length }} of {{ total }} users.</p>
+                                <nav aria-label="Users pagination">
+                                    <ul class="pagination pagination-sm mb-0">
+                                        {% set page_count = ((total + per_page - 1) // per_page) if per_page else 1 %}
+                                        <li class="page-item {% if page <= 1 %}disabled{% endif %}"><a class="page-link"
+                                                href="?page={{ page - 1 }}">Previous</a></li>
+                                        {% for p in range(1, page_count + 1) %}
+                                        {% if p <= 5 or p>= page_count %}
+                                            <li class="page-item {% if p == page %}active{% endif %}"><a
+                                                    class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                                            {% elif p == 6 %}
+                                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <li class="page-item {% if page >= page_count %}disabled{% endif %}"><a
+                                                    class="page-link" href="?page={{ page + 1 }}">Next</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-4">
+                        <div class="card live-panel h-100 p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div>
+                                    <h2 class="card-title mb-1">Live Operations</h2>
+                                    <p class="text-soft mb-0">Realtime workforce indicators ready for operational
+                                        review.</p>
+                                </div>
+                                <span class="badge bg-warning text-dark">Realtime</span>
+                            </div>
+                            <div class="grid-stat">
+                                <div class="stat-card">
+                                    <div class="stat-label">Users Online</div>
+                                    <div class="stat-value">{{ kpis[4].value if kpis|length > 4 else 0 }}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">Drivers On Duty</div>
+                                    <div class="stat-value">{{ kpis[2].value if kpis|length > 2 else 0 }}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">Pending Verification</div>
+                                    <div class="stat-value">{{ kpis[6].value if kpis|length > 6 else 0 }}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">Deployed Users</div>
+                                    <div class="stat-value">{{ kpis[5].value if kpis|length > 5 else 0 }}</div>
+                                </div>
+                            </div>
+                            <div class="progress-section mt-3">
+                                <p class="mb-2 text-soft">Operational readiness across active user groups</p>
+                                <div class="progress rounded-pill" style="height: 12px;">
+                                    <div class="progress-bar bg-info rounded-pill" role="progressbar"
+                                        style="width: 68%;" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2 text-soft">
+                                    <small>Workforce visibility</small>
+                                    <small>68%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-xl-6">
+                        <div class="card analytics-card p-4 h-100">
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <div>
+                                    <h3 class="mb-1">Attendance Trend</h3>
+                                    <p class="text-soft mb-0">Weekly visibility across workforce sign-ins.</p>
+                                </div>
+                            </div>
+                            <canvas id="attendanceChart" height="260"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <div class="card analytics-card p-4 h-100">
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <div>
+                                    <h3 class="mb-1">Role Distribution</h3>
+                                    <p class="text-soft mb-0">Workforce composition by role category.</p>
+                                </div>
+                            </div>
+                            <canvas id="roleDistributionChart" height="260"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/users/users.js') }}"></script>
+</body>
+
+</html>

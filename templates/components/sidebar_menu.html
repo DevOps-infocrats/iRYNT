@@ -1,0 +1,31 @@
+{% macro render_sidebar_item(item, active_page) %}
+    {% if item.children %}
+        {% set submenu_open = item.children | selectattr('page', 'equalto', active_page) | list | length > 0 %}
+        <li class="nav-item nav-dropdown">
+            <button class="nav-link dropdown-toggle {% if submenu_open %}active{% endif %}"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#submenu-{{ item.id }}"
+                    aria-expanded="{{ 'true' if submenu_open else 'false' }}">
+                <span class="material-symbols-outlined">{{ item.icon }}</span>
+                <span class="nav-text">{{ item.title }}</span>
+                <span class="material-symbols-outlined dropdown-icon">expand_more</span>
+            </button>
+            <ul class="nav flex-column collapse{% if submenu_open %} show{% endif %}" id="submenu-{{ item.id }}">
+                {% for child in item.children %}
+                    {{ render_sidebar_item(child, active_page) }}
+                {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link {% if active_page == item.page %}active{% endif %}" href="{{ url_for_safe(item.endpoint) }}">
+                <span class="material-symbols-outlined">{{ item.icon }}</span>
+                <span class="nav-text">{{ item.title }}</span>
+                {% if item.badge %}
+                    <span class="badge rounded-pill bg-danger ms-auto">{{ item.badge }}</span>
+                {% endif %}
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}

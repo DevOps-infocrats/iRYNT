@@ -1,0 +1,41 @@
+.analytics-card {
+    border-radius: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 48px rgba(22, 46, 128, 0.12);
+}
+
+.analytics-card .card-label {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.82rem;
+    margin-bottom: 0.75rem;
+}
+
+.analytics-card .card-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.analytics-card .card-meta {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    margin-top: 0.8rem;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    border-top: 1px solid rgba(229, 233, 244, 0.95);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(91, 141, 239, 0.04);
+}
+
+.text-soft {
+    color: #6f78a4 !important;
+}

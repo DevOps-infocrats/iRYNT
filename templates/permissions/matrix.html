@@ -1,0 +1,277 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<div class="permissions-container">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <!-- Header -->
+    <div class="matrix-header">
+        <div>
+            <h1>Permission Matrix</h1>
+            <p>Interactive role-permission access matrix</p>
+        </div>
+        {% if roles %}
+        <div class="role-selector">
+            <label for="roleSelect">Select Role:</label>
+            <select id="roleSelect" onchange="loadRoleMatrix(this.value)">
+                <option value="">-- All Roles --</option>
+                {% for role in roles %}
+                <option value="{{ role.id }}" {% if selected_role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% else %}
+        <div class="role-selector role-hint">
+            <span>Role assignment is available only to users with role management permissions.</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Matrix Container -->
+    <div class="matrix-container">
+        <div id="matrixContent" class="matrix-content">
+            <div class="matrix-loading">Loading permission matrix...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadPermissionMatrix(roleId = '') {
+        const url = '/api/v1/permissions/matrix' + (roleId ? `?role_id=${roleId}` : '');
+        const container = document.getElementById('matrixContent');
+
+        container.innerHTML = '<div class="matrix-loading">Loading permission matrix...</div>';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                renderMatrix(data.data, roleId);
+            })
+            .catch(error => {
+                console.error('Error loading matrix:', error);
+                container.innerHTML = '<div class="matrix-empty">Unable to load permissions at this time.</div>';
+            });
+    }
+
+    function renderMatrix(matrix, roleId) {
+        const container = document.getElementById('matrixContent');
+        const actions = ['view', 'create', 'edit', 'delete', 'approve', 'export', 'assign', 'block', 'override'];
+
+        if (!matrix || !Object.keys(matrix).length) {
+            container.innerHTML = '<div class="matrix-empty">No permission entries were found.</div>';
+            return;
+        }
+
+        let html = '<table class="permission-matrix-table"><thead><tr><th>Module</th>';
+        actions.forEach(action => {
+            html += `<th>${action.charAt(0).toUpperCase() + action.slice(1)}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        Object.keys(matrix).forEach(module => {
+            html += `<tr><td class="module-cell"><strong>${module}</strong></td>`;
+            actions.forEach(action => {
+                const perm = matrix[module][action];
+                const checked = perm && perm.assigned ? 'checked' : '';
+                const security = perm ? perm.security_level : 'medium';
+                const disabled = !roleId ? 'disabled' : '';
+
+                html += `<td class="permission-cell security-${security}">`;
+                if (perm) {
+                    html += `<input type="checkbox" ${checked} ${disabled} data-permission-id="${perm.id}" data-role-id="${roleId}" class="permission-checkbox">`;
+                } else {
+                    html += '<span class="permission-empty">—</span>';
+                }
+                html += '</td>';
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+        document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                handlePermissionToggle(this);
+            });
+        });
+    }
+
+    function handlePermissionToggle(checkbox) {
+        const selectedRole = document.getElementById('roleSelect')?.value || checkbox.dataset.roleId;
+        const permissionId = checkbox.dataset.permissionId;
+        const endpoint = checkbox.checked ? 'assign' : 'revoke';
+        const csrfToken = document.querySelector('[name=csrf_token]')?.value;
+
+        if (!selectedRole) {
+            checkbox.checked = !checkbox.checked;
+            alert('Please select a role before editing permissions.');
+            return;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+
+        fetch(`/api/v1/permissions/roles/${selectedRole}/${endpoint}`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ permission_id: permissionId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                checkbox.checked = !checkbox.checked;
+                alert(data.errors ? data.errors.join('\n') : 'Error updating permission');
+            }
+        })
+        .catch(error => {
+            checkbox.checked = !checkbox.checked;
+            console.error('Error:', error);
+            alert('Error updating permission. Please try again.');
+        });
+    }
+
+    function loadRoleMatrix(roleId) {
+        loadPermissionMatrix(roleId);
+    }
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedRole = document.getElementById('roleSelect')?.value || '';
+        loadPermissionMatrix(selectedRole);
+    });
+</script>
+
+<style>
+    .matrix-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: var(--panel-white);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
+
+    .matrix-header h1 {
+        margin: 0 0 4px 0;
+        font-size: 24px;
+        color: var(--text-dark);
+    }
+
+    .matrix-header p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-soft);
+    }
+
+    .role-selector {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .role-selector label {
+        font-weight: 600;
+        color: var(--text-dark);
+        white-space: nowrap;
+    }
+
+    .role-selector select {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        min-width: 200px;
+    }
+
+    .matrix-container {
+        background: var(--panel-white);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        padding: 20px;
+    }
+
+    .permission-matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .permission-matrix-table thead {
+        background: var(--panel-dark);
+        color: var(--text-white);
+    }
+
+    .permission-matrix-table th {
+        padding: 12px;
+        text-align: center;
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .permission-matrix-table th:first-child {
+        text-align: left;
+    }
+
+    .permission-matrix-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: center;
+    }
+
+    .module-cell {
+        text-align: left;
+        font-weight: 600;
+        background: rgba(255, 122, 24, 0.05);
+        width: 150px;
+    }
+
+    .permission-empty {
+        color: var(--text-soft);
+        font-size: 14px;
+    }
+
+    .matrix-loading,
+    .matrix-empty {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-soft);
+        font-size: 14px;
+    }
+
+    .role-hint {
+        color: var(--text-soft);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .permission-cell {
+        transition: background 0.3s ease;
+    }
+
+    .permission-cell.security-critical {
+        background: rgba(230, 57, 70, 0.05);
+    }
+
+    .permission-cell.security-medium {
+        background: rgba(244, 162, 97, 0.05);
+    }
+
+    .permission-cell.security-low {
+        background: rgba(47, 191, 113, 0.05);
+    }
+
+    .permission-checkbox {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+    }
+</style>
+{% endblock %}

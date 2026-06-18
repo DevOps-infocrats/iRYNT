@@ -1,0 +1,47 @@
+{
+  "role_name": "Super Admin",
+  "level": 13,
+  "tier": "system",
+  "description": "Enterprise super administrator with complete system access",
+  "permissions": [
+    "users.view", "users.create", "users.edit", "users.delete", "users.block", "users.export",
+    "roles.view", "roles.create", "roles.edit", "roles.delete",
+    "permissions.view", "permissions.create", "permissions.edit", "permissions.delete", "permissions.assign", "permissions.audit",
+    "companies.view", "companies.create", "companies.edit", "companies.delete",
+    "circles.view", "circles.create", "circles.edit", "circles.delete",
+    "clients.view", "clients.create", "clients.edit", "clients.delete",
+    "projects.view", "projects.create", "projects.edit", "projects.delete", "projects.approve",
+    "vehicles.view", "vehicles.create", "vehicles.edit", "vehicles.delete", "vehicles.assign", "vehicles.block",
+    "deployments.view", "deployments.create", "deployments.edit", "deployments.delete", "deployments.approve", "deployments.override",
+    "helper_assignments.view", "helper_assignments.create", "helper_assignments.edit", "helper_assignments.delete",
+    "attendance.view", "attendance.mark", "attendance.approve", "attendance.export", "attendance.override",
+    "reports.view", "reports.export", "reports.analytics",
+    "workflows.view", "workflows.manage", "workflows.approve", "workflows.override",
+    "audit.view", "audit.export",
+    "access_control.view", "access_control.manage",
+    "notifications.view"
+  ],
+  "workflow_rights": {
+    "can_approve": true,
+    "can_reject": true,
+    "can_escalate": true,
+    "can_override": true,
+    "can_close_workflow": true,
+    "approval_level": 3
+  },
+  "sidebar_access": [
+    "dashboard",
+    "masters",
+    "user_management",
+    "deployments",
+    "operations",
+    "workflows",
+    "analytics",
+    "reporting",
+    "settings",
+    "admin"
+  ],
+  "scope": "global",
+  "is_predefined": true,
+  "is_system": true
+}

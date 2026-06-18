@@ -1,0 +1,864 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Enterprise Approvals Command Center{% endblock %}
+
+{% block content %}
+<style>
+    /* Command Center Premium Style overrides */
+    .kpi-card {
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(220, 224, 230, 0.65);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+    }
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-right: 16px;
+    }
+    .kpi-val {
+        font-size: 1.85rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .filter-chip {
+        border-radius: 20px;
+        padding: 6px 16px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(220, 224, 230, 0.8);
+        background: #fff;
+        color: #495057;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+    }
+    .filter-chip:hover {
+        background: #f1f3f5;
+        border-color: #ced4da;
+        color: #212529;
+    }
+    .filter-chip.active {
+        background: #206bc4;
+        color: #fff;
+        border-color: #206bc4;
+        box-shadow: 0 2px 6px rgba(32, 107, 196, 0.25);
+    }
+    .filter-chip .badge {
+        margin-left: 6px;
+        background: rgba(0,0,0,0.1);
+        color: inherit;
+        border-radius: 10px;
+    }
+    .filter-chip.active .badge {
+        background: rgba(255,255,255,0.25);
+    }
+
+    /* Drawer Styles */
+    .drawer-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    .drawer-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .detail-drawer {
+        position: fixed;
+        top: 0;
+        right: -580px;
+        width: 550px;
+        height: 100vh;
+        background: #fff;
+        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.12);
+        z-index: 1050;
+        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-left: 1px solid rgba(220, 224, 230, 0.5);
+    }
+    @media (max-width: 576px) {
+        .detail-drawer {
+            width: 100%;
+            right: -100%;
+        }
+    }
+    .detail-drawer.show {
+        right: 0;
+    }
+    .drawer-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+    }
+    .drawer-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex: 1;
+    }
+    .drawer-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+
+    /* Timeline Styles */
+    .timeline-simple {
+        position: relative;
+        padding-left: 20px;
+        margin-left: 10px;
+        border-left: 2px solid #e9ecef;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -26px;
+        top: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        border: 2px solid #fff;
+    }
+    .timeline-item.active::before {
+        background: #206bc4;
+    }
+    .timeline-item.approved::before {
+        background: #2fb344;
+    }
+    .timeline-item.rejected::before {
+        background: #d63939;
+    }
+
+    /* Workflow Trace Traceability */
+    .workflow-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        background: #f1f3f5;
+        border-radius: 8px;
+        padding: 12px;
+    }
+    .workflow-step {
+        text-align: center;
+        flex: 1;
+        position: relative;
+    }
+    .workflow-step:not(:last-child)::after {
+        content: '→';
+        position: absolute;
+        right: -8px;
+        top: 25%;
+        color: #adb5bd;
+    }
+    .workflow-step-num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #adb5bd;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+    .workflow-step.completed .workflow-step-num {
+        background: #2fb344;
+    }
+    .workflow-step.pending .workflow-step-num {
+        background: #206bc4;
+    }
+    .workflow-step.rejected .workflow-step-num {
+        background: #d63939;
+    }
+    .workflow-step-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: #495057;
+        display: block;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title text-dark">Enterprise Approvals Command Center</h2>
+                    <p class="text-secondary mb-0">Monitor, filter, and action compliance and workforce approval requests safely.</p>
+                </div>
+                <div class="col-auto">
+                    <div class="btn-list">
+                        <a href="{{ url_for('approvals.analytics') }}" class="btn btn-outline-primary">
+                            <span class="material-symbols-outlined">analytics</span> Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <!-- Summary KPI Dashboard -->
+            <div class="row row-deck row-cards mb-4">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card kpi-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="kpi-icon bg-blue-lt">
+                                <span class="material-symbols-outlined text-blue">rule</span>
+                            </div>
+                            <div>
+                                <div class="kpi-val text-dark">{{ metrics.total_pending }}</div>
+                                <div class="text-secondary font-weight-medium">Total Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card kpi-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="kpi-icon bg-red-lt">
+                                <span class="material-symbols-outlined text-danger">priority_high</span>
+                            </div>
+                            <div>
+                                <div class="kpi-val text-danger">{{ metrics.critical_pending }}</div>
+                                <div class="text-secondary font-weight-medium">Critical Requests</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card kpi-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="kpi-icon bg-orange-lt">
+                                <span class="material-symbols-outlined text-orange">alarm_on</span>
+                            </div>
+                            <div>
+                                <div class="kpi-val text-orange">{{ metrics.sla_breached }}</div>
+                                <div class="text-secondary font-weight-medium">SLA Overdue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card kpi-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="kpi-icon bg-teal-lt">
+                                <span class="material-symbols-outlined text-teal">assignment_ind</span>
+                            </div>
+                            <div>
+                                <div class="kpi-val text-teal">{{ metrics.my_pending }}</div>
+                                <div class="text-secondary font-weight-medium">My Actions Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter & Command Bar -->
+            <div class="mb-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between">
+                    <div class="d-flex flex-wrap">
+                        <a href="?category=all" class="filter-chip {% if category == 'all' %}active{% endif %}">
+                            All Approvals
+                        </a>
+                        <a href="?category=documents" class="filter-chip {% if category == 'documents' %}active{% endif %}">
+                            Documents
+                        </a>
+                        <a href="?category=attendance" class="filter-chip {% if category == 'attendance' %}active{% endif %}">
+                            Attendance
+                        </a>
+                        <a href="?category=compliance" class="filter-chip {% if category == 'compliance' %}active{% endif %}">
+                            Compliance
+                        </a>
+                        <a href="?category=deployments" class="filter-chip {% if category == 'deployments' %}active{% endif %}">
+                            Deployments
+                        </a>
+                        <a href="?category=escalations" class="filter-chip {% if category == 'escalations' %}active{% endif %}">
+                            Escalations
+                        </a>
+                        <a href="?category=payroll" class="filter-chip {% if category == 'payroll' %}active{% endif %}">
+                            Payroll
+                        </a>
+                        <a href="?category=critical" class="filter-chip {% if category == 'critical' %}active{% endif %}">
+                            Critical
+                        </a>
+                        <a href="?category=overdue" class="filter-chip {% if category == 'overdue' %}active{% endif %}">
+                            Overdue
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Queue Card -->
+            <div class="card shadow-sm">
+                <div class="card-body border-bottom py-3">
+                    <form method="GET" class="d-flex flex-wrap align-items-center gap-2">
+                        <input type="hidden" name="category" value="{{ category }}">
+                        <div class="flex-grow-1" style="min-width: 250px;">
+                            <div class="input-icon">
+                                <span class="input-icon-addon">
+                                    <span class="material-symbols-outlined">search</span>
+                                </span>
+                                <input type="text" name="q" class="form-control" placeholder="Search by title, requester..." value="{{ filters.search_query or '' }}">
+                            </div>
+                        </div>
+                        <div style="width: 150px;">
+                            <select name="approval_status" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="Pending" {% if filters.approval_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Under Review" {% if filters.approval_status == 'Under Review' %}selected{% endif %}>Under Review</option>
+                                <option value="Escalated" {% if filters.approval_status == 'Escalated' %}selected{% endif %}>Escalated</option>
+                                <option value="Approved" {% if filters.approval_status == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Rejected" {% if filters.approval_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+                        <div style="width: 150px;">
+                            <select name="priority" class="form-select">
+                                <option value="">All Priorities</option>
+                                <option value="Low" {% if filters.priority == 'Low' %}selected{% endif %}>Low</option>
+                                <option value="Medium" {% if filters.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="High" {% if filters.priority == 'High' %}selected{% endif %}>High</option>
+                                <option value="Critical" {% if filters.priority == 'Critical' %}selected{% endif %}>Critical</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="?category=all" class="btn btn-link">Reset</a>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-hover" id="approvalsQueueTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                                <th>ID</th>
+                                <th>Approval Category</th>
+                                <th>Request Title</th>
+                                <th>Requested By</th>
+                                <th>Priority</th>
+                                <th>SLA Indicator</th>
+                                <th>Status</th>
+                                <th style="width: 120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if approvals %}
+                                {% for approval in approvals %}
+                                <tr class="approval-row cursor-pointer" data-id="{{ approval.id }}" style="cursor: pointer;">
+                                    <td onclick="event.stopPropagation();">
+                                        <input type="checkbox" class="form-check-input approval-checkbox" value="{{ approval.id }}">
+                                    </td>
+                                    <td><span class="text-secondary font-weight-bold">#{{ approval.id[:8] }}</span></td>
+                                    <td>
+                                        <span class="badge bg-blue-lt">{{ approval.approval_type }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="font-weight-medium text-dark">{{ approval.request_title }}</div>
+                                        <div class="small text-secondary">{{ approval.module_name }}</div>
+                                    </td>
+                                    <td>{{ approval.requested_by.username if approval.requested_by else 'System' }}</td>
+                                    <td>
+                                        {% if approval.priority == 'Critical' %}
+                                            <span class="badge bg-red" style="font-weight: 600;">Critical</span>
+                                        {% elif approval.priority == 'High' %}
+                                            <span class="badge bg-orange">High</span>
+                                        {% elif approval.priority == 'Medium' %}
+                                            <span class="badge bg-yellow text-dark">Medium</span>
+                                        {% else %}
+                                            <span class="badge bg-blue-lt">Low</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if approval.sla_due_at %}
+                                            {% if approval.is_sla_breached() %}
+                                                <span class="badge bg-red-lt font-weight-bold" title="SLA Overdue"><span class="material-symbols-outlined" style="font-size:12px; vertical-align:middle; margin-right:2px;">warning</span> Overdue</span>
+                                            {% else %}
+                                                {% set remaining = approval.sla_remaining_seconds() %}
+                                                {% if remaining < 3600 %}
+                                                    <span class="badge bg-orange-lt"><span class="material-symbols-outlined" style="font-size:12px; vertical-align:middle; margin-right:2px;">schedule</span> {{ (remaining // 60) }}m remaining</span>
+                                                {% else %}
+                                                    <span class="badge bg-green-lt"><span class="material-symbols-outlined" style="font-size:12px; vertical-align:middle; margin-right:2px;">schedule</span> {{ (remaining // 3600) }}h remaining</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-secondary">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if approval.approval_status == 'Approved' %}
+                                            <span class="badge bg-success-lt">Approved</span>
+                                        {% elif approval.approval_status == 'Rejected' %}
+                                            <span class="badge bg-danger-lt">Rejected</span>
+                                        {% elif approval.approval_status == 'Escalated' %}
+                                            <span class="badge bg-warning-lt">Escalated</span>
+                                        {% else %}
+                                            <span class="badge bg-info-lt">{{ approval.approval_status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td onclick="event.stopPropagation();">
+                                        <div class="btn-list flex-nowrap">
+                                            <button onclick="openDrawer('{{ approval.id }}')" class="btn btn-sm btn-ghost-primary" title="View Details">
+                                                <span class="material-symbols-outlined">visibility</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="9" class="text-center text-secondary py-5">
+                                        <div class="mb-2"><span class="material-symbols-outlined" style="font-size: 36px; color: #cbd5e1;">folder_open</span></div>
+                                        <div>No pending approvals found matching the filter scope.</div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if total > 20 %}
+                <div class="card-footer d-flex align-items-center">
+                    <p class="text-secondary m-0">
+                        Showing {{ (page - 1) * 20 + 1 }} to {{ min(page * 20, total) }} of {{ total }} entries
+                    </p>
+                    <ul class="pagination m-0 ms-auto">
+                        {% set total_pages = (total + 19) // 20 %}
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?category={{ category }}&q={{ filters.search_query or '' }}&approval_status={{ filters.approval_status or '' }}&priority={{ filters.priority or '' }}&page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?category={{ category }}&q={{ filters.search_query or '' }}&approval_status={{ filters.approval_status or '' }}&priority={{ filters.priority or '' }}&page={{ page - 1 }}">Prev</a>
+                        </li>
+                        {% endif %}
+
+                        {% for p in range(max(1, page - 2), min(total_pages + 1, page + 3)) %}
+                            {% if p == page %}
+                                <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                            <!-- slide -->
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?category={{ category }}&q={{ filters.search_query or '' }}&approval_status={{ filters.approval_status or '' }}&priority={{ filters.priority or '' }}&page={{ p }}">{{ p }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?category={{ category }}&q={{ filters.search_query or '' }}&approval_status={{ filters.approval_status or '' }}&priority={{ filters.priority or '' }}&page={{ page + 1 }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?category={{ category }}&q={{ filters.search_query or '' }}&approval_status={{ filters.approval_status or '' }}&priority={{ filters.priority or '' }}&page={{ total_pages }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sliding Detail Drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<div class="detail-drawer" id="detailDrawer">
+    <div class="drawer-header">
+        <div>
+            <span class="badge bg-blue-lt mb-1" id="drawerType">Category</span>
+            <h3 class="mb-0 text-dark" id="drawerTitle">Approval Request Details</h3>
+            <span class="small text-secondary" id="drawerMetaId">#00000000</span>
+        </div>
+        <button type="button" class="btn-close" onclick="closeDrawer()" aria-label="Close"></button>
+    </div>
+    
+    <div class="drawer-body" id="drawerLoader" style="display: flex; align-items: center; justify-content: center;">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div class="drawer-body" id="drawerContent" style="display: none;">
+        <!-- Level Tracker Tracing -->
+        <div class="workflow-steps" id="drawerLevels">
+            <!-- Generated dynamically -->
+        </div>
+
+        <div class="mb-4">
+            <h4 class="text-secondary text-uppercase font-weight-bold mb-2" style="font-size: 11px;">Request Description</h4>
+            <p class="text-dark mb-0" id="drawerDescription" style="white-space: pre-line;">No description provided.</p>
+        </div>
+
+        <!-- Meta Details Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">Priority</span>
+                    <span class="font-weight-medium" id="drawerPriority">Medium</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">SLA Remaining</span>
+                    <span class="font-weight-medium" id="drawerSla">No SLA limit</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">Requested By</span>
+                    <span class="font-weight-medium" id="drawerRequestedBy">System</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">Assigned To</span>
+                    <span class="font-weight-medium" id="drawerAssignedApprover">Unassigned</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">Circle / Scope</span>
+                    <span class="font-weight-medium" id="drawerCircle">All Circle</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-light p-2 rounded">
+                    <span class="d-block small text-secondary">Status</span>
+                    <span class="font-weight-medium" id="drawerStatus">Pending</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Link to details page -->
+        <div class="mb-4">
+            <a href="#" id="drawerFullDetailsBtn" class="btn btn-outline-secondary btn-sm w-100">
+                <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">open_in_new</span> Open Full Details Page
+            </a>
+        </div>
+
+        <!-- Actions panel (Form-based) -->
+        <div class="card mb-4 border-primary" id="drawerActionsPanel" style="display: none;">
+            <div class="card-body p-3">
+                <h4 class="card-title text-primary mb-3">Action Required</h4>
+                
+                <!-- Comments / Action input remarks -->
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Remarks / Comment</label>
+                    <textarea id="actionRemarks" class="form-control" rows="2" placeholder="Provide action reason or details..."></textarea>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <form id="approveForm" method="POST" action="">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="remarks" id="approveRemarks">
+                            <input type="hidden" name="next" id="approveNext">
+                            <button type="submit" class="btn btn-success w-100" onclick="submitApprovalForm('approve')">
+                                <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">check_circle</span> Approve
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-6">
+                        <form id="rejectForm" method="POST" action="">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="remarks" id="rejectRemarks">
+                            <input type="hidden" name="next" id="rejectNext">
+                            <button type="submit" class="btn btn-danger w-100" onclick="submitApprovalForm('reject')">
+                                <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">cancel</span> Reject
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-12" id="escalateFormContainer">
+                        <form id="escalateForm" method="POST" action="">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="remarks" id="escalateRemarks">
+                            <input type="hidden" name="next" id="escalateNext">
+                            <button type="submit" class="btn btn-warning w-100" onclick="submitApprovalForm('escalate')">
+                                <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">trending_up</span> Escalate Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reassign Form -->
+                <div class="mt-3 pt-3 border-top" id="reassignFormContainer">
+                    <form id="reassignForm" method="POST" action="">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="next" id="reassignNext">
+                        <label class="form-label small text-secondary">Reassign Request</label>
+                        <div class="input-group">
+                            <select name="approver_id" id="reassignApproverSelect" class="form-select form-select-sm">
+                                <option value="">Select Assignee...</option>
+                            </select>
+                            <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="submitApprovalForm('reassign')">Assign</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments Tab -->
+        <div class="mb-4">
+            <h4 class="mb-3 text-dark d-flex align-items-center">
+                <span class="material-symbols-outlined me-1">comment</span> Comments
+            </h4>
+            <form id="drawerCommentForm" method="POST" action="" class="mb-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" id="commentNext">
+                <div class="input-group">
+                    <input type="text" name="comment" class="form-control" placeholder="Add a public comment..." required>
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+            </form>
+            <div id="drawerCommentsList" class="border-top pt-2">
+                <!-- Dynamic comments -->
+            </div>
+        </div>
+
+        <!-- History Activity Timeline -->
+        <div>
+            <h4 class="mb-3 text-dark d-flex align-items-center">
+                <span class="material-symbols-outlined me-1">history</span> Activity Timeline
+            </h4>
+            <div class="timeline-simple" id="drawerTimeline">
+                <!-- Dynamic history entries -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Selection listeners
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.approval-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    // Row Click to Open Drawer
+    document.querySelectorAll('.approval-row').forEach(row => {
+        row.addEventListener('click', function() {
+            const approvalId = this.getAttribute('data-id');
+            openDrawer(approvalId);
+        });
+    });
+
+    function openDrawer(id) {
+        document.getElementById('drawerBackdrop').classList.add('show');
+        document.getElementById('detailDrawer').classList.add('show');
+        
+        // Reset Drawer Panel
+        document.getElementById('drawerLoader').style.display = 'flex';
+        document.getElementById('drawerContent').style.display = 'none';
+
+        // Set action form routes
+        document.getElementById('approveForm').action = `/pending-approvals/approve/${id}`;
+        document.getElementById('rejectForm').action = `/pending-approvals/reject/${id}`;
+        document.getElementById('escalateForm').action = `/pending-approvals/escalate/${id}`;
+        document.getElementById('reassignForm').action = `/pending-approvals/reassign/${id}`;
+        document.getElementById('drawerCommentForm').action = `/pending-approvals/comment/${id}`;
+
+        // Set current page redirect URL
+        const currentUrl = window.location.href;
+        document.getElementById('approveNext').value = currentUrl;
+        document.getElementById('rejectNext').value = currentUrl;
+        document.getElementById('escalateNext').value = currentUrl;
+        document.getElementById('reassignNext').value = currentUrl;
+        document.getElementById('commentNext').value = currentUrl;
+
+        // Fetch details via AJAX
+        fetch(`/pending-approvals/ajax/detail/${id}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load approval details.');
+                return res.json();
+            })
+            .then(data => {
+                const app = data.approval;
+                
+                // Populate text details
+                document.getElementById('drawerType').innerText = app.approval_type.replace('_', ' ').toUpperCase();
+                document.getElementById('drawerTitle').innerText = app.request_title;
+                document.getElementById('drawerMetaId').innerText = `#${app.id}`;
+                document.getElementById('drawerDescription').innerText = app.request_description || 'No description provided.';
+                document.getElementById('drawerPriority').innerText = app.priority;
+                document.getElementById('drawerFullDetailsBtn').href = `/pending-approvals/view/${app.id}`;
+
+                // Priority Badge Styles
+                const priorityEl = document.getElementById('drawerPriority');
+                priorityEl.className = 'font-weight-medium';
+                if (app.priority === 'Critical') priorityEl.classList.add('text-danger');
+                else if (app.priority === 'High') priorityEl.classList.add('text-orange');
+                else if (app.priority === 'Medium') priorityEl.classList.add('text-yellow');
+                else priorityEl.classList.add('text-blue');
+
+                // SLA Indicator
+                const slaEl = document.getElementById('drawerSla');
+                slaEl.className = 'font-weight-medium';
+                if (app.sla_due_at) {
+                    if (app.is_sla_breached) {
+                        slaEl.innerText = 'SLA Breached / Overdue';
+                        slaEl.classList.add('text-danger');
+                    } else {
+                        const hRemaining = Math.max(1, Math.floor(app.sla_remaining_seconds / 3600));
+                        slaEl.innerText = `${hRemaining} hours left`;
+                        slaEl.classList.add('text-success');
+                    }
+                } else {
+                    slaEl.innerText = 'No SLA limit';
+                }
+
+                // Submitter, Circle, Status
+                document.getElementById('drawerRequestedBy').innerText = app.requested_by || 'System';
+                document.getElementById('drawerAssignedApprover').innerText = app.assigned_approver || 'Unassigned';
+                document.getElementById('drawerCircle').innerText = app.circle_id || 'Global Scope';
+                document.getElementById('drawerStatus').innerText = app.approval_status;
+
+                // Status Badge Color
+                const statusEl = document.getElementById('drawerStatus');
+                statusEl.className = 'font-weight-medium';
+                if (app.approval_status === 'Approved') statusEl.classList.add('text-success');
+                else if (app.approval_status === 'Rejected') statusEl.classList.add('text-danger');
+                else if (app.approval_status === 'Escalated') statusEl.classList.add('text-warning');
+                else statusEl.classList.add('text-info');
+
+                // Action form panel visibility
+                const showActions = ['Pending', 'Under Review', 'Escalated'].includes(app.approval_status);
+                document.getElementById('drawerActionsPanel').style.display = showActions ? 'block' : 'none';
+
+                // Workflow Steps Tracing UI
+                const levelsContainer = document.getElementById('drawerLevels');
+                levelsContainer.innerHTML = '';
+                data.levels_trace.forEach(lvl => {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = `workflow-step ${lvl.status.toLowerCase()}`;
+                    
+                    const stepNum = document.createElement('div');
+                    stepNum.className = 'workflow-step-num';
+                    if (lvl.status === 'Completed') stepNum.innerHTML = '&#10003;';
+                    else stepNum.innerText = lvl.level;
+
+                    const label = document.createElement('span');
+                    label.className = 'workflow-step-label';
+                    label.innerText = lvl.role_name;
+
+                    stepDiv.appendChild(stepNum);
+                    stepDiv.appendChild(label);
+                    levelsContainer.appendChild(stepDiv);
+                });
+
+                // Populate Comments
+                const commentsList = document.getElementById('drawerCommentsList');
+                commentsList.innerHTML = '';
+                if (data.comments && data.comments.length > 0) {
+                    data.comments.forEach(c => {
+                        const cDiv = document.createElement('div');
+                        cDiv.className = 'py-2 border-bottom';
+                        cDiv.innerHTML = `
+                            <div class="d-flex justify-content-between small text-secondary">
+                                <strong>${c.user}</strong>
+                                <span>${c.created_at}</span>
+                            </div>
+                            <p class="mb-0 mt-1 small text-dark">${c.comment}</p>
+                        `;
+                        commentsList.appendChild(cDiv);
+                    });
+                } else {
+                    commentsList.innerHTML = '<p class="text-secondary small py-2 mb-0">No comments posted yet.</p>';
+                }
+
+                // Populate History Timeline
+                const timeline = document.getElementById('drawerTimeline');
+                timeline.innerHTML = '';
+                if (data.history && data.history.length > 0) {
+                    data.history.forEach(h => {
+                        const hItem = document.createElement('div');
+                        hItem.className = 'timeline-item';
+                        if (h.action_taken === 'APPROVED') hItem.classList.add('approved');
+                        else if (h.action_taken === 'REJECTED') hItem.classList.add('rejected');
+                        else if (h.action_taken === 'ESCALATED') hItem.classList.add('active');
+
+                        hItem.innerHTML = `
+                            <div class="small text-secondary">
+                                <span class="badge bg-light text-dark me-1">${h.action_taken}</span>
+                                <strong>${h.action_by}</strong> on ${h.action_time}
+                            </div>
+                            ${h.remarks ? `<p class="mb-0 mt-1 small text-dark">${h.remarks}</p>` : ''}
+                        `;
+                        timeline.appendChild(hItem);
+                    });
+                } else {
+                    timeline.innerHTML = '<p class="text-secondary small">No audit timeline entries available.</p>';
+                }
+
+                // Populate Assignees Dropdown
+                const assignSelect = document.getElementById('reassignApproverSelect');
+                assignSelect.innerHTML = '<option value="">Select Assignee...</option>';
+                data.assignees.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u.id;
+                    opt.innerText = u.username;
+                    if (u.id === app.assigned_approver_id) opt.selected = true;
+                    assignSelect.appendChild(opt);
+                });
+
+                // Display main loader switch
+                document.getElementById('drawerLoader').style.display = 'none';
+                document.getElementById('drawerContent').style.display = 'block';
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('drawerLoader').innerHTML = `
+                    <div class="text-danger p-3 text-center">
+                        <span class="material-symbols-outlined d-block mb-2" style="font-size: 32px;">error</span>
+                        <div class="small">${err.message || 'Error loading details.'}</div>
+                    </div>
+                `;
+            });
+    }
+
+    function closeDrawer() {
+        document.getElementById('drawerBackdrop').classList.remove('show');
+        document.getElementById('detailDrawer').classList.remove('show');
+    }
+
+    function submitApprovalForm(actionType) {
+        const remarksVal = document.getElementById('actionRemarks').value;
+        if (actionType === 'approve') {
+            document.getElementById('approveRemarks').value = remarksVal;
+        } else if (actionType === 'reject') {
+            document.getElementById('rejectRemarks').value = remarksVal;
+        } else if (actionType === 'escalate') {
+            document.getElementById('escalateRemarks').value = remarksVal;
+        }
+    }
+</script>
+{% endblock %}

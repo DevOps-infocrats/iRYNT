@@ -1,0 +1,51 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Assign Driver{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Driver Assignment</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <form method="POST" class="card">
+                        {{ form.hidden_tag() }}
+                        <div class="card-body">
+                            <div class="mb-3">
+                                {{ form.vehicle_id.label(class='form-label') }}
+                                {{ form.vehicle_id(class='form-select') }}
+                                {% if form.vehicle_id.errors %}
+                                <div class="invalid-feedback" style="display:block;">{{ form.vehicle_id.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.driver_id.label(class='form-label') }}
+                                {{ form.driver_id(class='form-select') }}
+                                {% if form.driver_id.errors %}
+                                <div class="invalid-feedback" style="display:block;">{{ form.driver_id.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-end">
+                            <a href="{{ url_for('deployments.index') }}" class="btn btn-secondary">Cancel</a>
+                            {{ form.submit(class='btn btn-primary') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

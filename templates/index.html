@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIL Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .status {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .status strong {
+            color: #2e7d32;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .status p {
+            color: #558b2f;
+            margin: 5px 0;
+        }
+        .features {
+            margin: 30px 0;
+            text-align: left;
+        }
+        .features h2 {
+            color: #667eea;
+            margin: 20px 0 15px 0;
+            font-size: 1.3em;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .features li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+        .features li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .endpoints {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .endpoints h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .endpoint {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .env-info {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .env-info strong {
+            color: #e65100;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .env-info p {
+            color: #bf360c;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 VIL Project</h1>
+        
+        <div class="status">
+            <strong>✓ Application Running</strong>
+            <p>Your Flask application is successfully running with 4-layer enterprise architecture</p>
+        </div>
+        
+        <div class="env-info">
+            <strong>📋 Environment Information</strong>
+            <p><strong>Framework:</strong> Flask 2.3.3</p>
+            <p><strong>Database:</strong> SQLAlchemy + SQLite (development)</p>
+            <p><strong>Authentication:</strong> Flask-Login ready</p>
+            <p><strong>Architecture:</strong> 4-Layer Clean Architecture (Delivery/Application/Domain/Infrastructure)</p>
+        </div>
+        
+        <div class="features">
+            <h2>Architecture Layers</h2>
+            <ul>
+                <li><strong>Delivery Layer:</strong> Web & API controllers</li>
+                <li><strong>Application Layer:</strong> DTOs & validators</li>
+                <li><strong>Domain Layer:</strong> Business logic & services</li>
+                <li><strong>Infrastructure Layer:</strong> Repositories & database</li>
+                <li><strong>Shared Layer:</strong> Cross-cutting utilities</li>
+            </ul>
+        </div>
+        
+        <div class="endpoints">
+            <h3>Available Endpoints</h3>
+            <div class="endpoint">GET /</div>
+            <div class="endpoint">GET /health</div>
+            <p style="margin-top: 10px; color: #666; font-size: 0.9em;">More endpoints available as modules are implemented</p>
+        </div>
+        
+        <div class="features">
+            <h2>Next Steps</h2>
+            <ul>
+                <li>Check the documentation files in the project root</li>
+                <li>Implement remaining 12 modules following the vehicles pattern</li>
+                <li>Setup dependency injection in app/__init__.py</li>
+                <li>Register routes for web and API</li>
+                <li>Add database models</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

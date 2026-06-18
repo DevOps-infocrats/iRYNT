@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/drivers.css') }}">
+</head>
+<body class="dashboard-page driver-profile-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Driver Profile</p>
+                        <h1 class="dashboard-title">{{ profile.user.username }}</h1>
+                        <p class="dashboard-subtitle text-soft">Enterprise-grade driver profile with compliance, trips, vehicle assignment, and activity insights.</p>
+                    </div>
+                    <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+                        {% if can_edit %}
+                            <a href="{{ url_for('drivers.edit', driver_id=profile.user.id) }}" class="btn btn-gradient">Edit Profile</a>
+                        {% endif %}
+                        {% if can_mark_attendance and profile.driver_profile %}
+                            {% if profile.today_attendance.status == 'checked_in' %}
+                                <form method="post" action="{{ url_for('attendance.mark') }}" class="m-0">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="driver_profile_id" value="{{ profile.driver_profile.id }}">
+                                    <input type="hidden" name="action" value="check_out">
+                                    <button type="submit" class="btn btn-outline-danger">Check Out</button>
+                                </form>
+                            {% elif profile.today_attendance.status == 'absent' %}
+                                <form method="post" action="{{ url_for('attendance.mark') }}" class="m-0">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="driver_profile_id" value="{{ profile.driver_profile.id }}">
+                                    <input type="hidden" name="action" value="check_in">
+                                    <button type="submit" class="btn btn-outline-success">Check In</button>
+                                </form>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-secondary" disabled>Checked Out</button>
+                            {% endif %}
+                        {% endif %}
+                        <a href="{{ url_for('drivers.index') }}" class="btn btn-outline-secondary">Back to Drivers</a>
+                    </div>
+                </div>
+
+                <div class="row gx-3 gy-4">
+                    <div class="col-12 col-xl-8">
+                        <div class="card profile-header p-4 mb-4">
+                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-4">
+                                <div class="d-flex gap-3 align-items-center">
+                                    <div class="driver-avatar shadow-sm">{{ profile.user.username[0]|upper }}</div>
+                                    <div>
+                                        <p class="text-soft mb-1">Driver ID: {{ profile.user.id[:8].upper() }}</p>
+                                        <h2 class="mb-1">{{ profile.user.username }}</h2>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-success">{{ profile.user.primary_role.name if profile.user.primary_role else 'Driver' }}</span>
+                                            <span class="badge bg-info">{{ profile.assigned_vehicle.status if profile.assigned_vehicle else 'Unassigned' }}</span>
+                                            {% if profile.driver_profile and profile.driver_profile.circle %}
+                                                <span class="badge bg-secondary">{{ profile.driver_profile.circle.circle_name }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <p class="text-soft mb-1">Profile status</p>
+                                    <h3 class="mb-0">{{ 'Active' if profile.driver_profile and profile.driver_profile.active else 'Inactive' }}</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card kpi-grid mb-4">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Total Trips</p>
+                                        <h3>{{ profile.kpi.total_trips }}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Monthly Trips</p>
+                                        <h3>{{ profile.kpi.monthly_trips }}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Attendance %</p>
+                                        <h3>{{ profile.kpi.attendance_percent }}%</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Safety Score</p>
+                                        <h3>{{ profile.kpi.safety_score }}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Rating</p>
+                                        <h3>{{ profile.kpi.rating }} / 5</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="kpi-card p-3">
+                                        <p class="kpi-label">Fuel Efficiency</p>
+                                        <h3>{{ profile.kpi.fuel_efficiency }} km/l</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card profile-tabs mb-4">
+                            <ul class="nav nav-tabs" id="driverTab" role="tablist">
+                                <li class="nav-item" role="presentation"><button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">Overview</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal Info</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" id="license-tab" data-bs-toggle="tab" data-bs-target="#license" type="button" role="tab">License</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" id="vehicle-tab" data-bs-toggle="tab" data-bs-target="#vehicle" type="button" role="tab">Vehicle</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab">Documents</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">Activity</button></li>
+                            </ul>
+                            <div class="tab-content p-4" id="driverTabContent">
+                                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6">
+                                            <div class="card section-card p-3">
+                                                <h5 class="section-title">Assigned Vehicle</h5>
+                                                <p class="text-soft mb-1">{{ profile.assigned_vehicle.vehicle_number if profile.assigned_vehicle else 'No assignment' }}</p>
+                                                <p class="mb-0">{{ profile.assigned_vehicle.vehicle_type if profile.assigned_vehicle else '—' }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="card section-card p-3">
+                                                <h5 class="section-title">Latest License</h5>
+                                                <p class="text-soft mb-1">{{ profile.latest_license.license_number if profile.latest_license else 'No license data' }}</p>
+                                                <p class="mb-0">Expiry: {{ profile.latest_license.expiry_date if profile.latest_license else 'N/A' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="personal" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6">
+                                            <div class="card section-card p-4">
+                                                <h5 class="section-title">Personal Details</h5>
+                                                <dl class="row mb-0">
+                                                    <dt class="col-5 text-soft">Full Name</dt><dd class="col-7">{{ profile.user.username }}</dd>
+                                                    <dt class="col-5 text-soft">Email</dt><dd class="col-7">{{ profile.user.email }}</dd>
+                                                    <dt class="col-5 text-soft">Phone</dt><dd class="col-7">{{ profile.user.phone or 'N/A' }}</dd>
+                                                <dt class="col-5 text-soft">Gender</dt><dd class="col-7">{{ profile.driver_profile.gender if profile.driver_profile and profile.driver_profile.gender else 'N/A' }}</dd>
+                                                <dt class="col-5 text-soft">DOB</dt><dd class="col-7">{{ profile.driver_profile.dob if profile.driver_profile and profile.driver_profile.dob else 'N/A' }}</dd>
+                                                <dt class="col-5 text-soft">Nationality</dt><dd class="col-7">{{ profile.driver_profile.nationality if profile.driver_profile and profile.driver_profile.nationality else 'N/A' }}</dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="card section-card p-4">
+                                                <h5 class="section-title">Emergency Contact</h5>
+                                                <dl class="row mb-0">
+                                                    <dt class="col-5 text-soft">Contact Name</dt><dd class="col-7">{{ profile.driver_profile.emergency_contact_name if profile.driver_profile and profile.driver_profile.emergency_contact_name else 'N/A' }}</dd>
+                                                    <dt class="col-5 text-soft">Phone</dt><dd class="col-7">{{ profile.driver_profile.emergency_contact_phone if profile.driver_profile and profile.driver_profile.emergency_contact_phone else 'N/A' }}</dd>
+                                                    <dt class="col-5 text-soft">Address</dt><dd class="col-7">{{ profile.driver_profile.address if profile.driver_profile and profile.driver_profile.address else 'N/A' }}</dd>
+                                                    <dt class="col-5 text-soft">Experience</dt><dd class="col-7">{{ profile.driver_profile.experience_years if profile.driver_profile and profile.driver_profile.experience_years else 0 }} years</dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="license" role="tabpanel">
+                                    <div class="card section-card p-4">
+                                        <h5 class="section-title">License & Compliance</h5>
+                                        {% if profile.latest_license %}
+                                            <dl class="row mb-4">
+                                                <dt class="col-5 text-soft">License Number</dt><dd class="col-7">{{ profile.latest_license.license_number }}</dd>
+                                                <dt class="col-5 text-soft">Vehicle Classes</dt><dd class="col-7">{{ profile.latest_license.vehicle_classes or 'N/A' }}</dd>
+                                                <dt class="col-5 text-soft">Issue Date</dt><dd class="col-7">{{ profile.latest_license.issue_date }}</dd>
+                                                <dt class="col-5 text-soft">Expiry Date</dt><dd class="col-7">{{ profile.latest_license.expiry_date }}</dd>
+                                                <dt class="col-5 text-soft">Medical</dt><dd class="col-7">{{ profile.latest_license.medical_certificate_status }}</dd>
+                                                <dt class="col-5 text-soft">Police Check</dt><dd class="col-7">{{ profile.latest_license.police_verification_status }}</dd>
+                                                <dt class="col-5 text-soft">Insurance</dt><dd class="col-7">{{ profile.latest_license.insurance_compliance_status }}</dd>
+                                            </dl>
+                                            <!-- Verification UI removed per request -->
+                                        {% else %}
+                                            <p class="text-muted mb-0">No license or compliance records are available for this driver.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="vehicle" role="tabpanel">
+                                    <div class="card section-card p-4">
+                                        <h5 class="section-title">Assigned Vehicle</h5>
+                                        {% if profile.assigned_vehicle %}
+                                            <dl class="row mb-0">
+                                                <dt class="col-5 text-soft">Registration</dt><dd class="col-7">{{ profile.assigned_vehicle.vehicle_number }}</dd>
+                                                <dt class="col-5 text-soft">Type</dt><dd class="col-7">{{ profile.assigned_vehicle.vehicle_type }}</dd>
+                                                <dt class="col-5 text-soft">Status</dt><dd class="col-7">{{ profile.assigned_vehicle.status }}</dd>
+                                                <dt class="col-5 text-soft">Insurance</dt><dd class="col-7">{{ profile.assigned_vehicle.insurance_status }}</dd>
+                                                <dt class="col-5 text-soft">Odometer</dt><dd class="col-7">{{ profile.assigned_vehicle.last_activity or 'N/A' }}</dd>
+                                            </dl>
+                                        {% else %}
+                                            <p class="text-muted mb-0">This driver is not assigned to a vehicle.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="documents" role="tabpanel">
+                                    <div class="card section-card p-4">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                                            <div>
+                                                <h5 class="section-title mb-1">Driver Compliance Management</h5>
+                                                <p class="text-soft mb-0">Read-only compliance indicators. Operational workflows remain unchanged.</p>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <span class="badge bg-secondary">{{ driver_compliance.compliance_status }}</span>
+                                                <span class="badge bg-info">{{ driver_compliance.deployment_eligibility }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-4">
+                                            {% for card in driver_compliance.cards %}
+                                                <div class="col-12 col-md-6 col-xl-4">
+                                                    <div class="border rounded-3 p-3 h-100 bg-white">
+                                                        <div class="d-flex justify-content-between gap-2 mb-2">
+                                                            <strong>{{ card.type }}</strong>
+                                                            <span class="badge {% if card.status in ['Verified'] %}bg-success{% elif card.status in ['Expired', 'Rejected', 'Incomplete'] %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ card.status }}</span>
+                                                        </div>
+                                                        <p class="small text-soft mb-1">Expiry: {{ card.expiry or 'N/A' }}</p>
+                                                        <p class="small text-soft mb-1">Verification: {{ card.verification_status }}</p>
+                                                        <p class="small text-soft mb-0">Upload: {{ 'Uploaded' if card.uploaded else 'Not uploaded' }}</p>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% if profile.documents %}
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless align-middle mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Document Number</th>
+                                                            <th>Uploaded By</th>
+                                                            <th>Upload Date</th>
+                                                            <th>Expiry Date</th>
+                                                            <th>Verification Status</th>
+                                                            <th>Current Version</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for document in profile.documents %}
+                                                            <tr>
+                                                                <td>{{ document.document_type }}</td>
+                                                                <td>{{ document.file_name }}</td>
+                                                                <td>{{ document.uploaded_by or 'N/A' }}</td>
+                                                                <td>{{ document.uploaded_at.strftime('%Y-%m-%d') }}</td>
+                                                                <td>{{ document.expiry_date or 'N/A' }}</td>
+                                                                <td>{{ 'Verified' if document.status == 'Verified' else 'Rejected' if document.status == 'Rejected' else 'Pending' }}</td>
+                                                                <td>Current</td>
+                                                                <td><span class="badge {% if document.status == 'Verified' %}bg-success{% elif document.status == 'Rejected' %}bg-danger{% else %}bg-secondary{% endif %}">{{ document.status }}</span></td>
+                                                                <td>
+                                                                    <a href="{{ url_for('documents.view_driver_document', driver_profile_id=profile.driver_profile.id, document_id=document.id) }}" class="btn btn-sm btn-outline-secondary" target="_blank">View</a>
+                                                                    <a href="{{ url_for('drivers.download_document', driver_id=profile.driver_profile.id, document_id=document.id) }}" class="btn btn-sm btn-outline-primary">Download</a>
+                                                                    {% if can_edit %}
+                                                                        <a href="{{ url_for('drivers.edit', driver_id=profile.user.id) }}" class="btn btn-sm btn-outline-secondary">Replace</a>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted mb-0">No documents uploaded yet.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="activity" role="tabpanel">
+                                    <div class="card section-card p-4">
+                                        <h5 class="section-title">Activity Log</h5>
+                                        {% if profile.activity_logs %}
+                                            <ul class="list-group list-group-flush">
+                                                {% for log in profile.activity_logs %}
+                                                    <li class="list-group-item">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <strong>{{ log.event_type }}</strong>
+                                                                <p class="text-soft mb-0">{{ log.description }}</p>
+                                                            </div>
+                                                            <small class="text-muted">{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p class="text-muted mb-0">No recent driver activity recorded.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-4">
+                        <div class="card sticky-sidebar p-4 mb-4">
+                            <h5 class="section-title">Quick Details</h5>
+                            <dl class="row mb-0">
+                                <dt class="col-6 text-soft">Join Date</dt><dd class="col-6">{{ profile.driver_profile.join_date if profile.driver_profile and profile.driver_profile.join_date else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">Circle</dt><dd class="col-6">{{ profile.driver_profile.circle.circle_name if profile.driver_profile and profile.driver_profile.circle else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">Client</dt><dd class="col-6">{{ profile.driver_profile.client.client_name if profile.driver_profile and profile.driver_profile.client else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">Project</dt><dd class="col-6">{{ profile.driver_profile.project.project_name if profile.driver_profile and profile.driver_profile.project else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">Subzone</dt><dd class="col-6">{{ profile.driver_profile.subzone.subzone_name if profile.driver_profile and profile.driver_profile.subzone else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">License</dt><dd class="col-6">{{ profile.latest_license.license_number if profile.latest_license else 'N/A' }}</dd>
+                                <dt class="col-6 text-soft">Compliance</dt><dd class="col-6">{{ profile.driver_profile.compliance_status if profile.driver_profile and profile.driver_profile.compliance_status else 'Pending' }}</dd>
+                            </dl>
+                            <hr>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ url_for('deployments.assignment_dashboard', driver_id=profile.user.id) }}" class="btn btn-sm btn-outline-primary flex-grow-1" title="Assign a vehicle to this driver">
+                                    <i class="tabler-icon" data-icon="car"></i> Assign Vehicle
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-secondary flex-grow-1" title="Upload driver documents">
+                                    <i class="tabler-icon" data-icon="file-upload"></i> Upload
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-secondary flex-grow-1" title="View driver trips">
+                                    <i class="tabler-icon" data-icon="route"></i> Trips
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card section-card p-4">
+                            <h5 class="section-title">Performance Summary</h5>
+                            <div class="performance-grid">
+                                <div>
+                                    <p class="text-soft mb-1">On-time %</p>
+                                    <h4>{{ profile.kpi.on_time_percent }}%</h4>
+                                </div>
+                                <div>
+                                    <p class="text-soft mb-1">Violations</p>
+                                    <h4>{{ profile.kpi.violations }}</h4>
+                                </div>
+                                <div>
+                                    <p class="text-soft mb-1">Completed Trips</p>
+                                    <h4>{{ profile.kpi.total_trips }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/drivers.js') }}"></script>
+    <!-- Verification JS removed -->
+</body>
+</html>

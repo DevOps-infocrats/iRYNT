@@ -1,0 +1,80 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Approve Deployment{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Deployment Approval</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Deployment Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <strong>Vehicle:</strong> {{ deployment.vehicle_number }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Driver:</strong> {{ deployment.driver_name or 'Unassigned' }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Route:</strong> {{ deployment.route_name or '-' }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Type:</strong> {{ deployment.deployment_type }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="card">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Approval Decision</h3>
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    {% for field, errors in form.errors.items() %}
+                                        {% for error in errors %}
+                                            <li><strong>{{ getattr(form, field).label.text if getattr(form, field, None) else field }}:</strong> {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                {{ form.approval_action.label(class="form-label") }}
+                                {{ form.approval_action(class="form-select") }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.reason.label(class="form-label") }}
+                                {{ form.reason(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-end">
+                            <a href="{{ url_for('deployments.detail', deployment_id=deployment.id) }}" class="btn btn-secondary">Cancel</a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

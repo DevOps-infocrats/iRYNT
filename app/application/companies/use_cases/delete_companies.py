@@ -1,0 +1,1 @@
+# Delete companies use case

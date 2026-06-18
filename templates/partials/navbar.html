@@ -1,0 +1,104 @@
+<script>
+    (function () {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+
+        const initThemeToggle = () => {
+            const themeToggleBtn = document.getElementById('themeToggle');
+            if (themeToggleBtn) {
+                const icon = themeToggleBtn.querySelector('.material-symbols-outlined');
+
+                const updateThemeIcon = (theme) => {
+                    if (icon) {
+                        icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+                    }
+                };
+
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+                updateThemeIcon(currentTheme);
+
+                // Clone to strip any existing listeners and ensure a single clean handler
+                const newToggleBtn = themeToggleBtn.cloneNode(true);
+                themeToggleBtn.parentNode.replaceChild(newToggleBtn, themeToggleBtn);
+
+                newToggleBtn.addEventListener('click', () => {
+                    const targetTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-bs-theme', targetTheme);
+                    localStorage.setItem('theme', targetTheme);
+                    updateThemeIcon(targetTheme);
+                });
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initThemeToggle);
+        } else {
+            initThemeToggle();
+        }
+    })();
+</script>
+
+<header class="dashboard-navbar navbar-navbar-fixed py-3 px-3 px-lg-4">
+    <div class="navbar-grid align-items-center">
+        <div class="navbar-left d-flex align-items-center gap-3">
+            <button class="btn btn-icon d-lg-none" id="mobileSidebarToggle" aria-label="Open mobile menu" type="button">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+        </div>
+        <div class="navbar-middle d-none d-xl-flex align-items-center gap-3 flex-fill">
+            <div class="input-group navbar-search shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><span
+                        class="material-symbols-outlined">search</span></span>
+                <input type="search" class="form-control border-start-0"
+                    placeholder="Search operations, vehicles, users..." aria-label="Search" id="navbarSearch">
+            </div>
+            <div class="navbar-scope-chip text-soft">
+                <span class="scope-label">Scope:</span>
+                <strong>{{ current_scope.name if current_scope is defined else 'Global' }}</strong>
+            </div>
+        </div>
+        <div class="navbar-right d-flex align-items-center gap-2">
+            <div class="dropdown">
+                <button class="btn btn-icon btn-sm position-relative dropdown-toggle" type="button"
+                    id="notificationToggle" data-bs-toggle="dropdown" aria-label="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="badge badge-dot bg-danger" id="notificationBadge"></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationToggle"
+                    style="min-width:320px; max-width:420px;">
+                    <div class="d-flex justify-content-between align-items-center px-2">
+                        <strong>Notifications</strong>
+                        <a href="/notifications" class="small">Open Center</a>
+                    </div>
+                    <ul class="list-unstyled mb-0 mt-2" id="navbarNotificationList">
+                        <li class="text-center text-muted py-3">Loading...</li>
+                    </ul>
+                    <div class="dropdown-footer text-center mt-2">
+                        <button class="btn btn-link btn-sm" id="markAllReadBtn">Mark all read</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-icon btn-sm" type="button" id="themeToggle" aria-label="Toggle theme">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-soft-secondary dropdown-toggle" type="button" id="profileMenu"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="avatar-text">{{ current_user.username[0] if current_user.is_authenticated else 'U'
+                        }}</span>
+                    <span class="d-none d-md-inline ms-2">{{ current_user.username if current_user.is_authenticated else
+                        'Guest' }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileMenu">
+                    <li><a class="dropdown-item" href="{{ url_for_safe('profile') }}">Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for_safe('settings') }}">Settings</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

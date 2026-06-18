@@ -1,0 +1,29 @@
+{
+  "role_name": "MIS",
+  "level": 4,
+  "tier": "circle",
+  "description": "Management Information System officer with reporting access",
+  "permissions": [
+    "deployments.view",
+    "attendance.view",
+    "reports.view", "reports.export", "reports.analytics",
+    "users.view",
+    "vehicles.view"
+  ],
+  "workflow_rights": {
+    "can_approve": false,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 0
+  },
+  "sidebar_access": [
+    "dashboard",
+    "reporting",
+    "operations"
+  ],
+  "scope": "circle",
+  "is_predefined": true,
+  "is_system": false
+}

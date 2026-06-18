@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Compliance | {{ profile.user.username if profile.user else 'Driver' }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/compliance.css') }}">
+</head>
+<body class="dashboard-page compliance-page">
+    <div class="dashboard-shell" id="dashboardShell">
+        {% include 'partials/sidebar.html' %}
+        <main class="dashboard-main">
+            {% include 'partials/navbar.html' %}
+            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Driver Compliance</p>
+                        <h1 class="dashboard-title">{{ profile.user.username if profile.user else 'Driver' }}</h1>
+                        <p class="dashboard-subtitle text-soft">Document lifecycle, verification visibility, and safe deployment eligibility indicators.</p>
+                    </div>
+                    <a href="{{ url_for('documents.drivers') }}" class="btn btn-outline-secondary">Back</a>
+                </div>
+
+                <div class="compliance-summary mb-4">
+                    <div><span class="summary-label">Employee ID</span><strong>{{ profile.driver_code or (profile.user.id[:8].upper() if profile.user else 'N/A') }}</strong></div>
+                    <div><span class="summary-label">Assigned Project</span><strong>{{ profile.project.project_name if profile.project else 'Unassigned' }}</strong></div>
+                    <div><span class="summary-label">Circle / Subzone</span><strong>{{ profile.circle.circle_name if profile.circle else 'N/A' }} / {{ profile.subzone.subzone_name if profile.subzone else 'N/A' }}</strong></div>
+                    <div><span class="summary-label">Driver Status</span><strong>{{ 'Active' if profile.active else 'Inactive' }}</strong></div>
+                    <div><span class="summary-label">Compliance Status</span><span class="compliance-badge status-{{ compliance.compliance_status|lower|replace(' ', '-') }}">{{ compliance.compliance_status }}</span></div>
+                    <div><span class="summary-label">Deployment Eligibility</span><span class="compliance-badge status-{{ compliance.deployment_eligibility|lower|replace(' ', '-') }}">{{ compliance.deployment_eligibility }}</span></div>
+                </div>
+
+                <div class="compliance-alert-strip mb-4">
+                    <span>{{ compliance.alerts.get('expired', 0) }} expired documents</span>
+                    <span>{{ compliance.alerts.get('expiring_7', 0) }} expiring in 7 days</span>
+                    <span>{{ compliance.alerts.get('expiring_30', 0) }} expiring in 30 days</span>
+                    <span>{{ compliance.alerts.get('rejected', 0) }} rejected</span>
+                    <span>{{ compliance.alerts.get('pending', 0) }} pending verification</span>
+                </div>
+
+                <div class="compliance-card-grid mb-4">
+                    {% for card in compliance.cards %}
+                        <div class="compliance-doc-card">
+                            <div class="d-flex justify-content-between gap-2">
+                                <div>
+                                    <p class="doc-card-label">{{ 'Required' if card.required else 'Optional' }}</p>
+                                    <h3>{{ card.type }}</h3>
+                                </div>
+                                <span class="compliance-badge status-{{ card.status|lower|replace(' ', '-') }}">{{ card.status }}</span>
+                            </div>
+                            <dl>
+                                <dt>Expiry</dt><dd>{{ card.expiry or 'N/A' }}</dd>
+                                <dt>Verification</dt><dd>{{ card.verification_status }}</dd>
+                                <dt>Upload</dt><dd>{{ 'Uploaded' if card.uploaded else 'Not uploaded' }}</dd>
+                                <dt>Warning</dt><dd>{{ card.expiry_state.label }}</dd>
+                            </dl>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-xl-8">
+                        <div class="compliance-panel">
+                            <h2 class="panel-title">Driver Document Table</h2>
+                            <div class="table-responsive">
+                                <table class="table align-middle compliance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Document Type</th>
+                                            <th>Document Number</th>
+                                            <th>Uploaded By</th>
+                                            <th>Upload Date</th>
+                                            <th>Expiry Date</th>
+                                            <th>Verification Status</th>
+                                            <th>Verified By</th>
+                                            <th>Verification Date</th>
+                                            <th>Current Version</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for document in documents %}
+                                            <tr>
+                                                <td>{{ document.document_type }}</td>
+                                                <td>{{ document.file_name }}</td>
+                                                <td>{{ document.uploaded_by or 'N/A' }}</td>
+                                                <td>{{ document.uploaded_at.strftime('%Y-%m-%d') if document.uploaded_at else 'N/A' }}</td>
+                                                <td>{{ document.expiry_date or 'N/A' }}</td>
+                                                <td>{{ 'Verified' if document.status == 'Verified' else 'Rejected' if document.status == 'Rejected' else 'Pending' }}</td>
+                                                <td>{{ document.uploaded_by if document.status == 'Verified' else 'N/A' }}</td>
+                                                <td>{{ document.uploaded_at.strftime('%Y-%m-%d') if document.status == 'Verified' and document.uploaded_at else 'N/A' }}</td>
+                                                <td>Current</td>
+                                                <td><span class="compliance-badge status-{{ (document.status or 'Uploaded')|lower|replace(' ', '-') }}">{{ document.status or 'Uploaded' }}</span></td>
+                                                <td class="action-stack">
+                                                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('documents.view_driver_document', driver_profile_id=profile.id, document_id=document.id) }}" target="_blank">View</a>
+                                                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('drivers.download_document', driver_id=profile.id, document_id=document.id) }}">Download</a>
+                                                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('drivers.edit', driver_id=profile.user_id) }}">Replace</a>
+                                                    {% if can_review %}
+                                                        <form method="post" action="{{ url_for('documents.review_driver_document', driver_profile_id=profile.id, document_id=document.id, action='verify') }}">
+                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            <button class="btn btn-sm btn-outline-success" type="submit">Verify</button>
+                                                        </form>
+                                                        <form method="post" action="{{ url_for('documents.review_driver_document', driver_profile_id=profile.id, document_id=document.id, action='reject') }}">
+                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+                                                        </form>
+                                                        <form method="post" action="{{ url_for('documents.review_driver_document', driver_profile_id=profile.id, document_id=document.id, action='request-reupload') }}">
+                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            <button class="btn btn-sm btn-outline-warning" type="submit">Request Re-upload</button>
+                                                        </form>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr><td colspan="11" class="text-center py-5 text-muted">No documents uploaded yet.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-4">
+                        <div class="compliance-panel">
+                            <h2 class="panel-title">Audit Timeline</h2>
+                            <div class="timeline">
+                                {% for item in timeline %}
+                                    <div class="timeline-item">
+                                        <strong>{{ item.event_type }}</strong>
+                                        <p>{{ item.description or 'Document activity recorded.' }}</p>
+                                        <span>{{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else 'N/A' }}</span>
+                                    </div>
+                                {% else %}
+                                    {% for document in documents %}
+                                        <div class="timeline-item">
+                                            <strong>Uploaded</strong>
+                                            <p>{{ document.document_type }} uploaded.</p>
+                                            <span>{{ document.uploaded_at.strftime('%Y-%m-%d %H:%M') if document.uploaded_at else 'N/A' }}</span>
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted mb-0">No document activity available.</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+</html>

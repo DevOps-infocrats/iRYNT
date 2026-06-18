@@ -1,0 +1,25 @@
+{
+  "role_name": "Helper",
+  "level": 1,
+  "tier": "field",
+  "description": "Field operator - Vehicle helper/assistant with operational responsibilities",
+  "permissions": [
+    "attendance.view",
+    "attendance.mark",
+    "helper_assignments.view"
+  ],
+  "workflow_rights": {
+    "can_approve": false,
+    "can_reject": false,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 0
+  },
+  "sidebar_access": [
+    "attendance"
+  ],
+  "scope": "operational",
+  "is_predefined": true,
+  "is_system": false
+}

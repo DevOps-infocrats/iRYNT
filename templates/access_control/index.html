@@ -1,0 +1,91 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <p class="dashboard-title-label">Access Governance</p>
+        <h1 class="dashboard-title">Access Control Center</h1>
+        <p class="subtitle-text">Centralized enterprise access control, role governance, permission oversight, and workflow authorization.</p>
+        <nav class="breadcrumb-panel" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item">Administration</li>
+                <li class="breadcrumb-item active" aria-current="page">Access Control</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+        {% if has_permission('access_control.manage') %}
+        <a href="{{ url_for('roles.index') }}" class="btn btn-gradient btn-lg">Manage Roles</a>
+        <a href="{{ url_for('permissions.dashboard') }}" class="btn btn-outline-secondary btn-lg">Manage Permissions</a>
+        {% endif %}
+        <a href="{{ url_for('permissions.permission_matrix') }}" class="btn btn-outline-secondary btn-lg">Permission Matrix</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    {% for kpi in kpis %}
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                    <div>
+                        <p class="text-uppercase text-muted small mb-2">{{ kpi.title }}</p>
+                        <h2 class="mb-1">{{ kpi.value }}</h2>
+                    </div>
+                    <div class="avatar rounded-circle bg-light d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+                        <span class="material-symbols-outlined fs-3">{{ kpi.icon }}</span>
+                    </div>
+                </div>
+                <p class="text-muted mb-0">{{ kpi.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-xl-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h2 class="card-title mb-0">Access Control Operations</h2>
+                <p class="text-soft mb-0">Quick links for role, permission, and audit management.</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ url_for('roles.index') }}" class="list-group-item list-group-item-action">Roles Dashboard</a>
+                            <a href="{{ url_for('roles.create') }}" class="list-group-item list-group-item-action">Create Role</a>
+                            <a href="{{ url_for('permissions.permission_registry') }}" class="list-group-item list-group-item-action">Permission Registry</a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ url_for('permissions.permission_matrix') }}" class="list-group-item list-group-item-action">Permission Matrix</a>
+                            <a href="{{ url_for('permissions.audit_logs') }}" class="list-group-item list-group-item-action">Permission Audit Logs</a>
+                            <a href="{{ url_for('permissions.dashboard') }}" class="list-group-item list-group-item-action">Permission Governance</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h2 class="card-title mb-0">Operational Guidance</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Use this page to review access control posture, manage role-based authorization, and oversee critical permission assignments.</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Review roles and scopes.</li>
+                    <li class="list-group-item">Enforce workflow approvals.</li>
+                    <li class="list-group-item">Audit permission changes.</li>
+                    <li class="list-group-item">Limit access using policies.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

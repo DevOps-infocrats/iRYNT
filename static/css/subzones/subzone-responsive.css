@@ -1,0 +1,51 @@
+@media (max-width: 1199px) {
+    .subzone-header,
+    .subzone-card,
+    .subzone-preview-card,
+    .subzone-dashboard-header {
+        padding: 18px 20px;
+    }
+}
+
+@media (max-width: 991px) {
+    .subzone-preview-card {
+        grid-template-columns: 1fr;
+    }
+
+    .subzone-form-group .form-control,
+    .subzone-form-group .form-select {
+        min-height: 52px;
+    }
+
+    .subzone-card .card-body {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 767px) {
+    .subzone-header h1 {
+        font-size: 2rem;
+    }
+
+    .subzone-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .subzone-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575px) {
+    .subzone-card,
+    .subzone-dashboard-section,
+    .subzone-preview-card {
+        border-radius: 18px;
+    }
+
+    .subzone-card .card-header,
+    .subzone-dashboard-header {
+        padding: 16px;
+    }
+}

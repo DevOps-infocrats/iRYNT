@@ -1,0 +1,115 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Helper Assignments{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none mb-4">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <p class="text-muted mb-1">Deployments Module</p>
+                    <h2 class="page-title text-white" style="font-weight: 700;">Helper Assignments</h2>
+                </div>
+                {% if has_permission('helper_assignments.create') %}
+                <div class="col-auto ms-auto">
+                    <a href="{{ url_for('deployments.helper_assignments_create') }}" class="btn btn-primary d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined fs-5">add</span> Add Assignment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-white">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Helper</th>
+                                <th>Circle</th>
+                                <th>Project</th>
+                                <th>Subzone</th>
+                                <th>Shift</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if assignments %}
+                                {% for assignment in assignments %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ assignment.helper.username if assignment.helper else 'Unknown' }}</strong>
+                                        <div class="text-muted small">{{ assignment.helper.email if assignment.helper else '' }}</div>
+                                    </td>
+                                    <td>{{ assignment.circle.circle_name if assignment.circle else 'N/A' }}</td>
+                                    <td>{{ assignment.project.project_name if assignment.project else 'N/A' }}</td>
+                                    <td>{{ assignment.subzone.subzone_name if assignment.subzone else 'N/A' }}</td>
+                                    <td><span class="badge bg-secondary">{{ assignment.shift or 'N/A' }}</span></td>
+                                    <td><small>{{ assignment.start_date.strftime('%Y-%m-%d') if assignment.start_date else '-' }}</small></td>
+                                    <td><small>{{ assignment.end_date.strftime('%Y-%m-%d') if assignment.end_date else '-' }}</small></td>
+                                    <td>
+                                        {% if assignment.status == 'Active' %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Ended</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-2">
+                                            <a href="{{ url_for('deployments.helper_assignments_view', id=assignment.id) }}" class="btn btn-sm btn-outline-info">View</a>
+                                            {% if has_permission('helper_assignments.edit') and assignment.status == 'Active' %}
+                                                <a href="{{ url_for('deployments.helper_assignments_edit', id=assignment.id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                            {% endif %}
+                                            {% if has_permission('helper_assignments.delete') and assignment.status == 'Active' %}
+                                                <form action="{{ url_for('deployments.helper_assignments_end', id=assignment.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to end this helper assignment?');" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">End</button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-5">
+                                    <span class="material-symbols-outlined display-1 mb-3">assignment_late</span>
+                                    <h5>No helper assignments found</h5>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if pages > 1 %}
+                <div class="card-footer d-flex justify-content-between align-items-center bg-transparent border-0 pt-3">
+                    <p class="text-muted mb-0 small">Showing page {{ page }} of {{ pages }}</p>
+                    <nav aria-label="Pagination">
+                        <ul class="pagination mb-0 pagination-sm">
+                            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                                <a class="page-link text-white bg-dark border-secondary" href="?page={{ page - 1 }}">Previous</a>
+                            </li>
+                            {% for p in range(1, pages + 1) %}
+                            <li class="page-item {% if p == page %}active{% endif %}">
+                                <a class="page-link text-white bg-dark border-secondary {% if p == page %}bg-primary border-primary{% endif %}" href="?page={{ p }}">{{ p }}</a>
+                            </li>
+                            {% endfor %}
+                            <li class="page-item {% if page >= pages %}disabled{% endif %}">
+                                <a class="page-link text-white bg-dark border-secondary" href="?page={{ page + 1 }}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

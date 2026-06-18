@@ -1,0 +1,38 @@
+{
+  "role_name": "Circle Admin",
+  "level": 7,
+  "tier": "circle",
+  "description": "Circle level administrator with circle-wide access",
+  "permissions": [
+    "users.view", "users.create", "users.edit",
+    "circles.view", "circles.edit",
+    "clients.view", "clients.edit",
+    "projects.view", "projects.edit",
+    "vehicles.view", "vehicles.assign",
+    "deployments.view", "deployments.create", "deployments.edit", "deployments.approve",
+    "attendance.view", "attendance.approve",
+    "reports.view", "reports.export",
+    "workflows.view", "workflows.manage", "workflows.approve",
+    "notifications.view"
+  ],
+  "workflow_rights": {
+    "can_approve": true,
+    "can_reject": true,
+    "can_escalate": false,
+    "can_override": false,
+    "can_close_workflow": false,
+    "approval_level": 1
+  },
+  "sidebar_access": [
+    "dashboard",
+    "masters",
+    "user_management",
+    "deployments",
+    "operations",
+    "workflows",
+    "reporting"
+  ],
+  "scope": "circle",
+  "is_predefined": true,
+  "is_system": false
+}

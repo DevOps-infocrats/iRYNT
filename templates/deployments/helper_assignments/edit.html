@@ -1,0 +1,132 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Edit Helper Assignment{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none mb-4">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <p class="text-muted mb-1"><a href="{{ url_for('deployments.helper_assignments_index') }}" class="text-decoration-none text-muted">← Back to List</a></p>
+                    <h2 class="page-title text-white" style="font-weight: 700;">Edit Helper Assignment</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form method="POST" class="card border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        {{ form.hidden_tag() }}
+                        <div class="card-body p-4 text-white">
+                            {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Please fix the errors below.</strong>
+                            </div>
+                            {% endif %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Helper *</label>
+                                    {{ form.helper_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.helper_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.helper_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Circle *</label>
+                                    {{ form.circle_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.circle_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.circle_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Project *</label>
+                                    {{ form.project_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.project_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.project_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Subzone *</label>
+                                    {{ form.subzone_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.subzone_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.subzone_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Shift</label>
+                                    {{ form.shift(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.shift.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.shift.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Status</label>
+                                    {{ form.status(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.status.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Start Date *</label>
+                                    {{ form.start_date(class='form-control bg-dark border-secondary text-white') }}
+                                    {% if form.start_date.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.start_date.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">End Date</label>
+                                    {{ form.end_date(class='form-control bg-dark border-secondary text-white') }}
+                                    {% if form.end_date.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.end_date.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Assigned Driver (Optional)</label>
+                                    {{ form.assigned_driver_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.assigned_driver_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.assigned_driver_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-soft">Assigned Vehicle (Optional)</label>
+                                    {{ form.assigned_vehicle_id(class='form-select bg-dark border-secondary text-white') }}
+                                    {% if form.assigned_vehicle_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.assigned_vehicle_id.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label text-soft">Remarks</label>
+                                    {{ form.remarks(class='form-control bg-dark border-secondary text-white', rows=3) }}
+                                    {% if form.remarks.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.remarks.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-end bg-transparent border-0 pt-0 px-4 pb-4">
+                            <a href="{{ url_for('deployments.helper_assignments_index') }}" class="btn btn-outline-light me-2">Cancel</a>
+                            {{ form.submit(class='btn btn-primary px-4') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

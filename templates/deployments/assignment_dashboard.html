@@ -1,0 +1,481 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Driver Assignment Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Operational Workforce Allocation</h2>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary btn-sm gap-2" data-bs-toggle="modal" data-bs-target="#assignmentModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M12 5l0 14"></path>
+                            <path d="M5 12l14 0"></path>
+                        </svg>
+                        <span>Assign Driver</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <!-- KPI Cards -->
+            <div class="row row-deck row-cards mb-4">
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title">{{ kpis.total_drivers }}</h3>
+                                <div class="text-secondary">Total Drivers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title">{{ kpis.assigned_drivers }}</h3>
+                                <div class="text-secondary">Assigned</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title">{{ kpis.available_drivers }}</h3>
+                                <div class="text-secondary">Available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title text-danger">{{ kpis.compliance_failed }}</h3>
+                                <div class="text-secondary">Non-Compliant</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title text-success">{{ kpis.deployment_ready }}</h3>
+                                <div class="text-secondary">Ready Deploy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-truncate">
+                                <h3 class="card-title text-warning">{{ kpis.expiring_licenses }}</h3>
+                                <div class="text-secondary">Expiring 30d</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignments Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Active Assignments</h3>
+                    <div class="card-options">
+                        <select class="form-select form-select-sm" id="statusFilter" style="width: 150px;">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Failed_Validation">Failed Validation</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Driver</th>
+                                <th>License Status</th>
+                                <th>Compliance</th>
+                                <th>Vehicle</th>
+                                <th>Insurance</th>
+                                <th>Fitness</th>
+                                <th>Project</th>
+                                <th>Deployment</th>
+                                <th>Last Assignment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assignment in assignments %}
+                            <tr>
+                                <td>
+                                    <span class="text-reset">{{ assignment.driver_name }}</span>
+                                </td>
+                                <td>{{ assignment.license_status or 'Pending' }}</td>
+                                <td>{{ assignment.compliance_status or 'Pending' }}</td>
+                                <td>{{ assignment.vehicle_number }}</td>
+                                <td>
+                                    {% if assignment.insurance_status == 'Valid' %}
+                                    <span class="badge badge-success">✓</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">✗</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if assignment.fitness_status == 'Valid' %}
+                                    <span class="badge badge-success">✓</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">✗</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ assignment.project_name or '-' }}</td>
+                                <td>
+                                    {% if assignment.deployment_status %}
+                                    <a href="{{ url_for('deployments.detail', deployment_id=assignment.deployment_id) }}" class="badge badge-primary">{{ assignment.deployment_status }}</a>
+                                    {% else %}
+                                    <span class="text-secondary">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small class="text-secondary">
+                                        {{ assignment.assigned_at.split('T')[0] if assignment.assigned_at else '-' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if assignment.assignment_status == 'Failed_Validation' %}
+                                    <button class="btn btn-sm btn-icon btn-link-danger" title="Retry assignment">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M20 6h-2.323m-4.677 0a9 9 0 0 0 -5 1.978m-2.325 -1.884a9 9 0 1 0 15.933 5.219"></path>
+                                            <path d="M20 6v6h-6"></path>
+                                        </svg>
+                                    </button>
+                                    {% else %}
+                                        {% if assignment.deployment_id %}
+                                        <a href="{{ url_for('deployments.detail', deployment_id=assignment.deployment_id) }}" class="btn btn-sm btn-icon" title="View deployment">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                            </svg>
+                                        </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    <button type="button" class="btn btn-sm btn-icon btn-danger delete-assignment" data-assignment-id="{{ assignment.assignment_id }}" title="Remove assignment">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M4 7l16 0" />
+                                            <path d="M10 11l0 6" />
+                                            <path d="M14 11l0 6" />
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                            <path d="M9 7v-1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v1" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if not assignments %}
+                <div class="card-body text-center text-secondary py-4">
+                    No assignments found
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            {% if pages > 1 %}
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="text-secondary">
+                    Showing {{ assignments|length }} of {{ total }} assignments
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('deployments.assignment_dashboard', page=1) }}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('deployments.assignment_dashboard', page=page-1) }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for p in range(max(1, page-2), min(pages+1, page+3)) %}
+                            {% if p == page %}
+                            <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('deployments.assignment_dashboard', page=p) }}">{{ p }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page < pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('deployments.assignment_dashboard', page=page+1) }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('deployments.assignment_dashboard', page=pages) }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Assignment Modal -->
+<div class="modal modal-blur fade" id="assignmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Driver to Vehicle</h5>
+            </div>
+
+            <form method="POST" id="assignmentForm" class="modal-body">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Driver <span class="text-danger">*</span></label>
+                        <select id="driverSelect" class="form-select" name="driver_id" required>
+                            <option value="">Select Driver</option>
+                            {% for driver in available_drivers %}
+                            <option value="{{ driver.driver_id }}"
+                                    data-license="{{ driver.license_status }}"
+                                    data-compliance="{{ driver.compliance_status }}"
+                                    data-project-id="{{ driver.project_id }}"
+                                    data-project-name="{{ driver.project_name }}"
+                                    data-subzone-id="{{ driver.subzone_id }}"
+                                    data-subzone-name="{{ driver.subzone_name }}">
+                                {{ driver.driver_name }} ({{ driver.driver_code or 'N/A' }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Vehicle <span class="text-danger">*</span></label>
+                        <select id="vehicleSelect" class="form-select" name="vehicle_id" required>
+                            <option value="">Select Vehicle</option>
+                            {% for vehicle in available_vehicles %}
+                            <option value="{{ vehicle.vehicle_id }}"
+                                    data-insurance="{{ vehicle.insurance_status }}"
+                                    data-fitness="{{ vehicle.fitness_status }}"
+                                    data-project-id="{{ vehicle.project_id }}"
+                                    data-subzone-id="{{ vehicle.subzone_id }}">
+                                {{ vehicle.vehicle_number }} ({{ vehicle.vehicle_type }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Validation Status Panel -->
+                <div class="alert alert-warning" id="validationPanel" style="display:none;">
+                    <h4>Compliance Validation Status</h4>
+                    <div id="validationChecks" class="mt-3"></div>
+                </div>
+
+                <div class="row mb-3" id="detailsSection" style="display:none;">
+                    <div class="col-md-6">
+                        <label class="form-label">Project</label>
+                        <input type="text" class="form-control" id="projectDisplay" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Subzone</label>
+                        <input type="text" class="form-control" id="subzoneDisplay" disabled>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Assign Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const driverSelect = document.getElementById('driverSelect');
+    const vehicleSelect = document.getElementById('vehicleSelect');
+    const validationPanel = document.getElementById('validationPanel');
+    const validationChecks = document.getElementById('validationChecks');
+    const detailsSection = document.getElementById('detailsSection');
+
+    const vehicleOptions = Array.from(vehicleSelect.querySelectorAll('option')).map(option => ({
+        value: option.value,
+        text: option.textContent.trim(),
+        insurance: option.dataset.insurance,
+        fitness: option.dataset.fitness,
+        projectId: option.dataset.projectId,
+        subzoneId: option.dataset.subzoneId,
+    }));
+
+    function filterVehiclesByDriver() {
+        vehicleSelect.innerHTML = '<option value="">Select Vehicle</option>';
+
+        const matching = vehicleOptions.filter(option => option.value);
+
+        matching.forEach(option => {
+            const el = document.createElement('option');
+            el.value = option.value;
+            el.textContent = option.text;
+            el.dataset.insurance = option.insurance;
+            el.dataset.fitness = option.fitness;
+            el.dataset.projectId = option.projectId;
+            el.dataset.subzoneId = option.subzoneId;
+            vehicleSelect.appendChild(el);
+        });
+
+        if (matching.length === 0) {
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = 'No available vehicles';
+            emptyOption.disabled = true;
+            vehicleSelect.appendChild(emptyOption);
+        }
+    }
+
+    function updateValidation() {
+        const driverOption = driverSelect.options[driverSelect.selectedIndex];
+        const vehicleOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+        const projectDisplay = document.getElementById('projectDisplay');
+        const subzoneDisplay = document.getElementById('subzoneDisplay');
+
+        if (!driverOption.value) {
+            validationPanel.style.display = 'none';
+            detailsSection.style.display = 'none';
+            return;
+        }
+
+        detailsSection.style.display = 'block';
+        projectDisplay.value = driverOption.dataset.projectName || '-';
+        subzoneDisplay.value = driverOption.dataset.subzoneName || '-';
+
+        if (!vehicleOption || !vehicleOption.value) {
+            validationPanel.style.display = 'block';
+            validationChecks.innerHTML = '<p class="mb-0">Select a vehicle from the available vehicles in the driver\'s subzone.</p>';
+            return;
+        }
+
+        validationPanel.style.display = 'block';
+
+        const driverLicense = driverOption.dataset.license;
+        const driverCompliance = driverOption.dataset.compliance;
+        const vehicleInsurance = vehicleOption.dataset.insurance;
+        const vehicleFitness = vehicleOption.dataset.fitness;
+
+        let checks = `
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <strong>Driver License:</strong>
+                        <span class="badge ${driverLicense === 'Verified' ? 'badge-success' : 'badge-danger'}">
+                            ${driverLicense === 'Verified' ? '✓ Verified' : '✗ ' + (driverLicense || 'Pending')}
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Compliance:</strong>
+                        <span class="badge ${driverCompliance === 'Verified' ? 'badge-success' : 'badge-danger'}">
+                            ${driverCompliance === 'Verified' ? '✓ Verified' : '✗ ' + (driverCompliance || 'Pending')}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <strong>Vehicle Insurance:</strong>
+                        <span class="badge ${vehicleInsurance === 'Valid' ? 'badge-success' : 'badge-danger'}">
+                            ${vehicleInsurance === 'Valid' ? '✓ Valid' : '✗ Invalid'}
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Vehicle Fitness:</strong>
+                        <span class="badge ${vehicleFitness === 'Valid' ? 'badge-success' : 'badge-danger'}">
+                            ${vehicleFitness === 'Valid' ? '✓ Valid' : '✗ Invalid'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        validationChecks.innerHTML = checks;
+    }
+
+    driverSelect.addEventListener('change', function() {
+        filterVehiclesByDriver();
+        updateValidation();
+    });
+    vehicleSelect.addEventListener('change', updateValidation);
+
+    // Status filter
+    document.getElementById('statusFilter')?.addEventListener('change', function(e) {
+        const status = e.target.value;
+        window.location.href = `{{ url_for('deployments.assignment_dashboard') }}${status ? '?filter_status=' + status : ''}`;
+    });
+
+    // Delete assignment handler
+    document.querySelectorAll('.delete-assignment').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const assignmentId = this.dataset.assignmentId;
+            if (!confirm('Remove this driver assignment?')) {
+                return;
+            }
+
+            const row = this.closest('tr');
+            
+            // Get CSRF token directly from Jinja
+            const csrfToken = "{{ csrf_token() }}";
+            
+            fetch(`{{ url_for('deployments.release_assignment', assignment_id='__ID__') }}`.replace('__ID__', assignmentId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async response => {
+                const payload = await response.json().catch(() => ({}));
+                if (response.ok && payload.success !== false) {
+                    row.style.opacity = '0.5';
+                    row.style.textDecoration = 'line-through';
+                    setTimeout(() => window.location.reload(), 500);
+                    
+                    // Show success message
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                    alertDiv.style.zIndex = '9999';
+                    alertDiv.textContent = payload.message || 'Assignment removed successfully';
+                    document.body.appendChild(alertDiv);
+                } else {
+                    alert(payload.message || 'Failed to remove assignment');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error removing assignment');
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %}

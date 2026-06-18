@@ -1,0 +1,123 @@
+{% extends 'layouts/main.html' %}
+
+{% block title %}Vehicle Deployments{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">Vehicle Deployments</h2>
+                </div>
+                <div class="col-auto">
+                    {% if has_permission(current_user, 'deployments.create') %}
+                    <a href="{{ url_for('deployments.create') }}" class="btn btn-primary">
+                        <span class="btn-label">+ New Deployment</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="container-xl">
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Approved" {% if status_filter == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Active" {% if status_filter == 'Active' %}selected{% endif %}>Active</option>
+                                <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Approval Status</label>
+                            <select name="approval_status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Pending" {% if approval_filter == 'Pending' %}selected{% endif %}>Pending Approval</option>
+                                <option value="Approved" {% if approval_filter == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Rejected" {% if approval_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Deployments Table -->
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Route</th>
+                                <th>Status</th>
+                                <th>Approval</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if deployments %}
+                                {% for deployment in deployments %}
+                                <tr>
+                                    <td><strong>{{ deployment.vehicle_number }}</strong></td>
+                                    <td>{{ deployment.driver_name or 'Unassigned' }}</td>
+                                    <td>{{ deployment.route_name or '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if deployment.status == 'Active' else 'warning' if deployment.status == 'Pending' else 'secondary' }}">
+                                            {{ deployment.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if deployment.approval_status == 'Approved' else 'danger' if deployment.approval_status == 'Rejected' else 'warning' }}">
+                                            {{ deployment.approval_status }}
+                                        </span>
+                                    </td>
+                                    <td><small>{{ deployment.created_at[:10] }}</small></td>
+                                    <td>
+                                        <a href="{{ url_for('deployments.detail', deployment_id=deployment.id) }}" class="btn btn-sm btn-ghost-primary">View</a>
+                                        {% if deployment.approval_status == 'Pending' and has_permission(current_user, 'deployments.approve') %}
+                                        <a href="{{ url_for('deployments.approve', deployment_id=deployment.id) }}" class="btn btn-sm btn-ghost-success">Approve</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No deployments found</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for p in range(1, pages + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

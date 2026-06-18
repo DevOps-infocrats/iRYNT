@@ -1,0 +1,64 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+    <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+        <div>
+            <p class="dashboard-title-label">Attendance Management</p>
+            <h1 class="dashboard-title">Attendance Approvals</h1>
+            <p class="dashboard-subtitle text-soft">Review and approve attendance correction requests or overrides from the operational teams.</p>
+        </div>
+        <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ url_for('attendance.live') }}" class="btn btn-outline-secondary">Live Attendance</a>
+            <a href="{{ url_for('attendance.history') }}" class="btn btn-outline-secondary">Attendance History</a>
+            <a href="{{ url_for('attendance.monitoring') }}" class="btn btn-outline-secondary">Monitoring</a>
+        </div>
+    </div>
+
+    <div class="card table-card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h2 class="card-title mb-1">Pending Approval Requests</h2>
+                <p class="text-soft mb-0">{{ total }} requests awaiting review.</p>
+            </div>
+            <div class="badge bg-info text-white py-2 px-3">Approvals</div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Request</th>
+                        <th>Driver</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Approver</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if approvals %}
+                        {% for approval in approvals %}
+                            <tr>
+                                <td>{{ approval.request_title }}</td>
+                                <td>{{ approval.requested_by.username if approval.requested_by else 'N/A' }}</td>
+                                <td>{{ approval.approval_type }}</td>
+                                <td>{{ approval.approval_status }}</td>
+                                <td>{{ approval.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ approval.assigned_approver.username if approval.assigned_approver else 'Unassigned' }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('approvals.view', approval_id=approval.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">No attendance approvals are pending currently.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
