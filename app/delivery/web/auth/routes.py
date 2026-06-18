@@ -60,15 +60,15 @@ def _json_response(result, status=200):
 def login():
     if current_user.is_authenticated:
         is_field = False
-        if current_user.primary_role and current_user.primary_role.name in ('Driver', 'Helper'):
+        if current_user.primary_role and current_user.primary_role.name.lower() in ('driver', 'helper'):
             is_field = True
-        elif any(r.name in ('Driver', 'Helper') for r in current_user.roles):
+        elif any(r.name.lower() in ('driver', 'helper') for r in current_user.roles):
             is_field = True
 
         is_admin = False
-        if current_user.primary_role and current_user.primary_role.name in ('Super Admin', 'Admin'):
+        if current_user.primary_role and current_user.primary_role.name.lower() in ('super admin', 'admin'):
             is_admin = True
-        elif any(r.name in ('Super Admin', 'Admin') for r in current_user.roles):
+        elif any(r.name.lower() in ('super admin', 'admin') for r in current_user.roles):
             is_admin = True
 
         if is_field and not is_admin:
