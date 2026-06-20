@@ -11,3 +11,4 @@ Werkzeug
 click
 itsdangerous
 Flask-SQLAlchemy
+python-dotenv
