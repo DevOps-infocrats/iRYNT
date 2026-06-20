@@ -1,9 +1,12 @@
+#!/usr/bin/env python
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env
+# Load environment variables from .env if present
 load_dotenv()
 
 from app import create_app
 
-app = create_app(os.environ.get('FLASK_ENV', 'production'))
+# Create the WSGI application object for the web server (e.g., gunicorn)
+application = create_app(os.getenv('FLASK_ENV', 'production'))
+app = application
