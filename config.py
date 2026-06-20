@@ -30,7 +30,7 @@ class Config:
     PASSWORD_EXPIRE_DAYS = int(os.environ.get('PASSWORD_EXPIRE_DAYS', 90))
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://postgres:1234@localhost:5432/VILdatabase'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 class DevelopmentConfig(Config):
     """Development configuration"""
