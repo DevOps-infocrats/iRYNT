@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk User Import - VIL Workforce Management</title>
+    <meta name="description" content="Upload an Excel template to bulk import workforce users into VIL.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* Premium gradient background */
+        body {
+            background: linear-gradient(135deg, hsl(220, 30%, 15%), hsl(260, 25%, 10%));
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        p.description { font-size: 1.1rem; opacity: 0.9; }
+        .actions {
+            display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;
+        }
+        .btn {
+            background: hsl(260, 70%, 55%);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .btn:hover { background: hsl(260, 70%, 65%); transform: translateY(-2px); }
+        .btn:disabled { background: #555; cursor: not-allowed; }
+        .summary, .error-report {
+            margin-top: 2rem; background: rgba(255,255,255,0.07); padding: 1rem; border-radius: 8px;
+        }
+        .error-table { width: 100%; border-collapse: collapse; }
+        .error-table th, .error-table td { padding: 0.5rem; border: 1px solid rgba(255,255,255,0.2); }
+        .error-table th { background: rgba(255,255,255,0.15); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background:none; color:#ddd;">
+                <li class="breadcrumb-item"><a href="{{ url_for('users.index') }}" style="color:#bbb; text-decoration:none;">User Management</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('users.index') }}" style="color:#bbb; text-decoration:none;">Users</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Bulk Import</li>
+            </ol>
+        </nav>
+        <h1>Bulk User Import</h1>
+        <p class="description">Upload workforce data using an Excel template to create multiple users in a single operation.</p>
+        <div class="actions">
+            <button class="btn" id="download-template">Download Template</button>
+            <input type="file" id="excel-file" accept=".xlsx" style="display:none;" />
+            <button class="btn" id="choose-file">Upload Excel File</button>
+            <button class="btn" id="import-users" disabled>Import Users</button>
+            <button class="btn" id="download-errors" style="display:none;">Download Error Report</button>
+        </div>
+        <div class="summary" id="validation-summary" style="display:none;">
+            <h3>Validation Summary</h3>
+            <pre id="summary-text"></pre>
+        </div>
+        <div class="error-report" id="error-report" style="display:none;">
+            <h3>Errors</h3>
+            <table class="error-table" id="error-table">
+                <thead>
+                    <tr><th>Row</th><th>Column</th><th>Message</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/bulk_import.js') }}"></script>
+</body>
+</html>

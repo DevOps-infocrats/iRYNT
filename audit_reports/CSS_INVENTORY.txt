@@ -1,0 +1,247 @@
+# UI Inventory: CSS Stylesheets
+
+This document inventory audits all CSS files in `static/css/` to map usage, file size, design token compliance, and potential styles pollution.
+
+## CSS Audit Metrics
+
+- **Total CSS files**: 21
+- **Combined CSS size**: 122.86 KB
+- **Usage of `!important`**: 92 overrides
+- **Hardcoded HEX color codes (Token bypasses)**: 284
+- **Hardcoded RGB/RGBA color codes (Token bypasses)**: 303
+
+---
+
+### `static/css/auth.css`
+- **File Size**: 9472 bytes
+- **Purpose**: Global style system module for auth.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **1** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **19** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **34** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.form-control*`, `.form-select*`
+- **Templates Loading this File**: `forgot_password.html`, `login.html`, `reset_password.html`
+
+---
+
+### `static/css/circle.css`
+- **File Size**: 1204 bytes
+- **Purpose**: Global style system module for circle.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **9** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **5** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`
+- **Templates Loading this File**: `circles/create.html`, `circles/edit.html`, `circles/index.html`
+
+---
+
+### `static/css/client.css`
+- **File Size**: 3027 bytes
+- **Purpose**: Global style system module for client.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **15** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **11** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.table*`
+- **Templates Loading this File**: `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`
+
+---
+
+### `static/css/company.css`
+- **File Size**: 1933 bytes
+- **Purpose**: Global style system module for company.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **11** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **6** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.table*`
+- **Templates Loading this File**: `companies/create.html`, `companies/edit.html`, `companies/index.html`
+
+---
+
+### `static/css/compliance.css`
+- **File Size**: 3885 bytes
+- **Purpose**: Global style system module for compliance.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **30** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **1** hardcoded RGB/RGBA colors.
+- **Templates Loading this File**: `documents/drivers.html`, `documents/driver_detail.html`, `documents/vehicles.html`
+
+---
+
+### `static/css/dashboard.css`
+- **File Size**: 13854 bytes
+- **Purpose**: Styles for the operations metrics, KPI grid cards, and central command layout.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **22** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **46** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.form-control*`, `.form-select*`, `.row*`
+- **Templates Loading this File**: `dashboard.html`, `circles/create.html`, `circles/index.html`, `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`, `companies/create.html`, and 32 others
+
+---
+
+### `static/css/design-tokens.css`
+- **File Size**: 14459 bytes
+- **Purpose**: Enterprise design token library, defining color palette, shadow styles, typography scale, spacing margins, and dark mode overrides.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **54** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **28** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **38** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.card*`, `.form-control*`, `.form-select*`, `.nav-*`, `.table*`
+- **Templates Loading this File**: `dashboard.html`, `forgot_password.html`, `login.html`, `reset_password.html`, `circles/create.html`, `circles/edit.html`, `circles/index.html`, `clients/create.html`, and 37 others
+
+---
+
+### `static/css/drivers.css`
+- **File Size**: 3220 bytes
+- **Purpose**: Global style system module for drivers.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **16** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **23** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.nav-*`, `.table*`
+- **Templates Loading this File**: `drivers/create.html`, `drivers/edit.html`, `drivers/list.html`, `drivers/profile.html`
+
+---
+
+### `static/css/navbar.css`
+- **File Size**: 4293 bytes
+- **Purpose**: Styles for the top dashboard navigation bar.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **11** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **9** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.form-control*`, `.nav-*`
+- **Templates Loading this File**: `dashboard.html`, `circles/create.html`, `circles/index.html`, `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`, `companies/create.html`, and 33 others
+
+---
+
+### `static/css/permissions/permissions.css`
+- **File Size**: 9549 bytes
+- **Purpose**: Module-specific styles overrides for permissions views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **17** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **16** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`
+- **Templates Loading this File**: `layouts/main.html`
+
+---
+
+### `static/css/projects/project-dashboard.css`
+- **File Size**: 9399 bytes
+- **Purpose**: Module-specific styles overrides for projects views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **2** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **4** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.nav-*`
+- **Templates Loading this File**: `projects/details.html`
+
+---
+
+### `static/css/projects/project.css`
+- **File Size**: 11984 bytes
+- **Purpose**: Module-specific styles overrides for projects views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **2** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **24** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **16** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.col-*`, `.form-control*`, `.form-select*`, `.row*`, `.table*`
+- **Templates Loading this File**: `projects/create.html`, `projects/details.html`, `projects/edit.html`, `projects/index.html`
+
+---
+
+### `static/css/roles/roles.css`
+- **File Size**: 10347 bytes
+- **Purpose**: Module-specific styles overrides for roles views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **16** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **26** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **15** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.col-*`, `.row*`, `.table*`
+- **Templates Loading this File**: `roles/compare.html`, `roles/create.html`, `roles/detail.html`, `roles/list.html`
+
+---
+
+### `static/css/sidebar.css`
+- **File Size**: 11641 bytes
+- **Purpose**: Styles for the main sidebar navigation panel.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **7** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **13** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **14** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.nav-*`
+- **Templates Loading this File**: `dashboard.html`, `circles/create.html`, `circles/index.html`, `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`, `companies/create.html`, and 33 others
+
+---
+
+### `static/css/subzones/subzone-dashboard.css`
+- **File Size**: 3547 bytes
+- **Purpose**: Module-specific styles overrides for subzones views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **2** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **14** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`
+- **Templates Loading this File**: `subzones/details.html`
+
+---
+
+### `static/css/subzones/subzone-responsive.css`
+- **File Size**: 962 bytes
+- **Purpose**: Module-specific styles overrides for subzones views.
+- **Technical Debt & CSS Conflicts**:
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.form-control*`, `.form-select*`
+- **Templates Loading this File**: `subzones/create.html`, `subzones/details.html`, `subzones/edit.html`
+
+---
+
+### `static/css/subzones/subzone.css`
+- **File Size**: 4702 bytes
+- **Purpose**: Module-specific styles overrides for subzones views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **17** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **20** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.card*`, `.form-control*`, `.form-select*`
+- **Templates Loading this File**: `subzones/create.html`, `subzones/details.html`, `subzones/edit.html`, `subzones/list.html`
+
+---
+
+### `static/css/users/users.css`
+- **File Size**: 5356 bytes
+- **Purpose**: Module-specific styles overrides for users views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **8** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **17** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **22** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.btn*`, `.col-*`, `.row*`
+- **Templates Loading this File**: `users/list.html`, `users/manage.html`, `users/profile.html`
+
+---
+
+### `static/css/vehicles/vehicle-dashboard.css`
+- **File Size**: 828 bytes
+- **Purpose**: Module-specific styles overrides for vehicles views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **1** `!important` overrides, which pollute the specificity hierarchy.
+  - Contains **1** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **4** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.card*`, `.table*`
+- **Templates Loading this File**: `vehicles/details.html`, `vehicles/list.html`
+
+---
+
+### `static/css/vehicles/vehicle-responsive.css`
+- **File Size**: 602 bytes
+- **Purpose**: Module-specific styles overrides for vehicles views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **1** `!important` overrides, which pollute the specificity hierarchy.
+  - Directly overrides Bootstrap components class namespaces: `.card*`
+- **Templates Loading this File**: `vehicles/create.html`
+
+---
+
+### `static/css/vehicles/vehicle.css`
+- **File Size**: 1546 bytes
+- **Purpose**: Module-specific styles overrides for vehicles views.
+- **Technical Debt & CSS Conflicts**:
+  - Contains **6** hardcoded HEX codes bypassing `design-tokens.css` color variables.
+  - Contains **5** hardcoded RGB/RGBA colors.
+  - Directly overrides Bootstrap components class namespaces: `.form-control*`, `.form-select*`
+- **Templates Loading this File**: `vehicles/create.html`, `vehicles/details.html`, `vehicles/edit.html`, `vehicles/list.html`
+
+---

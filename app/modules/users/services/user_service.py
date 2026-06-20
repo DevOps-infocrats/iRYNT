@@ -20,7 +20,7 @@ class UserService:
 
     def get_project_choices(self, client_id=None):
         projects = self.repository.get_projects(client_id)
-        return [('', 'Select project')] + [(project.id, f"{project.project_name} ({project.project_code})") for project in projects]
+        return [('', 'Select project')] + [(projects.id, f"{projects.project_name} ({projects.project_code})") for projects in projects]
 
     def get_subzone_choices(self, project_id=None):
         subzones = self.repository.get_subzones(project_id)
@@ -127,6 +127,7 @@ class UserService:
         role_id = payload.get('role_id')
         company_id = payload.get('company_id')
         circle_id = payload.get('circle_id')
+        project_id = payload.get('project_id')
         password = payload.get('password') or 'ChangeMe@123'
         user = User(
             username=payload['username'],
@@ -147,7 +148,21 @@ class UserService:
         from app.extensions import db
         db.session.add(user)
         db.session.commit()
-        ensure_helper_profile(user)
+        ensure_helper_profile(user, project_id=project_id)
+        
+        # Safe welcome notification
+        try:
+            from app.modules.notifications.helpers import create_notification_safe
+            create_notification_safe(
+                user_id=user.id,
+                message=f"Welcome to VIL Workforce Management! Your account ({user.username}) is active.",
+                module="system",
+                priority="info",
+                type="system"
+            )
+        except Exception:
+            pass
+
         return user
 
     def update_user(self, user_id, payload):
@@ -175,7 +190,7 @@ class UserService:
 
         from app.extensions import db
         db.session.commit()
-        ensure_helper_profile(user)
+        ensure_helper_profile(user, project_id=payload.get('project_id'))
         return user
 
     def get_user_profile(self, user_id):
@@ -249,7 +264,7 @@ class UserService:
         ]
 
 
-def ensure_helper_profile(user):
+def ensure_helper_profile(user, project_id=None):
     from app.modules.auth.models import Role
     from app.modules.drivers.models import DriverProfile
     from app.modules.circles.models import Circle
@@ -260,17 +275,36 @@ def ensure_helper_profile(user):
     import uuid
 
     is_helper = False
-    if user.primary_role and user.primary_role.name == 'Helper':
-        is_helper = True
-    elif any(r.name == 'Helper' for r in user.roles):
-        is_helper = True
+    is_driver = False
+    if user.primary_role:
+        if user.primary_role.name == 'Helper':
+            is_helper = True
+        elif user.primary_role.name == 'Driver':
+            is_driver = True
+    for r in user.roles:
+        if r.name == 'Helper':
+            is_helper = True
+        elif r.name == 'Driver':
+            is_driver = True
 
-    if not is_helper:
+    if not (is_helper or is_driver):
         return None
 
     profile = DriverProfile.query.filter_by(user_id=user.id).first()
     company_id = user.company_id
     circle_id = user.circle_id
+
+    target_project_id = project_id
+    target_client_id = None
+
+    if target_project_id:
+        p = Project.query.get(target_project_id)
+        if p:
+            target_client_id = p.client_id
+            if not company_id:
+                company_id = p.company_id
+            if not circle_id:
+                circle_id = p.circle_id
 
     target_circle_id = circle_id
     if not target_circle_id and company_id:
@@ -278,17 +312,17 @@ def ensure_helper_profile(user):
         if c:
             target_circle_id = c.id
 
-    target_client_id = None
-    if company_id and target_circle_id:
-        cl = Client.query.filter_by(company_id=company_id, circle_id=target_circle_id).first()
-        if cl:
-            target_client_id = cl.id
+    if not target_client_id:
+        if company_id and target_circle_id:
+            cl = Client.query.filter_by(company_id=company_id, circle_id=target_circle_id).first()
+            if cl:
+                target_client_id = cl.id
 
-    target_project_id = None
-    if company_id and target_circle_id and target_client_id:
-        p = Project.query.filter_by(company_id=company_id, circle_id=target_circle_id, client_id=target_client_id).first()
-        if p:
-            target_project_id = p.id
+    if not target_project_id:
+        if company_id and target_circle_id and target_client_id:
+            p = Project.query.filter_by(company_id=company_id, circle_id=target_circle_id, client_id=target_client_id).first()
+            if p:
+                target_project_id = p.id
 
     target_subzone_id = None
     if company_id and target_circle_id and target_client_id and target_project_id:
@@ -297,7 +331,8 @@ def ensure_helper_profile(user):
             target_subzone_id = sz.id
 
     if not profile:
-        driver_code = f"HLP-{uuid.uuid4().hex[:8].upper()}"
+        prefix = "HLP" if is_helper else "DRV"
+        driver_code = f"{prefix}-{uuid.uuid4().hex[:8].upper()}"
         profile = DriverProfile(
             user_id=user.id,
             driver_code=driver_code,

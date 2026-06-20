@@ -211,6 +211,7 @@ def create_app(config_name=None):
     from app.modules.subzones.routes import subzones_bp
     from app.modules.vehicles.routes import vehicles_bp
     from app.modules.users.routes import users_bp
+    from app.modules.users.controllers.bulk_import_controller import bulk_import_bp
     from app.modules.drivers.routes import drivers_bp
     from app.modules.attendance.routes import attendance_bp
     from app.modules.deployments.routes import deployments_bp
@@ -247,6 +248,7 @@ def create_app(config_name=None):
     app.register_blueprint(subzones_bp)
     app.register_blueprint(vehicles_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(bulk_import_bp)
     app.register_blueprint(drivers_bp)
     app.register_blueprint(attendance_bp)
     app.register_blueprint(deployments_bp)

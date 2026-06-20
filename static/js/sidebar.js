@@ -134,10 +134,11 @@ const initDashboardSidebar = () => {
 
     // Mobile drawer close on link click
     sidebarEventHandlers.sidebarClick = (event) => {
-        if (!isMobile() || !sidebar.classList.contains('mobile-open')) {
+        const isMobileViewport = window.innerWidth < 768 || isMobile();
+        if (!isMobileViewport || !sidebar.classList.contains('mobile-open')) {
             return;
         }
-        const targetLink = event.target.closest('.sidebar-nav a.nav-link');
+        const targetLink = event.target.closest('.sidebar-nav a');
         if (targetLink) {
             setMobileDrawerOpen(false);
         }

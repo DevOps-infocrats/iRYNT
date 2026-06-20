@@ -1,0 +1,23 @@
+# Technical Debt & Code Duplication Report
+
+This document tracks code duplication, architectural overlaps, dead code, and style inconsistencies across the VIL frontend system.
+
+## 1. Core Architectural Issues
+
+### Manual Layout Duplication (Critical Debt)
+- **Finding**: **48 templates** do not inherit from `layouts/main.html`. Instead, they repeat the entire HTML structure, head tags, fonts, styles imports, and include navbar and sidebar templates manually.
+- **Implication**: Any changes to global script loading, metadata, or favicon requires editing 48 files. This makes visual upgrades, scripts versioning, or analytics integrations extremely risky.
+
+### Redundant Stylesheet Imports
+- **Finding**: Multiple form pages include scripts and styles that are not utilized. For example, `companies/create.html` loads `chart.js` from jsdelivr despite containing only input fields and no chart elements. This bloats page-load performance.
+
+## 2. Style System Conflicts
+
+- **Usage of `!important`**: **92 occurrences** of `!important` across stylesheet files (e.g., 20+ inside `sidebar.css`, 30+ inside `dashboard.css`, and module stylesheets). This breaks CSS inheritance rules.
+- **Hardcoded Colors**: **587 hardcoded hex/rgb color declarations** are scattered throughout module stylesheets (e.g. `roles.css`, `permissions.css`, `subzone.css`) rather than referencing variables defined in `design-tokens.css`.
+- **Direct Bootstrap Override**: Custom stylesheets directly target global Bootstrap classes (`.btn`, `.card`, `.form-control`, `.table`) with specific overrides instead of defining custom utility namespaces (e.g. `.btn-custom` or using CSS customization hooks). This creates theme conflicts.
+
+## 3. JavaScript Duplication
+- **AJAX logic**: Direct `fetch` calls are copy-pasted in multiple modules (`circle.js`, `company.js`, `drivers.js`, `users.js`). There is no centralized API request client or error-handling wrapper.
+- **Validation routines**: Form submit event interceptors (e.g., `checkValidity()`, `was-validated`) are written individually inside every controller script instead of using a global form-helper component.
+- **WebSocket listeners**: Multiple scripts re-implement realtime SSE or socket notifications listeners instead of subscribing to a single global listener event bus.

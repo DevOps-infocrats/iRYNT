@@ -1,0 +1,24 @@
+# UI Inventory: Reusable UI Components
+
+This document tracks reusable UI elements inside the VIL front-end structure, auditing design styling, variants, and reusability potential.
+
+| Component Name | Location | Styles Dependency | Scripts Dependency | Customization Variants | Reusability Score | Tech Debt / Remarks |
+|---|---|---|---|---|---|---|
+| Sidebar Navigation | [sidebar.html](file:///templates/partials/sidebar.html) / [sidebar_menu.html](file:///templates/components/sidebar_menu.html) | [sidebar.css](file:///static/css/sidebar.css) | [sidebar.js](file:///static/js/sidebar.js) | Expanded, Collapsed, Mobile Slide-out | **9/10** | Mostly reusable. Needs custom user-role mapping loaded cleanly. |
+| Navbar Header | [navbar.html](file:///templates/partials/navbar.html) | [navbar.css](file:///static/css/navbar.css) | Inline listener inside [main.html](file:///templates/layouts/main.html) | Light / Dark Theme Toggle, Notification Bell | **8/10** | Includes inline Javascript event listeners for theme toggles. Theme management should be externalized to a global utility. |
+| Stat Card / KPI Widget | Hardcoded in [dashboard.html](file:///templates/dashboard.html#L210) | `.kpi-card`, `.card-glass` in [dashboard.css](file:///static/css/dashboard.css) | *None* | Standard stat, warning/alert, color gradient icons | **4/10** | Card structure is hardcoded inside templates using HTML utility classes rather than using a Jinja macro component. Duplicated markup. |
+| Page Header Console | Duplicated across edit/create/list pages | `.dashboard-header` classes in [dashboard.css](file:///static/css/dashboard.css) | *None* | With/Without Action Buttons, With Back Links | **3/10** | Header HTML layouts are manually duplicated in every single module template. This should be a unified macro component. |
+| Table Data Grid | Implemented in 20+ list/detail views | `.table`, `.dashboard-table` in [dashboard.css](file:///static/css/dashboard.css) | Ajax helpers inside module scripts | Standard rows, actions column dropdown, pagination buttons | **3/10** | High levels of markup duplication. Tables do not share a common helper macro. Sorting and filters are handled ad-hoc. |
+| Searchable Location Selects | Used in Company, Circle, and Client forms | `.searchable-select` in [dashboard.css](file:///static/css/dashboard.css) | Custom location fetchers (e.g. `company.js`) | Country, State, City selectors | **5/10** | The location API dropdown options filters are coded directly inside module-specific JS files. The HTML structure is repeated inside each form. |
+| Status Indicator Badges | Used across lists and detail cards | `.badge-soft-*`, `.bg-gradient-*` in [design-tokens.css](file:///static/css/design-tokens.css) | *None* | Success, Warning, Danger, Info, Neutral | **7/10** | Standardized CSS token classes exist. However, the logic mapping database statuses to styles is repeatedly written inside python route templates. |
+
+## Detailed Component Analysis
+
+### Sidebar & Navbar layouts
+These layout shells are the most mature elements, using a global CSS grid layout in `main.html` and utilizing standard sidebar collapse logic. However, because 48 templates don't inherit from the layout parent, the sidebar sidebar menu includes are repeated manually, reducing modularity.
+
+### Form Fields and Input Blocks
+Form inputs are styled using Bootstrap's `.form-control` and `.form-select`. However, spacing wrapper groups (usually `.mb-3` or custom `.col-lg-6` sizes) are scattered. Forms are styled with manual bootstrap grids rather than modular row abstractions. Form validation classes are mixed.
+
+### Modals and Popups
+Bootstrap modals (e.g., `#deleteModal`, `#importModal`) are written inline at the bottom of templates. These could be unified into a single global layout modal structure triggered via data attributes to prevent layout bloating.

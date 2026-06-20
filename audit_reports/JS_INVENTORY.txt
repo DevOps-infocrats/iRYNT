@@ -1,0 +1,324 @@
+# UI Inventory: JavaScript Scripts
+
+This document audits all JavaScript source files in `static/js/` to map usage, libraries dependencies, WebSockets usage, and duplicate logics.
+
+## JS Audit Metrics
+
+- **Total JS files**: 23
+- **Total JS size**: 92.73 KB
+
+---
+
+### `static/js/auth.js`
+- **File Size**: 3431 bytes
+- **Purpose**: Module-specific script for auth.js logic.
+- **Event Listeners Added**: 6
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `login.html`
+
+---
+
+### `static/js/charts.js`
+- **File Size**: 3989 bytes
+- **Purpose**: Initializes Chart.js operations trends and utilization dashboards.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `Yes`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `dashboard.html`
+
+---
+
+### `static/js/circle.js`
+- **File Size**: 3676 bytes
+- **Purpose**: Module-specific script for circle.js logic.
+- **Event Listeners Added**: 5
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `circles/create.html`
+
+---
+
+### `static/js/client.js`
+- **File Size**: 3259 bytes
+- **Purpose**: Module-specific script for client.js logic.
+- **Event Listeners Added**: 7
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `clients/create.html`, `clients/edit.html`
+
+---
+
+### `static/js/company.js`
+- **File Size**: 5967 bytes
+- **Purpose**: Module-specific script for company.js logic.
+- **Event Listeners Added**: 11
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `companies/create.html`, `companies/edit.html`
+
+---
+
+### `static/js/dashboard.js`
+- **File Size**: 958 bytes
+- **Purpose**: General command center widgets updates.
+- **Event Listeners Added**: 2
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `dashboard.html`, `circles/index.html`, `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`, `companies/create.html`, `companies/edit.html`, and 7 others
+
+---
+
+### `static/js/drivers.js`
+- **File Size**: 521 bytes
+- **Purpose**: Module-specific script for drivers.js logic.
+- **Event Listeners Added**: 2
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `drivers/list.html`, `drivers/profile.html`
+
+---
+
+### `static/js/filters.js`
+- **File Size**: 2517 bytes
+- **Purpose**: Synchronizes and pulls filter dropdown selections (Company/Circle/Client).
+- **Event Listeners Added**: 1
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `dashboard.html`
+
+---
+
+### `static/js/projects/project.js`
+- **File Size**: 12604 bytes
+- **Purpose**: Module-specific script for projects logic.
+- **Event Listeners Added**: 15
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `projects/create.html`, `projects/edit.html`
+
+---
+
+### `static/js/realtime.js`
+- **File Size**: 1227 bytes
+- **Purpose**: Creates EventSource connections to stream notifications.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `dashboard.html`
+
+---
+
+### `static/js/roles/roles.js`
+- **File Size**: 4603 bytes
+- **Purpose**: Module-specific script for roles logic.
+- **Event Listeners Added**: 8
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `roles/create.html`, `roles/list.html`
+
+---
+
+### `static/js/sidebar.js`
+- **File Size**: 11215 bytes
+- **Purpose**: Collapses, expands, and dynamic toggle logic for the sidebar layout.
+- **Event Listeners Added**: 10
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `dashboard.html`, `circles/create.html`, `circles/index.html`, `clients/create.html`, `clients/details.html`, `clients/edit.html`, `clients/index.html`, `companies/create.html`, and 23 others
+
+---
+
+### `static/js/subzones/analytics.js`
+- **File Size**: 1902 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `Yes`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/subzones/dashboard.js`
+- **File Size**: 1065 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: `subzones/details.html`
+
+---
+
+### `static/js/subzones/hierarchy.js`
+- **File Size**: 4283 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 1
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/subzones/realtime.js`
+- **File Size**: 881 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `No`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**: *Clean structure, focused scope.*
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/subzones/subzone.js`
+- **File Size**: 7975 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 7
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `subzones/create.html`, `subzones/edit.html`
+
+---
+
+### `static/js/subzones/validations.js`
+- **File Size**: 1343 bytes
+- **Purpose**: Module-specific script for subzones logic.
+- **Event Listeners Added**: 1
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Redundant script file. Form validation sequences should be unified in a global `static/js/validation-utils.js`.
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/users/users.js`
+- **File Size**: 7224 bytes
+- **Purpose**: Module-specific script for users logic.
+- **Event Listeners Added**: 7
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `Yes`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `users/list.html`, `users/manage.html`, `users/profile.html`
+
+---
+
+### `static/js/vehicles/hierarchy.js`
+- **File Size**: 6000 bytes
+- **Purpose**: Module-specific script for vehicles logic.
+- **Event Listeners Added**: 5
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/vehicles/validations.js`
+- **File Size**: 2201 bytes
+- **Purpose**: Module-specific script for vehicles logic.
+- **Event Listeners Added**: 1
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: *Dead Code (No templates reference this script)*
+
+---
+
+### `static/js/vehicles/vehicle.js`
+- **File Size**: 1832 bytes
+- **Purpose**: Module-specific script for vehicles logic.
+- **Event Listeners Added**: 0
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `drivers/create.html`, `drivers/edit.html`, `vehicles/create.html`, `vehicles/edit.html`
+
+---
+
+### `static/js/widgets.js`
+- **File Size**: 6286 bytes
+- **Purpose**: Helper widgets initializer and metrics updater.
+- **Event Listeners Added**: 2
+- **Performs REST Fetch/AJAX calls**: `Yes`
+- **Integrates Realtime WebSockets**: `No`
+- **Integrates Canvas Charts**: `No`
+- **Integrates Leaflet Maps**: `No`
+- **Technical Debt & Code Smells**:
+  - Implements custom REST data calls directly inside UI handlers. Suggest encapsulating API requests in an `api-client.js` module.
+- **Templates Loading this Script**: `dashboard.html`
+
+---

@@ -93,6 +93,76 @@ export function initSubzoneForm() {
             saveButton.classList.add('loading');
         });
     }
+
+    const btnFetchLocation = document.getElementById('btnFetchLocation');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+    const fetchStatus = document.getElementById('locationFetchStatus');
+
+    if (btnFetchLocation) {
+        btnFetchLocation.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                if (fetchStatus) {
+                    fetchStatus.textContent = 'Geolocation is not supported by your browser.';
+                    fetchStatus.className = 'ms-2 text-danger small';
+                }
+                return;
+            }
+
+            btnFetchLocation.disabled = true;
+            const originalHtml = btnFetchLocation.innerHTML;
+            btnFetchLocation.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Fetching...</span>
+            `;
+            if (fetchStatus) {
+                fetchStatus.textContent = 'Acquiring GPS location...';
+                fetchStatus.className = 'ms-2 text-soft small';
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    if (latitudeInput) latitudeInput.value = lat;
+                    if (longitudeInput) longitudeInput.value = lng;
+
+                    // Trigger input event to update validation/state if necessary
+                    if (latitudeInput) latitudeInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    if (longitudeInput) longitudeInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                    btnFetchLocation.disabled = false;
+                    btnFetchLocation.innerHTML = originalHtml;
+                    if (fetchStatus) {
+                        fetchStatus.textContent = 'Location filled successfully!';
+                        fetchStatus.className = 'ms-2 text-success small';
+                    }
+                },
+                (error) => {
+                    console.error('Error fetching location:', error);
+                    let errMsg = 'Failed to fetch location.';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errMsg = 'Location permission denied by user.';
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        errMsg = 'Location information is unavailable.';
+                    } else if (error.code === error.TIMEOUT) {
+                        errMsg = 'Request to get user location timed out.';
+                    }
+                    btnFetchLocation.disabled = false;
+                    btnFetchLocation.innerHTML = originalHtml;
+                    if (fetchStatus) {
+                        fetchStatus.textContent = errMsg;
+                        fetchStatus.className = 'ms-2 text-danger small';
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+    }
 }
 
 export function initSubzoneListFilters() {

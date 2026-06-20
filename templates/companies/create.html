@@ -1,185 +1,167 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Company</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+{% extends 'layouts/main.html' %}
+{% set title = 'Create Company' %}
+
+{% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/company.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-</head>
-<body class="dashboard-page company-page">
-    <div class="dashboard-shell" id="dashboardShell">
-        {% include 'partials/sidebar.html' %}
-        <main class="dashboard-main">
-            {% include 'partials/navbar.html' %}
-            <section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
-                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
-                    <div>
-                        <p class="dashboard-title-label">Company Master</p>
-                        <h1 class="dashboard-title">Create New Company</h1>
-                        <p class="dashboard-subtitle text-soft">Build an enterprise-grade company record with validation and smart address lookup.</p>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+        <p class="dashboard-title-label">Company Master</p>
+        <h1 class="dashboard-title">Create New Company</h1>
+        <p class="dashboard-subtitle text-soft">Build an enterprise-grade company record with validation and smart address lookup.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('companies.index') }}" class="btn btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<form id="companyForm" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="company-card card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="mb-1">Basic Information</h5>
+                <p class="text-soft mb-0">Enter the company identity, codes, and compliance data.</p>
+            </div>
+            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#basicSection" aria-expanded="true">Toggle</button>
+        </div>
+        <div class="collapse show" id="basicSection">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.company_name.id }}">Company Name <span class="text-danger">*</span></label>
+                        {{ form.company_name(class="form-control" , placeholder="Enter company name") }}
+                        {% if form.company_name.errors %}
+                            <div class="invalid-feedback d-block">{{ form.company_name.errors[0] }}</div>
+                        {% endif %}
                     </div>
-                    <div class="d-flex gap-2">
-                        <a href="{{ url_for('companies.index') }}" class="btn btn-outline-secondary">Back to list</a>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.company_code.id }}">Company Code <span class="text-danger">*</span></label>
+                        {{ form.company_code(class="form-control" , placeholder="Example: TCI001") }}
+                        {% if form.company_code.errors %}
+                            <div class="invalid-feedback d-block">{{ form.company_code.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.gst_number.id }}">GST Number</label>
+                        {{ form.gst_number(class="form-control" , placeholder="Example: 27ABCDE1234F1Z5") }}
+                        {% if form.gst_number.errors %}
+                            <div class="invalid-feedback d-block">{{ form.gst_number.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.pan_number.id }}">PAN Number</label>
+                        {{ form.pan_number(class="form-control" , placeholder="Example: ABCDE1234F") }}
+                        {% if form.pan_number.errors %}
+                            <div class="invalid-feedback d-block">{{ form.pan_number.errors[0] }}</div>
+                        {% endif %}
                     </div>
                 </div>
-
-                <form id="companyForm" method="POST" novalidate>
-                    {{ form.hidden_tag() }}
-
-                    <div class="company-card card mb-4">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="mb-1">Basic Information</h5>
-                                <p class="text-soft mb-0">Enter the company identity, codes, and compliance data.</p>
-                            </div>
-                            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#basicSection" aria-expanded="true">Toggle</button>
-                        </div>
-                        <div class="collapse show" id="basicSection">
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.company_name.id }}">Company Name <span class="text-danger">*</span></label>
-                                        {{ form.company_name(class="form-control" , placeholder="Enter company name") }}
-                                        {% if form.company_name.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.company_name.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.company_code.id }}">Company Code <span class="text-danger">*</span></label>
-                                        {{ form.company_code(class="form-control" , placeholder="Example: TCI001") }}
-                                        {% if form.company_code.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.company_code.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.gst_number.id }}">GST Number</label>
-                                        {{ form.gst_number(class="form-control" , placeholder="Example: 27ABCDE1234F1Z5") }}
-                                        {% if form.gst_number.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.gst_number.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.pan_number.id }}">PAN Number</label>
-                                        {{ form.pan_number(class="form-control" , placeholder="Example: ABCDE1234F") }}
-                                        {% if form.pan_number.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.pan_number.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="company-card card mb-4">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="mb-1">Contact Information</h5>
-                                <p class="text-soft mb-0">Add optional email and phone details for corporate contact.</p>
-                            </div>
-                            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#contactSection" aria-expanded="true">Toggle</button>
-                        </div>
-                        <div class="collapse show" id="contactSection">
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.email.id }}">Company Email</label>
-                                        {{ form.email(class="form-control" , placeholder="admin@company.com") }}
-                                        {% if form.email.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.phone.id }}">Phone Number</label>
-                                        {{ form.phone(class="form-control" , placeholder="9876543210") }}
-                                        {% if form.phone.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.phone.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.status.id }}">Company Status</label>
-                                        {{ form.status(class="form-select") }}
-                                        {% if form.status.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.status.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="company-card card mb-4">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="mb-1">Address Information</h5>
-                                <p class="text-soft mb-0">Publish the company location with country, state, city and pincode.</p>
-                            </div>
-                            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#addressSection" aria-expanded="true">Toggle</button>
-                        </div>
-                        <div class="collapse show" id="addressSection">
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-12 col-lg-6">
-                                        <div class="searchable-select">
-                                            <label class="form-label" for="country_id">Country <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control search-input" id="countrySearch" placeholder="Search countries" autocomplete="off">
-                                            <select id="country_id" name="country_id" class="form-select" data-selected="{{ form.country_id.data or '' }}"></select>
-                                            {% if form.country_id.errors %}
-                                                <div class="invalid-feedback d-block">{{ form.country_id.errors[0] }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <div class="searchable-select">
-                                            <label class="form-label" for="state_id">State <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control search-input" id="stateSearch" placeholder="Search states" autocomplete="off">
-                                            <select id="state_id" name="state_id" class="form-select" data-selected="{{ form.state_id.data or '' }}"></select>
-                                            {% if form.state_id.errors %}
-                                                <div class="invalid-feedback d-block">{{ form.state_id.errors[0] }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <div class="searchable-select">
-                                            <label class="form-label" for="city_id">City <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control search-input" id="citySearch" placeholder="Search cities" autocomplete="off">
-                                            <select id="city_id" name="city_id" class="form-select" data-selected="{{ form.city_id.data or '' }}"></select>
-                                            {% if form.city_id.errors %}
-                                                <div class="invalid-feedback d-block">{{ form.city_id.errors[0] }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-lg-6">
-                                        <label class="form-label" for="{{ form.pincode.id }}">Pincode <span class="text-danger">*</span></label>
-                                        {{ form.pincode(class="form-control" , placeholder="226010") }}
-                                        {% if form.pincode.errors %}
-                                            <div class="invalid-feedback d-block">{{ form.pincode.errors[0] }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2 justify-content-end">
-                        <button type="reset" id="resetButton" class="btn btn-outline-secondary">Reset</button>
-                        <a href="{{ url_for('companies.index') }}" class="btn btn-secondary">Cancel</a>
-                        {{ form.submit(class='btn btn-gradient') }}
-                    </div>
-                </form>
-            </section>
-        </main>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="company-card card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="mb-1">Contact Information</h5>
+                <p class="text-soft mb-0">Add optional email and phone details for corporate contact.</p>
+            </div>
+            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#contactSection" aria-expanded="true">Toggle</button>
+        </div>
+        <div class="collapse show" id="contactSection">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.email.id }}">Company Email</label>
+                        {{ form.email(class="form-control" , placeholder="admin@company.com") }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.phone.id }}">Phone Number</label>
+                        {{ form.phone(class="form-control" , placeholder="9876543210") }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback d-block">{{ form.phone.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.status.id }}">Company Status</label>
+                        {{ form.status(class="form-select") }}
+                        {% if form.status.errors %}
+                            <div class="invalid-feedback d-block">{{ form.status.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="company-card card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="mb-1">Address Information</h5>
+                <p class="text-soft mb-0">Publish the company location with country, state, city and pincode.</p>
+            </div>
+            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#addressSection" aria-expanded="true">Toggle</button>
+        </div>
+        <div class="collapse show" id="addressSection">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">
+                        <div class="searchable-select">
+                            <label class="form-label" for="country_id">Country <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control search-input" id="countrySearch" placeholder="Search countries" autocomplete="off">
+                            <select id="country_id" name="country_id" class="form-select" data-selected="{{ form.country_id.data or '' }}"></select>
+                            {% if form.country_id.errors %}
+                                <div class="invalid-feedback d-block">{{ form.country_id.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="searchable-select">
+                            <label class="form-label" for="state_id">State <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control search-input" id="stateSearch" placeholder="Search states" autocomplete="off">
+                            <select id="state_id" name="state_id" class="form-select" data-selected="{{ form.state_id.data or '' }}"></select>
+                            {% if form.state_id.errors %}
+                                <div class="invalid-feedback d-block">{{ form.state_id.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="searchable-select">
+                            <label class="form-label" for="city_id">City <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control search-input" id="citySearch" placeholder="Search cities" autocomplete="off">
+                            <select id="city_id" name="city_id" class="form-select" data-selected="{{ form.city_id.data or '' }}"></select>
+                            {% if form.city_id.errors %}
+                                <div class="invalid-feedback d-block">{{ form.city_id.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label" for="{{ form.pincode.id }}">Pincode <span class="text-danger">*</span></label>
+                        {{ form.pincode(class="form-control" , placeholder="226010") }}
+                        {% if form.pincode.errors %}
+                            <div class="invalid-feedback d-block">{{ form.pincode.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 justify-content-end">
+        <button type="reset" id="resetButton" class="btn btn-outline-secondary">Reset</button>
+        <a href="{{ url_for('companies.index') }}" class="btn btn-secondary">Cancel</a>
+        {{ form.submit(class='btn btn-gradient') }}
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
     <script src="{{ url_for('static', filename='js/company.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-</body>
-</html>
+{% endblock %}

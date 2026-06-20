@@ -1,0 +1,600 @@
+{% extends 'layouts/main.html' %}
+
+{% block styles %}
+    
+    <style>
+        .import-card {
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .import-card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .dropzone-container {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .dropzone-container:hover, .dropzone-container.dragover {
+            border-color: #6366f1;
+            background: #f1f5f9;
+        }
+
+        .dropzone-icon {
+            font-size: 3.5rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .dropzone-container:hover .dropzone-icon {
+            transform: translateY(-4px);
+            color: #6366f1;
+        }
+
+        .step-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .step-active .step-badge {
+            background: #6366f1;
+            color: #ffffff;
+        }
+
+        .metric-pill {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+        }
+
+        .badge-success-soft {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-danger-soft {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .preview-table-wrapper {
+            max-height: 450px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 12px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Micro-animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-effect {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+                
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('users.index') }}" class="text-decoration-none">User Management</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('users.index') }}" class="text-decoration-none">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Bulk Import</li>
+                    </ol>
+                </nav>
+
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div>
+                        <p class="dashboard-title-label">Workforce Administration</p>
+                        <h1 class="dashboard-title">Bulk User Import</h1>
+                        <p class="text-soft mb-0">Upload workforce data using an Excel template to create multiple users in a single operation.</p>
+                    </div>
+                </div>
+
+                <!-- Main Workflow Container -->
+                <div class="row g-4">
+                    
+                    <!-- Left Section: Setup and Upload -->
+                    <div class="col-12 col-lg-5">
+                        <div class="card import-card p-4 mb-4">
+                            <div class="d-flex align-items-center mb-3 step-active">
+                                <span class="step-badge">1</span>
+                                <h5 class="mb-0 fw-bold">Download Template</h5>
+                            </div>
+                            <p class="text-soft small mb-3">Download the pre-formatted Excel template. Make sure to keep the header columns exactly as defined to ensure parsing success.</p>
+                            <a href="{{ url_for('bulk_import.download_template') }}" class="btn btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined">download</span>
+                                Download Import Template (.xlsx)
+                            </a>
+                        </div>
+
+                        <div class="card import-card p-4 position-relative">
+                            <div class="d-flex align-items-center mb-3 step-active">
+                                <span class="step-badge">2</span>
+                                <h5 class="mb-0 fw-bold">Upload Excel File</h5>
+                            </div>
+                            <p class="text-soft small mb-3">Drag and drop your filled Excel sheet or browse your local system. Supported formats: .xlsx</p>
+                            
+                            <div class="dropzone-container" id="dropzone">
+                                <input type="file" id="fileInput" accept=".xlsx" style="display: none;">
+                                <span class="material-symbols-outlined dropzone-icon">upload_file</span>
+                                <h6 class="fw-bold mb-1" id="dropzoneText">Drag and drop Excel here</h6>
+                                <p class="text-soft small mb-0">or click to browse from device</p>
+                            </div>
+                            
+                            <!-- File Selected State (Hidden by Default) -->
+                            <div class="mt-3 p-3 bg-light rounded d-none" id="selectedFileContainer">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined text-success">draft</span>
+                                        <div>
+                                            <span class="fw-semibold small d-block text-truncate" id="fileName" style="max-width: 200px;">filename.xlsx</span>
+                                            <small class="text-soft" id="fileSize">0 KB</small>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-link text-danger text-decoration-none" id="removeFileBtn">Remove</button>
+                                </div>
+                            </div>
+
+                            <!-- Upload & Validate Button -->
+                            <button id="validateBtn" class="btn btn-gradient w-100 py-2.5 mt-4" disabled>
+                                Validate Upload
+                            </button>
+
+                            <!-- Loading Overlay -->
+                            <div class="loading-overlay d-none" id="loadingOverlay">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary mb-2" role="status"></div>
+                                    <p class="small fw-semibold mb-0" id="loadingText">Processing spreadsheet...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section: Validation Results & Actions -->
+                    <div class="col-12 col-lg-7">
+                        <div class="card import-card p-4 h-100 d-flex flex-column" id="resultsCard" style="min-height: 400px;">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="step-badge">3</span>
+                                <h5 class="mb-0 fw-bold">Verification & Status</h5>
+                            </div>
+                            
+                            <!-- Empty State (Shown by Default) -->
+                            <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center p-5 text-soft" id="resultsEmptyState">
+                                <span class="material-symbols-outlined fs-1 mb-3">flaky</span>
+                                <h6 class="fw-semibold">No File Validated Yet</h6>
+                                <p class="small max-width-350">Once you select a template and click "Validate Upload", the verification breakdown and preview will load here.</p>
+                            </div>
+
+                            <!-- Results Summary & Preview (Hidden by Default) -->
+                            <div class="d-none flex-grow-1 d-flex flex-column" id="resultsContent">
+                                <!-- Metrics Row -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-4">
+                                        <div class="metric-pill text-center">
+                                            <small class="text-soft fw-medium d-block mb-1">Total Records</small>
+                                            <h3 class="fw-bold mb-0 text-dark" id="totalRows">0</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="metric-pill text-center">
+                                            <small class="text-soft fw-medium d-block mb-1">Valid Records</small>
+                                            <h3 class="fw-bold mb-0 text-success" id="validRows">0</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="metric-pill text-center">
+                                            <small class="text-soft fw-medium d-block mb-1">Errors</small>
+                                            <h3 class="fw-bold mb-0 text-danger" id="errorRows">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Error Alert Banner -->
+                                <div class="alert alert-danger d-none mb-3" id="errorBanner">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <span class="material-symbols-outlined">warning</span>
+                                        <div>
+                                            <span class="fw-semibold d-block">Validation Issues Found</span>
+                                            <span class="small" id="errorBannerText">Some records failed structural or database checks. You can import valid records or download the error report.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Success Alert Banner -->
+                                <div class="alert alert-success d-none mb-3" id="successBanner">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                        <div>
+                                            <span class="fw-semibold d-block">All Records Validated!</span>
+                                            <span class="small">Excel sheet matches all validation requirements. Ready to finalize workforce onboarding.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tab Navigation -->
+                                <ul class="nav nav-pills mb-3" id="resultsTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="preview-tab" data-bs-toggle="pill" data-bs-target="#preview-pane" type="button" role="tab" aria-controls="preview-pane" aria-selected="true">
+                                            <span class="material-symbols-outlined align-middle fs-5 me-1">preview</span>
+                                            Pre-Import Preview
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link position-relative" id="errors-tab" data-bs-toggle="pill" data-bs-target="#errors-pane" type="button" role="tab" aria-controls="errors-pane" aria-selected="false">
+                                            <span class="material-symbols-outlined align-middle fs-5 me-1">error</span>
+                                            Validation Errors
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="errorsBadge">0</span>
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab Content -->
+                                <div class="tab-content flex-grow-1 d-flex flex-column" id="resultsTabContent" style="min-height: 300px;">
+                                    
+                                    <!-- Preview Tab Pane -->
+                                    <div class="tab-pane fade show active flex-grow-1 d-flex flex-column" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab">
+                                        <div class="preview-table-wrapper flex-grow-1 mb-3">
+                                            <table class="table table-hover align-middle mb-0 text-nowrap" id="previewTable">
+                                                <thead class="table-light sticky-top">
+                                                    <tr>
+                                                        <th>Row</th>
+                                                        <th>Employee ID</th>
+                                                        <th>Name</th>
+                                                        <th>Role</th>
+                                                        <th>Resolved Role ID</th>
+                                                        <th>Company</th>
+                                                        <th>Resolved Company ID</th>
+                                                        <th>Circle</th>
+                                                        <th>Resolved Circle ID</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="previewTableBody">
+                                                    <!-- Dynamically populated -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Errors Tab Pane -->
+                                    <div class="tab-pane fade flex-grow-1 d-flex flex-column" id="errors-pane" role="tabpanel" aria-labelledby="errors-tab">
+                                        <div class="preview-table-wrapper flex-grow-1 mb-3" id="errorsTableContainer">
+                                            <table class="table table-hover align-middle mb-0" id="errorsTable">
+                                                <thead class="table-light sticky-top">
+                                                    <tr>
+                                                        <th style="width: 100px;">Row Number</th>
+                                                        <th>Column</th>
+                                                        <th>Value</th>
+                                                        <th>Error</th>
+                                                        <th>Suggested Fix</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="errorsTableBody">
+                                                    <!-- Dynamically populated -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Final Actions -->
+                                <div class="d-flex flex-wrap gap-2 justify-content-end mt-auto pt-3 border-top">
+                                    <a href="{{ url_for('bulk_import.download_error_report') }}" id="downloadErrorReportBtn" class="btn btn-outline-danger d-none">
+                                        <span class="material-symbols-outlined align-middle fs-5 me-1">file_download</span>
+                                        Download Error Report
+                                    </a>
+                                    <button id="importBtn" class="btn btn-gradient px-4 py-2">
+                                        Import Valid Records
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="importSuccessModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body text-center p-5">
+                    <span class="material-symbols-outlined text-success fs-1 mb-3 pulse-effect" style="font-size: 4.5rem !important;">check_circle</span>
+                    <h4 class="fw-bold mb-2">Import Completed Successfully</h4>
+                    <p class="text-soft mb-4" id="modalSuccessText">Workforce identities have been onboarded into the VIL registry.</p>
+                    <a href="{{ url_for('users.index') }}" class="btn btn-gradient px-5 py-2">
+                        Go to Users Registry
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const validateBtn = document.getElementById('validateBtn');
+            const removeFileBtn = document.getElementById('removeFileBtn');
+            const selectedFileContainer = document.getElementById('selectedFileContainer');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const dropzoneText = document.getElementById('dropzoneText');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            const resultsEmptyState = document.getElementById('resultsEmptyState');
+            const resultsContent = document.getElementById('resultsContent');
+            const totalRows = document.getElementById('totalRows');
+            const validRows = document.getElementById('validRows');
+            const errorRows = document.getElementById('errorRows');
+            const errorBanner = document.getElementById('errorBanner');
+            const successBanner = document.getElementById('successBanner');
+            const errorsTableContainer = document.getElementById('errorsTableContainer');
+            const errorsTableBody = document.getElementById('errorsTableBody');
+            const downloadErrorReportBtn = document.getElementById('downloadErrorReportBtn');
+            const importBtn = document.getElementById('importBtn');
+            
+            let selectedFile = null;
+
+            // CSRF Token header for AJAX posts
+            const csrfToken = '{{ csrf_token() }}';
+
+            // Drag and drop events
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                }, false);
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    handleFileSelect(files[0]);
+                }
+            });
+
+            dropzone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+
+            function handleFileSelect(file) {
+                if (!file.name.endsWith('.xlsx')) {
+                    alert('Please select a valid Excel file (.xlsx)');
+                    return;
+                }
+                selectedFile = file;
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+                
+                selectedFileContainer.classList.remove('d-none');
+                dropzone.classList.add('d-none');
+                validateBtn.disabled = false;
+            }
+
+            removeFileBtn.addEventListener('click', () => {
+                selectedFile = null;
+                fileInput.value = '';
+                selectedFileContainer.classList.add('d-none');
+                dropzone.classList.remove('d-none');
+                validateBtn.disabled = true;
+                resetResults();
+            });
+
+            function resetResults() {
+                resultsEmptyState.classList.remove('d-none');
+                resultsContent.classList.add('d-none');
+            }
+
+            // Upload and Validate
+            validateBtn.addEventListener('click', () => {
+                if (!selectedFile) return;
+
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                loadingText.textContent = 'Parsing and validating workbook...';
+                loadingOverlay.classList.remove('d-none');
+
+                $.ajax({
+                    url: "{{ url_for('bulk_import.validate_upload') }}",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    success: function(response) {
+                        loadingOverlay.classList.add('d-none');
+                        displayValidationResults(response);
+                    },
+                    error: function(xhr) {
+                        loadingOverlay.classList.add('d-none');
+                        const err = xhr.responseJSON ? xhr.responseJSON.error : 'Network error';
+                        alert('Validation failed: ' + err);
+                    }
+                });
+            });
+
+            function displayValidationResults(res) {
+                resultsEmptyState.classList.add('d-none');
+                resultsContent.classList.remove('d-none');
+                
+                const summary = res.summary || {};
+                const errors = res.errors || [];
+                const rows = res.rows || [];
+                
+                totalRows.textContent = summary.total || 0;
+                validRows.textContent = summary.valid || 0;
+                errorRows.textContent = summary.failed || 0;
+
+                // Clear lists
+                errorsTableBody.innerHTML = '';
+                
+                const previewTableBody = document.getElementById('previewTableBody');
+                previewTableBody.innerHTML = '';
+
+                // Populate Pre-Import Preview Table
+                rows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    
+                    const isValid = row.is_valid !== false;
+                    const statusBadge = isValid 
+                        ? `<span class="badge badge-success-soft px-2.5 py-1">Valid</span>`
+                        : `<span class="badge badge-danger-soft px-2.5 py-1">Error</span>`;
+
+                    // Generate a temporary mock employee ID preview
+                    const mockEmpId = "AUTO-GEN";
+
+                    tr.innerHTML = `
+                        <td class="fw-semibold">Row ${row.row_number}</td>
+                        <td><code>${mockEmpId}</code></td>
+                        <td>${row.Username || ''}</td>
+                        <td>${row.Role || ''}</td>
+                        <td><small class="text-muted text-truncate d-inline-block" style="max-width: 100px;">${row.role_id || 'N/A'}</small></td>
+                        <td>${row.Company || ''}</td>
+                        <td><small class="text-muted text-truncate d-inline-block" style="max-width: 100px;">${row.company_id || 'N/A'}</small></td>
+                        <td>${row.Circle || ''}</td>
+                        <td><small class="text-muted text-truncate d-inline-block" style="max-width: 100px;">${row.circle_id || 'N/A'}</small></td>
+                        <td>${statusBadge}</td>
+                    `;
+                    previewTableBody.appendChild(tr);
+                });
+
+                // Populate Errors Table
+                const errorsBadge = document.getElementById('errorsBadge');
+                if (errors.length > 0) {
+                    errorBanner.classList.remove('d-none');
+                    successBanner.classList.add('d-none');
+                    downloadErrorReportBtn.classList.remove('d-none');
+                    
+                    errorsBadge.textContent = errors.length;
+                    errorsBadge.classList.remove('d-none');
+
+                    errors.forEach(err => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="fw-bold">Row ${err.row_number}</td>
+                            <td><span class="badge bg-light text-dark font-monospace">${err.column || ''}</span></td>
+                            <td><code>${err.value !== null && err.value !== undefined ? err.value : ''}</code></td>
+                            <td class="text-danger small">${err.message}</td>
+                            <td class="text-success small">${err.suggested_fix || ''}</td>
+                        `;
+                        errorsTableBody.appendChild(tr);
+                    });
+                } else {
+                    errorBanner.classList.add('d-none');
+                    successBanner.classList.remove('d-none');
+                    downloadErrorReportBtn.classList.add('d-none');
+                    errorsBadge.classList.add('d-none');
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td colspan="5" class="text-center text-success small py-4">
+                            <span class="material-symbols-outlined align-middle fs-5 me-1">check_circle</span>
+                            All checks passed. Ready to import.
+                        </td>
+                    `;
+                    errorsTableBody.appendChild(tr);
+                }
+
+                // If zero valid rows, disable import button
+                importBtn.disabled = (summary.valid === 0);
+            }
+
+            // Final Import Action
+            importBtn.addEventListener('click', () => {
+                loadingText.textContent = 'Importing workforce data into registry...';
+                loadingOverlay.classList.remove('d-none');
+
+                $.ajax({
+                    url: "{{ url_for('bulk_import.import_users') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    success: function(response) {
+                        loadingOverlay.classList.add('d-none');
+                        
+                        // Populate success message
+                        const modalText = document.getElementById('modalSuccessText');
+                        modalText.textContent = `Successfully imported ${response.created || 0} user records.`;
+                        
+                        // Show modal
+                        const successModal = new bootstrap.Modal(document.getElementById('importSuccessModal'));
+                        successModal.show();
+                    },
+                    error: function(xhr) {
+                        loadingOverlay.classList.add('d-none');
+                        const err = xhr.responseJSON ? xhr.responseJSON.error : 'Import failed';
+                        alert('Import failed: ' + err);
+                    }
+                });
+            });
+
+        });
+    </script>
+{% endblock %}

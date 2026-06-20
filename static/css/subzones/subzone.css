@@ -206,3 +206,49 @@
     color: var(--text-soft);
     font-size: 0.9rem;
 }
+
+/* Geo-Fencing Configuration Grid Layout */
+.geofencing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.geofencing-grid .toggle-card {
+    height: 100%;
+    min-height: 55px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0 !important;
+    padding: 12px 16px !important;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.geofencing-grid .subzone-form-group {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.geofencing-grid .subzone-form-group label {
+    margin-bottom: 8px;
+}
+
+.geofencing-grid .subzone-form-group .form-control {
+    margin-top: auto;
+}
+
+@media (max-width: 991px) {
+    .geofencing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .geofencing-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

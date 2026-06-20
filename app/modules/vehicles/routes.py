@@ -8,6 +8,11 @@ from app.modules.circles.models import Circle
 from app.modules.clients.models import Client
 from app.modules.projects.models import Project
 from app.modules.subzones.models import Subzone
+from app.modules.vehicles.services.excel_parser_service import VehicleExcelParserService
+from app.modules.vehicles.services.validation_service import VehicleValidationService
+from app.modules.vehicles.services.bulk_import_service import VehicleBulkImportService
+import io
+from flask import send_file, session
 
 vehicles_bp = Blueprint('vehicles', __name__, url_prefix='/vehicles')
 vehicle_service = VehicleService()
@@ -283,4 +288,83 @@ def ajax_check_number():
         exclude_id=exclude_id,
     )
     return jsonify({'exists': exists})
+
+
+def _has_bulk_import_permission():
+    allowed_roles = {'Super Admin', 'Corporate Admin', 'Circle Admin'}
+    user_roles = [r.name for r in getattr(current_user, 'roles', [])]
+    if hasattr(current_user, 'primary_role') and current_user.primary_role:
+        user_roles.append(current_user.primary_role.name)
+    return any(role in allowed_roles for role in user_roles)
+
+@vehicles_bp.route('/bulk-import', methods=['GET'])
+@login_required
+def bulk_import_page():
+    if not _has_bulk_import_permission():
+        return jsonify({'error': 'Forbidden'}), 403
+    return render_template('vehicles/bulk_import.html')
+
+@vehicles_bp.route('/bulk-import/template', methods=['GET'])
+@login_required
+def download_template():
+    if not _has_bulk_import_permission():
+        return jsonify({'error': 'Forbidden'}), 403
+    parser = VehicleExcelParserService()
+    wb_bytes = parser.generate_template()
+    return send_file(
+        io.BytesIO(wb_bytes),
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='VIL_Vehicle_Import_Template.xlsx'
+    )
+
+@vehicles_bp.route('/bulk-import/validate', methods=['POST'])
+@login_required
+def validate_upload():
+    if not _has_bulk_import_permission():
+        return jsonify({'error': 'Forbidden'}), 403
+    uploaded_file = request.files.get('file')
+    if not uploaded_file:
+        return jsonify({'error': 'No file provided'}), 400
+    parser = VehicleExcelParserService()
+    rows = parser.parse_excel(uploaded_file)
+    validator = VehicleValidationService()
+    summary, errors = validator.validate(rows)
+    session['vehicle_import_data'] = {'rows': rows, 'errors': errors}
+    return jsonify({'summary': summary, 'errors': errors, 'rows': rows})
+
+@vehicles_bp.route('/bulk-import/import', methods=['POST'])
+@login_required
+def import_vehicles():
+    if not _has_bulk_import_permission():
+        return jsonify({'error': 'Forbidden'}), 403
+    data = session.get('vehicle_import_data')
+    if not data:
+        return jsonify({'error': 'No validation data found'}), 400
+    rows = data.get('rows', [])
+    errors = data.get('errors', [])
+    error_row_indices = {e['row_number'] - 2 for e in errors}
+    valid_rows = [row for idx, row in enumerate(rows) if idx not in error_row_indices]
+    import_service = VehicleBulkImportService()
+    import_result = import_service.import_rows(valid_rows, current_user.id)
+    session.pop('vehicle_import_data', None)
+    return jsonify(import_result)
+
+@vehicles_bp.route('/bulk-import/error-report', methods=['GET'])
+@login_required
+def download_error_report():
+    if not _has_bulk_import_permission():
+        return jsonify({'error': 'Forbidden'}), 403
+    data = session.get('vehicle_import_data', {})
+    errors = data.get('errors', [])
+    if not errors:
+        return jsonify({'error': 'No errors to report'}), 400
+    parser = VehicleExcelParserService()
+    wb_bytes = parser.generate_error_report(errors)
+    return send_file(
+        io.BytesIO(wb_bytes),
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='Vehicle_Bulk_Import_Error_Report.xlsx'
+    )
 

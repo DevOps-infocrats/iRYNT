@@ -1,0 +1,1502 @@
+# UI Inventory: Templates
+
+This document maps all Jinja2 HTML templates in the VIL codebase, identifying layout inheritance, dependencies, and route endpoints.
+
+## Summary Statistics
+
+- **Total Templates Analyzed**: 82
+- **Templates inheriting from `layouts/main.html`**: 34
+- **Templates with NO layout inheritance (manual boilerplate duplicate)**: 45 (excluding main layout and partial navbar/sidebar)
+
+---
+
+### `access_control/index.html`
+- **File Size**: 4927 bytes
+- **Purpose**: Landing and grid list console for access_control.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `approvals/analytics.html`
+- **File Size**: 13066 bytes
+- **Purpose**: Analytics reporting charts and data metrics for approvals.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `approvals/index.html`
+- **File Size**: 42757 bytes
+- **Purpose**: Landing and grid list console for approvals.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `min`, `csrf_token`, `csrf_token`, `csrf_token`, `csrf_token`, `csrf_token`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `approvals/view.html`
+- **File Size**: 16364 bytes
+- **Purpose**: Interface template representing the view view of the approvals module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`, `csrf_token`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `attendance/approvals.html`
+- **File Size**: 3411 bytes
+- **Purpose**: Interface template representing the approvals view of the attendance module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `attendance/history.html`
+- **File Size**: 5886 bytes
+- **Purpose**: Historical log records auditing attendance actions.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `attendance/live.html`
+- **File Size**: 61539 bytes
+- **Purpose**: Interface template representing the live view of the attendance module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`, `csrf_token`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `attendance/monitoring.html`
+- **File Size**: 5722 bytes
+- **Purpose**: Interface template representing the monitoring view of the attendance module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `attendance/shift_reports.html`
+- **File Size**: 1830 bytes
+- **Purpose**: Interface template representing the shift_reports view of the attendance module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `circles/create.html`
+- **File Size**: 6278 bytes
+- **Purpose**: Form template to create a new circles record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/circle.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://code.jquery.com/jquery-3.6.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - Static: `static/js/circle.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**:
+  - `'GET', 'POST'` `/create` (fn: `create` in `modules/circles/routes.py`)
+
+---
+
+### `circles/edit.html`
+- **File Size**: 1531 bytes
+- **Purpose**: Form template to modify an existing circles record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/circle.css`
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `circles/index.html`
+- **File Size**: 4672 bytes
+- **Purpose**: Landing and grid list console for circles.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/circle.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/` (fn: `index` in `modules/circles/routes.py`)
+
+---
+
+### `clients/create.html`
+- **File Size**: 10546 bytes
+- **Purpose**: Form template to create a new clients record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/client.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/client.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `clients/details.html`
+- **File Size**: 6524 bytes
+- **Purpose**: Detailed read-only profile dashboard view for a specific clients record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/client.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/<client_id>` (fn: `details` in `modules/clients/routes.py`)
+
+---
+
+### `clients/edit.html`
+- **File Size**: 11612 bytes
+- **Purpose**: Form template to modify an existing clients record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/client.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/client.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `clients/index.html`
+- **File Size**: 8055 bytes
+- **Purpose**: Landing and grid list console for clients.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/client.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `companies/create.html`
+- **File Size**: 13602 bytes
+- **Purpose**: Form template to create a new companies record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/company.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/company.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**:
+  - `'GET', 'POST'` `/create` (fn: `create` in `modules/companies/routes.py`)
+
+---
+
+### `companies/edit.html`
+- **File Size**: 13340 bytes
+- **Purpose**: Form template to modify an existing companies record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/company.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/company.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**:
+  - `'GET', 'POST'` `/<company_id>/edit` (fn: `edit` in `modules/companies/routes.py`)
+
+---
+
+### `companies/index.html`
+- **File Size**: 4930 bytes
+- **Purpose**: Landing and grid list console for companies.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/company.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/` (fn: `index` in `modules/companies/routes.py`)
+
+---
+
+### `components/sidebar_menu.html`
+- **File Size**: 1651 bytes
+- **Purpose**: Reusable micro-component representing sidebar_menu structure.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Defined**: `render_sidebar_item`
+- **Macros Used**: `render_sidebar_item`, `url_for_safe`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `dashboard.html`
+- **File Size**: 28292 bytes
+- **Purpose**: Operations Command Center main dashboard displaying real-time vehicle, driver, and compliance KPI widgets.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/filters.js`
+  - Static: `static/js/widgets.js`
+  - Static: `static/js/charts.js`
+  - Static: `static/js/realtime.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/active.html`
+- **File Size**: 2726 bytes
+- **Purpose**: View displaying currently active deployments tracking records.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/approve.html`
+- **File Size**: 3564 bytes
+- **Purpose**: Interface template representing the approve view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/assign.html`
+- **File Size**: 2123 bytes
+- **Purpose**: Interface template representing the assign view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/assignment_dashboard.html`
+- **File Size**: 24565 bytes
+- **Purpose**: Interface template representing the assignment_dashboard view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/create.html`
+- **File Size**: 8354 bytes
+- **Purpose**: Form template to create a new deployments record with built-in validation.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**:
+  - Static: `static/js/deployments.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/detail.html`
+- **File Size**: 7574 bytes
+- **Purpose**: Detailed profile dashboard view for a specific deployments record.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/helper_assignments/create.html`
+- **File Size**: 7799 bytes
+- **Purpose**: Interface template representing the helper_assignments view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/helper_assignments/edit.html`
+- **File Size**: 7801 bytes
+- **Purpose**: Interface template representing the helper_assignments view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/helper_assignments/index.html`
+- **File Size**: 7221 bytes
+- **Purpose**: Interface template representing the helper_assignments view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/helper_assignments/view.html`
+- **File Size**: 8489 bytes
+- **Purpose**: Interface template representing the helper_assignments view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/history.html`
+- **File Size**: 6261 bytes
+- **Purpose**: Historical log records auditing deployments actions.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/index.html`
+- **File Size**: 6647 bytes
+- **Purpose**: Landing and grid list console for deployments.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `deployments/requests.html`
+- **File Size**: 2808 bytes
+- **Purpose**: Interface template representing the requests view of the deployments module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `documents/driver_detail.html`
+- **File Size**: 12457 bytes
+- **Purpose**: Interface template representing the driver_detail view of the documents module.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`, `csrf_token`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/compliance.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `documents/drivers.html`
+- **File Size**: 9424 bytes
+- **Purpose**: Interface template representing the drivers view of the documents module.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/compliance.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `documents/vehicles.html`
+- **File Size**: 7924 bytes
+- **Purpose**: Interface template representing the vehicles view of the documents module.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/compliance.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `drivers/create.html`
+- **File Size**: 25726 bytes
+- **Purpose**: Form template to create a new drivers record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/drivers.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/vehicles/vehicle.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `drivers/edit.html`
+- **File Size**: 14689 bytes
+- **Purpose**: Form template to modify an existing drivers record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/drivers.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/vehicles/vehicle.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `drivers/list.html`
+- **File Size**: 10685 bytes
+- **Purpose**: Data grid view listing all drivers records with filters, search, and action links.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/drivers.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/drivers.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `drivers/profile.html`
+- **File Size**: 30189 bytes
+- **Purpose**: Profile console view for a drivers account.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/drivers.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/drivers.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `forgot_password.html`
+- **File Size**: 2954 bytes
+- **Purpose**: Self-service user password recovery request form.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/auth.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `index.html`
+- **File Size**: 5245 bytes
+- **Purpose**: Landing/Entry portal redirect.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `layouts/main.html`
+- **File Size**: 4082 bytes
+- **Purpose**: Global layout structure containing HTML shell, layout grid, and shared scripts/stylesheets.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://fonts.googleapis.com`
+  - CDN: `https://fonts.gstatic.com`
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/permissions/permissions.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `login.html`
+- **File Size**: 6533 bytes
+- **Purpose**: User authentication page (login input form).
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/auth.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/auth.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `notifications/index.html`
+- **File Size**: 8149 bytes
+- **Purpose**: Landing and grid list console for notifications.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**:
+  - `'GET'` `/` (fn: `index` in `delivery/web/routes/notifications_routes.py`)
+
+---
+
+### `partials/navbar.html`
+- **File Size**: 5623 bytes
+- **Purpose**: Partial layout component representing the global navbar layout block.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Used**: `url_for_safe`, `url_for_safe`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `partials/sidebar.html`
+- **File Size**: 2138 bytes
+- **Purpose**: Partial layout component representing the global sidebar layout block.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `components/sidebar_menu.html`
+- **Macros Used**: `render_sidebar_item`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/analytics.html`
+- **File Size**: 228 bytes
+- **Purpose**: Analytics reporting charts and data metrics for permissions.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/audit.html`
+- **File Size**: 219 bytes
+- **Purpose**: Interface template representing the audit view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/create.html`
+- **File Size**: 6004 bytes
+- **Purpose**: Form template to create a new permissions record with built-in validation.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/dashboard.html`
+- **File Size**: 11820 bytes
+- **Purpose**: Interface template representing the dashboard view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/details.html`
+- **File Size**: 235 bytes
+- **Purpose**: Detailed read-only profile dashboard view for a specific permissions record.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/edit.html`
+- **File Size**: 229 bytes
+- **Purpose**: Form template to modify an existing permissions record.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/matrix.html`
+- **File Size**: 8547 bytes
+- **Purpose**: Interface template representing the matrix view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `csrf_token`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/registry.html`
+- **File Size**: 14284 bytes
+- **Purpose**: Interface template representing the registry view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/role_permissions.html`
+- **File Size**: 231 bytes
+- **Purpose**: Interface template representing the role_permissions view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/settings.html`
+- **File Size**: 226 bytes
+- **Purpose**: Interface template representing the settings view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `permissions/workflow_access.html`
+- **File Size**: 229 bytes
+- **Purpose**: Interface template representing the workflow_access view of the permissions module.
+- **Parent Template**: `layouts/main.html`
+- **Included Partials**: *None*
+- **CSS Dependencies**: *None (uses global defaults or inherited layout)*
+- **JS Dependencies**: *None (uses global defaults or inherited layout)*
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `projects/create.html`
+- **File Size**: 18496 bytes
+- **Purpose**: Form template to create a new projects record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/projects/project.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+  - Static: `static/js/projects/project.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `projects/details.html`
+- **File Size**: 16292 bytes
+- **Purpose**: Detailed read-only profile dashboard view for a specific projects record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/projects/project.css`
+  - Static: `static/css/projects/project-dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `projects/edit.html`
+- **File Size**: 15289 bytes
+- **Purpose**: Form template to modify an existing projects record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/projects/project.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+  - Static: `static/js/projects/project.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `projects/index.html`
+- **File Size**: 8328 bytes
+- **Purpose**: Landing and grid list console for projects.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/projects/project.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `reset_password.html`
+- **File Size**: 3586 bytes
+- **Purpose**: Self-service password reset submission form.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: *None*
+- **Macros Used**: `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/auth.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `roles/compare.html`
+- **File Size**: 6522 bytes
+- **Purpose**: Interface template representing the compare view of the roles module.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/roles/roles.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `roles/create.html`
+- **File Size**: 6655 bytes
+- **Purpose**: Form template to create a new roles record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/roles/roles.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/roles/roles.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `roles/detail.html`
+- **File Size**: 12623 bytes
+- **Purpose**: Detailed profile dashboard view for a specific roles record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/roles/roles.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+- **Mapped Routes / Pages**:
+  - `'GET', 'POST'` `/create` (fn: `create` in `modules/roles/routes.py`)
+
+---
+
+### `roles/list.html`
+- **File Size**: 15460 bytes
+- **Purpose**: Data grid view listing all roles records with filters, search, and action links.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/roles/roles.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - Static: `static/js/roles/roles.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `subzones/create.html`
+- **File Size**: 17023 bytes
+- **Purpose**: Form template to create a new subzones record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/subzones/subzone.css`
+  - Static: `static/css/subzones/subzone-responsive.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/subzones/subzone.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `subzones/details.html`
+- **File Size**: 14721 bytes
+- **Purpose**: Detailed read-only profile dashboard view for a specific subzones record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/subzones/subzone.css`
+  - Static: `static/css/subzones/subzone-dashboard.css`
+  - Static: `static/css/subzones/subzone-responsive.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/subzones/dashboard.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `subzones/edit.html`
+- **File Size**: 16895 bytes
+- **Purpose**: Form template to modify an existing subzones record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/subzones/subzone.css`
+  - Static: `static/css/subzones/subzone-responsive.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/subzones/subzone.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `subzones/list.html`
+- **File Size**: 6302 bytes
+- **Purpose**: Data grid view listing all subzones records with filters, search, and action links.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/subzones/subzone.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/` (fn: `index` in `modules/subzones/routes.py`)
+
+---
+
+### `users/bulk_import.html`
+- **File Size**: 32067 bytes
+- **Purpose**: Upload console interface for importing users records from Excel templates.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**:
+  - `'GET'` `/bulk-import` (fn: `bulk_import_page` in `modules/users/controllers/bulk_import_controller.py`)
+
+---
+
+### `users/list.html`
+- **File Size**: 25891 bytes
+- **Purpose**: Data grid view listing all users records with filters, search, and action links.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/users/users.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/users/users.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `users/manage.html`
+- **File Size**: 5749 bytes
+- **Purpose**: Interface template representing the manage view of the users module.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/users/users.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/users/users.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `users/profile.html`
+- **File Size**: 18770 bytes
+- **Purpose**: Profile console view for a users account.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/users/users.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/chart.js`
+  - Static: `static/js/sidebar.js`
+  - Static: `static/js/users/users.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `vehicles/bulk_import.html`
+- **File Size**: 32224 bytes
+- **Purpose**: Upload console interface for importing vehicles records from Excel templates.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `csrf_token`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**:
+  - `'GET'` `/bulk-import` (fn: `bulk_import_page` in `modules/vehicles/routes.py`)
+
+---
+
+### `vehicles/create.html`
+- **File Size**: 17994 bytes
+- **Purpose**: Form template to create a new vehicles record with built-in validation.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `field`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/vehicles/vehicle.css`
+  - Static: `static/css/vehicles/vehicle-responsive.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/vehicles/vehicle.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `vehicles/details.html`
+- **File Size**: 10247 bytes
+- **Purpose**: Detailed read-only profile dashboard view for a specific vehicles record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/vehicles/vehicle.css`
+  - Static: `static/css/vehicles/vehicle-dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/<vehicle_id>` (fn: `details` in `modules/vehicles/routes.py`)
+
+---
+
+### `vehicles/edit.html`
+- **File Size**: 14614 bytes
+- **Purpose**: Form template to modify an existing vehicles record.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `field`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/vehicles/vehicle.css`
+- **JS Dependencies**:
+  - CDN: `https://code.jquery.com/jquery-3.7.0.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/vehicles/vehicle.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `vehicles/index.html`
+- **File Size**: 6327 bytes
+- **Purpose**: Landing and grid list console for vehicles.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**: *Indirect/Included partial or layout file*
+
+---
+
+### `vehicles/list.html`
+- **File Size**: 8319 bytes
+- **Purpose**: Data grid view listing all vehicles records with filters, search, and action links.
+- **Parent Template**: *None (Boilerplate Duplicate)*
+- **Included Partials**: `partials/navbar.html`, `partials/sidebar.html`
+- **Macros Used**: `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`, `url_for`
+- **CSS Dependencies**:
+  - CDN: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap`
+  - CDN: `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0`
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css`
+  - Static: `static/css/design-tokens.css`
+  - Static: `static/css/sidebar.css`
+  - Static: `static/css/navbar.css`
+  - Static: `static/css/dashboard.css`
+  - Static: `static/css/vehicles/vehicle.css`
+  - Static: `static/css/vehicles/vehicle-dashboard.css`
+- **JS Dependencies**:
+  - CDN: `https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js`
+  - Static: `static/js/sidebar.js`
+- **Mapped Routes / Pages**:
+  - `GET` `/` (fn: `index` in `modules/vehicles/routes.py`)
+
+---

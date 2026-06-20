@@ -120,6 +120,14 @@
     --spacing-16: 64px;
     --spacing-20: 80px;
     --spacing-24: 96px;
+    
+    /* ---- INPUTS, BUTTONS & CARDS ---- */
+    --input-height: 48px;
+    --input-radius: 12px;
+    --btn-height: 48px;
+    --btn-height-sm: 40px;
+    --card-radius: 16px;
+    --card-padding: 24px;
 }
 
 /* ---- DARK THEME ---- */
@@ -509,4 +517,48 @@ small {
 /* ---- CODE ---- */
 code, pre {
     font-family: var(--font-family-mono);
+}
+
+/* ---- GLOBAL STYLING OVERRIDES (INPUTS, BUTTONS, CARDS) ---- */
+.form-control:not(textarea),
+.form-select {
+    height: var(--input-height) !important;
+    border-radius: var(--input-radius) !important;
+    font-size: var(--font-size-base) !important;
+}
+
+textarea.form-control {
+    border-radius: var(--input-radius) !important;
+    font-size: var(--font-size-base) !important;
+}
+
+.btn:not(.btn-sm):not(.btn-close):not(.btn-icon):not(.carousel-control-prev):not(.carousel-control-next) {
+    height: var(--btn-height) !important;
+    border-radius: var(--input-radius) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-sm,
+.btn-icon {
+    height: var(--btn-height-sm) !important;
+    border-radius: var(--radius-md) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.card {
+    border-radius: var(--card-radius) !important;
+    border: var(--border-normal) !important;
+}
+
+.card .card-body {
+    padding: var(--card-padding) !important;
+}
+
+.card .card-header {
+    padding: 20px var(--card-padding) !important;
+    border-bottom: var(--border-light) !important;
 }

@@ -1,0 +1,32 @@
+# Responsive Design & Layout Audit
+
+This document analyzes the VIL frontend layout across critical viewport breakpoints, highlighting styling overflows, clipping issues, and responsive components behavior.
+
+## Tested Viewport Sizes
+
+- **Mobile (Small)**: `320px`, `375px`, `390px`, `414px`
+- **Mobile (Medium/Large)**: `480px`, `768px` (Tablets)
+- **Desktop (Standard)**: `1024px`, `1280px`, `1366px` (Laptops)
+- **Desktop (Large/Ultra-wide)**: `1440px`, `1920px` (High-resolution monitors)
+
+## Layout Structural Overviews & Issues
+
+### 1. Sidebar Grid Layout (Main Shell)
+- **Desktop (>= 992px)**: Sidebar sits fixed on the left with width `var(--sidebar-width)` (260px) and the main container shifts right. Responsive behavior is smooth.
+- **Tablets (768px - 991px)**: The sidebar collapses into icon-only mode `var(--sidebar-collapsed-width)` (70px). This works reasonably well but layout shifts are sudden.
+- **Mobile (< 768px)**: The sidebar moves off-canvas, sliding in from the left when clicking the hamburger toggle. Overlapping layout occurs on some models due to container margins.
+
+### 2. Table Component Overflows
+> [!WARNING]
+> Table columns are a primary source of horizontal overflows on viewports below `768px`.
+
+- **The Issue**: Columns containing long strings (e.g., GST numbers, email addresses, vehicle serials, UUIDs) do not wrap, forcing the screen to overflow horizontally and breaking the mobile viewport container.
+- **Solution**: All data grids must wrap inside a Bootstrap `.table-responsive` block wrapper, and columns must use explicit width restrictions or flex styling.
+
+### 3. Forms Layout Collapse
+- **Grid Layout**: Fields are organized inside `<div class='row g-3'>` with columns sized as `col-lg-6` or `col-md-4`.
+- **Breakpoints**: On small mobile sizes (`< 480px`), columns correctly stack vertically. However, button placements at the bottom of forms (e.g., Reset, Cancel, Save) often wrap awkwardly, clipping padding bounds or extending beyond cards boundaries.
+
+### 4. KPI Cards Grid Grid wrapping
+- **Desktop**: KPI widgets use CSS grid `grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))`.
+- **Mobile**: Columns wrap correctly, but in viewports below `360px`, the KPI avatars overlap with text values due to absolute sizing constraints. Cards heights are inconsistent across rows.

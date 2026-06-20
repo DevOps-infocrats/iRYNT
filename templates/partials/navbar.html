@@ -17,15 +17,13 @@
                 const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
                 updateThemeIcon(currentTheme);
 
-                // Clone to strip any existing listeners and ensure a single clean handler
-                const newToggleBtn = themeToggleBtn.cloneNode(true);
-                themeToggleBtn.parentNode.replaceChild(newToggleBtn, themeToggleBtn);
-
-                newToggleBtn.addEventListener('click', () => {
+                // Directly attach click handler (no cloning needed)
+                themeToggleBtn.addEventListener('click', () => {
                     const targetTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
                     document.documentElement.setAttribute('data-bs-theme', targetTheme);
                     localStorage.setItem('theme', targetTheme);
                     updateThemeIcon(targetTheme);
+                    console.log('Theme toggled to', targetTheme);
                 });
             }
         };

@@ -1,0 +1,49 @@
+# UI Refactoring & Design System Migration Plan
+
+## 1. Executive Summary
+The VIL frontend architecture is built on a modern core foundation (Bootstrap 5.3.2, Inter typography, CSS custom properties variable tokens). However, because over **58% of views** do not use Jinja2 layout inheritance, and stylesheets bypass design-tokens variables, the application has drifted visually and architecturally. This report outlines a migration path to standardize components and clean up the CSS codebase.
+
+## 2. Technical Architecture Blueprint
+
+### Current State vs Target State
+
+| Metric / Feature | Current State | Target State |
+|---|---|---|
+| Layout Inheritance | 34 templates use `main.html`; 48 duplicate boilerplate | 100% of templates inherit from `layouts/main.html` |
+| Design Tokens Colors | 580+ hardcoded hex/rgb styles | 100% compliance with `design-tokens.css` variables |
+| Style Specificity overrides | 92 `!important` declarations | `< 10` (strictly reserved for layout locks) |
+| JavaScript API client | Scattered direct `fetch` API requests | Encapsulated REST handler in `static/js/api-client.js` |
+| Form validations | Ad-hoc page scripts validation triggers | Standardized HTML5 constraint validations with form helper scripts |
+| Redundant JS script loads | Pages load unused scripts (e.g. Chart.js on form pages) | Asset bundles loaded dynamically based on block scopes |
+
+## 3. Recommended Design System Tokens
+
+The existing `static/css/design-tokens.css` token library is structurally sound and supports both Light and Dark modes. We must strictly enforce its usage across all views and component overrides:
+
+- **Color Palette**: Use `--accent-primary` (#FF7A18), `--accent-secondary` (#FF4D8D), `--accent-success` (#2FBF71), etc.
+- **Spacing Scale**: Enforce `--spacing-0` (0px) to `--spacing-24` (96px) scale variables instead of random margin values.
+- **Border Radius Scale**: Standardize cards/buttons to `--radius-md` (8px) and `--radius-lg` (12px). Remove competing 14px, 18px, and 22px hardcoded values.
+
+## 4. Migration Strategy Phases
+
+```mermaid
+graph TD
+    A[Phase 1: Base Layout Standardization] --> B[Phase 2: CSS Cleanup & Token Compliance]
+    B --> C[Phase 3: JS Reusable Component Library]
+    C --> D[Phase 4: Dynamic Validation & Testing]
+```
+
+### Phase 1: Base Layout Standardization
+Convert all 48 duplicating templates to extend `layouts/main.html`. Strip the boilerplate `<html>`, `<head>`, `<body>`, navbar includes, and sidebar includes. Inject local CSS and JS imports using `{% block content %}` and `{% block scripts %}` blocks.
+
+### Phase 2: CSS Cleanup & Token Compliance
+Convert all module-specific CSS (e.g., `circle.css`, `company.css`, `subzone.css`) into a standardized layout structure. Swap hardcoded color codes with their corresponding `--color-variable` from the tokens library. Clean up the `!important` overrides.
+
+### Phase 3: JavaScript Refactoring
+Create a global `static/js/api-client.js` class representing the database operations API. Move country-state-city loading logic and forms validations triggers to shared helpers. Dynamically register WebSocket and SSE listeners via a unified client event listener.
+
+## 5. Risk Assessment & Mitigations
+- **Risk 1: View Breakdown**: Layout inheritance changes could break page grids on specific modules.
+  - *Mitigation*: Test each module page grid individually across standard screen breakpoints after inheritance updates.
+- **Risk 2: Form submission breakages**: Form handlers relying on specific script positions could miss validation callbacks.
+  - *Mitigation*: Ensure standard block scopes (`{% block scripts %}`) are loaded at the bottom of the HTML grid.

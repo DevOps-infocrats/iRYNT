@@ -80,4 +80,3 @@ class VehicleService:
             'maintenance': sum(1 for v in vehicles if v.status == 'Maintenance'),
             'inactive': sum(1 for v in vehicles if v.status == 'Inactive'),
         }
-
