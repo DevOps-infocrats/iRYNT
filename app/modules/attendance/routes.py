@@ -32,7 +32,7 @@ def live():
     is_helper_user = has_role('Helper') and not has_role('Super Admin') and not has_role('Admin')
     if is_helper_user:
         is_driver_user = True
-        from app.modules.users.services import ensure_helper_profile
+        from app.modules.users.services.user_service import ensure_helper_profile
         ensure_helper_profile(current_user)
 
     driver_profile = None
