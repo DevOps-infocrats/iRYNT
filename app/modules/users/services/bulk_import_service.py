@@ -1,5 +1,5 @@
 import logging
-from .users.service import UserService
+from app.modules.users.services.user_service import UserService
 from app.extensions import db
 
 logger = logging.getLogger(__name__)
