@@ -14,7 +14,7 @@ from app.core.sidebar import build_sidebar_menu
 from app.domain.auth.policies.auth_policy import has_permission, has_role, has_scope
 from app.domain.auth.services.auth_service import AuthService
 from app.delivery.web.auth import auth_bp
-from app.delivery.api.v1.auth import api_auth_bp
+from app.api.v1.auth import api_auth_bp
 
 
 def _ensure_database_exists(sqlalchemy_uri):
@@ -222,6 +222,7 @@ def create_app(config_name=None):
     from app.modules.access_control.routes import access_control_bp
     from app.modules.approvals.routes import approval_bp
     from app.modules.documents.routes import documents_bp
+    from app.api.v1.attendance.routes import api_attendance_bp
     # Import notifications blueprint. The delivery.web package uses a module named
     # `routes.py`, which conflicts with the `routes` directory. Attempt a normal
     # import first; if that fails, fall back to loading the file directly so
@@ -239,6 +240,7 @@ def create_app(config_name=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/v1/auth')
+    app.register_blueprint(api_attendance_bp, url_prefix='/api/v1/attendance')
     app.register_blueprint(roles_api_bp)
     app.register_blueprint(permissions_api_bp)
     app.register_blueprint(companies_bp)
@@ -259,6 +261,7 @@ def create_app(config_name=None):
     app.register_blueprint(documents_bp)
     app.register_blueprint(notifications_bp)
     csrf.exempt(api_auth_bp)
+    csrf.exempt(api_attendance_bp)
     init_middleware(app)
 
     def url_for_safe(endpoint, **values):
