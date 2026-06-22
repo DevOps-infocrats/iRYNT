@@ -1,0 +1,214 @@
+VIL MOBILE/ANDROID API ENDPOINTS REFERENCE
+
+================================================================================
+1. AUTHENTICATION API
+================================================================================
+
+POST /api/v1/auth/login
+-----------------------
+- Purpose: Log in user, retrieve JWT access token and refresh token.
+- Request Headers:
+  Content-Type: application/json
+- Payload:
+  {
+    "username": "your_username",
+    "password": "your_password"
+  }
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "Login successful.",
+    "data": {
+      "access_token": "jwt_access_token_here",
+      "refresh_token": "jwt_refresh_token_here",
+      "user": { ... },
+      "permissions": [ ... ]
+    }
+  }
+
+POST /api/v1/auth/refresh
+-------------------------
+- Purpose: Refresh access token using a refresh token.
+- Request Headers:
+  Content-Type: application/json
+- Payload:
+  {
+    "refresh_token": "your_refresh_token"
+  }
+- Success Response (200 OK):
+  {
+    "success": true,
+    "data": {
+      "access_token": "new_jwt_access_token_here",
+      "refresh_token": "new_jwt_refresh_token_here"
+    }
+  }
+
+POST /api/v1/auth/logout
+------------------------
+- Purpose: Revoke refresh token and log user out.
+- Request Headers:
+  Content-Type: application/json
+- Payload:
+  {
+    "refresh_token": "your_refresh_token"
+  }
+
+
+================================================================================
+2. DEPLOYMENTS API
+================================================================================
+
+GET /api/v1/deployments/current
+-------------------------------
+- Purpose: Retrieve the current active deployment details for the authenticated user (supports both Driver and Helper roles).
+- Request Headers:
+  Authorization: Bearer <access_token>
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "Current deployment retrieved successfully.",
+    "data": {
+      "project": "Project Name",
+      "circle": "Circle Name",
+      "subzone": "Subzone Name",
+      "vehicle_number": "KA-01-AB-1234",
+      "status": "Active"
+    }
+  }
+
+
+================================================================================
+3. VEHICLES API
+================================================================================
+
+GET /api/v1/vehicles/current
+----------------------------
+- Purpose: Retrieve the vehicle details assigned to the authenticated user (supports both Driver and Helper roles).
+- Request Headers:
+  Authorization: Bearer <access_token>
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "Current vehicle retrieved successfully.",
+    "data": {
+      "vehicle_number": "KA-01-AB-1234",
+      "vehicle_type": "E-Rickshaw",
+      "odometer": 12000.0,
+      "insurance_expiry": "2027-12-31",
+      "fitness_expiry": "2027-12-31"
+    }
+  }
+
+
+================================================================================
+4. ATTENDANCE API
+================================================================================
+
+POST /api/v1/attendance/check-in
+--------------------------------
+- Purpose: Mark attendance check-in for the day.
+- Request Headers:
+  Authorization: Bearer <access_token>
+  Content-Type: application/json
+- Payload:
+  {
+    "driver_profile_id": "profile_uuid",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "accuracy": 10.0,
+    "odometer": 12000.0,
+    "selfie_data": "base64_image_data_optional",
+    "dashboard_data": "base64_image_data_optional"
+  }
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "Checked in successfully.",
+    "data": {
+      "id": "attendance_uuid",
+      "check_in": "2026-06-22T10:00:00+05:30",
+      "status": "Present",
+      ...
+    }
+  }
+
+POST /api/v1/attendance/check-out
+---------------------------------
+- Purpose: Mark attendance check-out for the day.
+- Request Headers:
+  Authorization: Bearer <access_token>
+  Content-Type: application/json
+- Payload:
+  {
+    "driver_profile_id": "profile_uuid",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "accuracy": 10.0,
+    "odometer": 12050.0,
+    "selfie_data": "base64_image_data_optional",
+    "dashboard_data": "base64_image_data_optional"
+  }
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "Checked out successfully.",
+    "data": {
+      "id": "attendance_uuid",
+      "check_out": "2026-06-22T18:00:00+05:30",
+      "status": "Present",
+      ...
+    }
+  }
+
+POST /api/v1/attendance/gps/sync
+--------------------------------
+- Purpose: Upload real-time GPS coordinate trace logs for an active deployment.
+- Request Headers:
+  Authorization: Bearer <access_token>
+  Content-Type: application/json
+- Payload:
+  {
+    "deployment_id": "deployment_uuid",
+    "coordinates": [
+      {
+        "latitude": 12.9716,
+        "longitude": 77.5946,
+        "timestamp": "2026-06-22T10:00:00Z",
+        "speed": 25.0,
+        "accuracy": 5.0
+      }
+    ]
+  }
+- Success Response (200 OK):
+  {
+    "success": true,
+    "message": "GPS sync completed successfully."
+  }
+
+
+================================================================================
+5. ROLE-SPECIFIC BEHAVIOR (DRIVER VS. HELPER)
+================================================================================
+
+The Mobile APIs are shared between both Drivers and Helpers. The backend resolves the
+authenticated user's role automatically to apply role-specific business and validation rules:
+
+1. Current Deployment & Vehicle (GET /deployments/current & GET /vehicles/current):
+   - Driver: Retrieves the driver's active deployment assignment details and associated vehicle.
+   - Helper: Retrieves active HelperAssignment details. If the helper is assigned to a vehicle/driver
+             with an active deployment, the endpoint returns details from that deployment. Otherwise,
+             it falls back to the helper's general project and subzone assignment.
+
+2. Attendance Check-In / Check-Out validation rules:
+   - Drivers:
+     - Odometer reading ("odometer" field in payload) is REQUIRED.
+     - Selfie ("selfie_data") is optional.
+   - Helpers:
+     - Selfie ("selfie_data" field containing base64 string) is REQUIRED.
+     - Odometer reading is not required (ignored if sent).
+   - Driver Profile ID:
+     - Note that the profile model class in the database is called "DriverProfile", but this same
+       model represents helper profiles. Both driver and helper users pass their respective
+       DriverProfile ID as "driver_profile_id" in the attendance payloads.
+

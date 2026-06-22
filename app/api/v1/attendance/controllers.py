@@ -17,7 +17,17 @@ class AttendanceApiController:
         :param actor: User object of the authenticated requester
         """
         driver_profile_id = data.get('driver_profile_id')
-        driver_profile = DriverProfile.query.get(driver_profile_id)
+        driver_profile = None
+        if driver_profile_id:
+            driver_profile = DriverProfile.query.get(driver_profile_id)
+            if not driver_profile:
+                # If they passed User ID instead of DriverProfile ID
+                driver_profile = DriverProfile.query.filter_by(user_id=driver_profile_id).first()
+        
+        if not driver_profile:
+            # Fallback to the authenticated actor's own profile
+            driver_profile = DriverProfile.query.filter_by(user_id=actor.id).first()
+
         if not driver_profile:
             return {'success': False, 'message': 'Driver profile could not be found.', 'status': 404}
 
