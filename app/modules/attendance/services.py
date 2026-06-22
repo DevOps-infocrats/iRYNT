@@ -52,7 +52,7 @@ class AttendanceService:
             return None, 'Driver profile could not be found.'
 
         if driver_profile.user:
-            from app.modules.users.services import ensure_helper_profile
+            from app.modules.users.services.user_service import ensure_helper_profile
             ensure_helper_profile(driver_profile.user)
             driver_profile = DriverProfile.query.get(driver_profile_id)
 
