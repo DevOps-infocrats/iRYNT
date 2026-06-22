@@ -223,6 +223,7 @@ def create_app(config_name=None):
     from app.modules.approvals.routes import approval_bp
     from app.modules.documents.routes import documents_bp
     from app.api.v1.attendance.routes import api_attendance_bp
+    from app.api.v1.api_router import register_api_v1_routes
     # Import notifications blueprint. The delivery.web package uses a module named
     # `routes.py`, which conflicts with the `routes` directory. Attempt a normal
     # import first; if that fails, fall back to loading the file directly so
@@ -241,6 +242,7 @@ def create_app(config_name=None):
     app.register_blueprint(auth_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(api_attendance_bp, url_prefix='/api/v1/attendance')
+    register_api_v1_routes(app)
     app.register_blueprint(roles_api_bp)
     app.register_blueprint(permissions_api_bp)
     app.register_blueprint(companies_bp)
