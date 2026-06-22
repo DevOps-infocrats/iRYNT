@@ -747,7 +747,7 @@ def helper_assignments_create():
                 # Also ensure driver profile is populated for attendance tracking
                 helper_user = User.query.get(form.helper_id.data)
                 if helper_user:
-                    from app.modules.users.services import ensure_helper_profile
+                    from app.modules.users.services.user_service import ensure_helper_profile
                     ensure_helper_profile(helper_user)
                 
                 db.session.commit()
