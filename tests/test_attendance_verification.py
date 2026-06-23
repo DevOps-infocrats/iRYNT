@@ -529,3 +529,40 @@ def test_helper_attendance_marking_deployed(app):
         assert total == 1
         assert drivers[0]['id'] == user.id
 
+
+def test_resolve_geo_reviewer_m2m(app):
+    from app.services.geolocation.attendance_geo_service import AttendanceGeoService
+    from app.modules.auth.models import User, Role
+    from app.modules.drivers.models import DriverProfile
+
+    with app.app_context():
+        role_kam = Role.query.filter_by(name='Circle KAM').first()
+        if not role_kam:
+            role_kam = Role(name='Circle KAM')
+            db.session.add(role_kam)
+        db.session.commit()
+
+        # Create a KAM user who only has the role via many-to-many relationship (role_id is NULL)
+        kam_user = User(username='kam_m2m_test', email='kam_m2m@test.com', circle_id='circle_test_m2m')
+        kam_user.set_password('kam123')
+        kam_user.role_id = None  # Explicitly None to test M2M join
+        db.session.add(kam_user)
+        db.session.commit()
+        kam_user.roles.append(role_kam)
+        db.session.commit()
+
+        # Create driver profile
+        driver_user = User(username='driver_m2m_test', email='driver_m2m@test.com')
+        driver_user.set_password('pass123')
+        db.session.add(driver_user)
+        db.session.commit()
+        profile = DriverProfile(user_id=driver_user.id, circle_id='circle_test_m2m', active=True)
+        db.session.add(profile)
+        db.session.commit()
+
+        geo_service = AttendanceGeoService()
+        resolved_approver = geo_service._resolve_geo_reviewer(profile, circle_id='circle_test_m2m')
+        assert resolved_approver is not None
+        assert resolved_approver.id == kam_user.id
+
+

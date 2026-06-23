@@ -198,7 +198,7 @@ def history():
 
 @attendance_bp.route('/monitoring')
 @login_required
-@permission_required('attendance.monitoring.view')
+@permission_required('attendance.view')
 def monitoring():
     filters = {
         'search_query': request.args.get('q', '').strip() or None,
@@ -217,7 +217,7 @@ def monitoring():
 
 @attendance_bp.route('/approvals')
 @login_required
-@permission_required('attendance.approvals.view')
+@permission_required('attendance.approve')
 def approvals():
     approvals = attendance_service.get_attendance_approvals()
     total = len(approvals)
@@ -232,7 +232,7 @@ def approvals():
 
 @attendance_bp.route('/shift-reports')
 @login_required
-@permission_required('attendance.reports.view')
+@permission_required('reports.view')
 def shift_reports():
     report_summary = attendance_service.get_shift_reports()
 

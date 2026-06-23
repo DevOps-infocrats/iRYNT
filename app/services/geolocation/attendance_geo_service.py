@@ -233,7 +233,7 @@ class AttendanceGeoService:
 
     def _resolve_geo_reviewer(self, driver_profile, company_id=None, circle_id=None):
         role_names = ['Key Account Manager', 'Circle KAM', 'CBH']
-        query = User.query.join(Role, User.role_id == Role.id).filter(Role.name.in_(role_names))
+        query = User.query.join(User.roles).filter(Role.name.in_(role_names))
         
         target_circle_id = circle_id or driver_profile.circle_id or (driver_profile.user.circle_id if driver_profile.user else None)
         target_company_id = company_id or (driver_profile.user.company_id if driver_profile.user else None)

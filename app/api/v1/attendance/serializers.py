@@ -6,9 +6,9 @@ class CheckInRequestSchema(Schema):
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
     accuracy = fields.Float(required=True)
-    selfie_data = fields.Str(allow_none=True)
-    dashboard_data = fields.Str(allow_none=True)
-    odometer = fields.Float(allow_none=True)
+    selfie_data = fields.Str(allow_none=True, validate=validate.Length(max=5242880))
+    dashboard_data = fields.Str(allow_none=True, validate=validate.Length(max=5242880))
+    odometer = fields.Float(allow_none=True, validate=validate.Range(min=0))
 
 class CheckOutRequestSchema(Schema):
     """Schema to validate check-out payload"""
@@ -16,9 +16,9 @@ class CheckOutRequestSchema(Schema):
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
     accuracy = fields.Float(required=True)
-    selfie_data = fields.Str(allow_none=True)
-    dashboard_data = fields.Str(allow_none=True)
-    odometer = fields.Float(allow_none=True)
+    selfie_data = fields.Str(allow_none=True, validate=validate.Length(max=5242880))
+    dashboard_data = fields.Str(allow_none=True, validate=validate.Length(max=5242880))
+    odometer = fields.Float(allow_none=True, validate=validate.Range(min=0))
 
 class GPSSyncPointSchema(Schema):
     """Schema to validate individual GPS track coordinate"""

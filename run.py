@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import os
-from app import create_app, db
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'))
+
+from app import create_app, db
 
 app = create_app(os.environ.get('FLASK_ENV', 'development'))
 

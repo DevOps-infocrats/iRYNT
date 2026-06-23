@@ -53,7 +53,12 @@ class ApprovalRepository:
 
         # Role-based query filtering
         if user and not user.is_superadmin:
-            role_conditions = []
+            role_conditions = [
+                or_(
+                    ApprovalRequest.assigned_approver_id == user.id,
+                    ApprovalRequest.requested_by_id == user.id
+                )
+            ]
             
             # 1. Driver / Helper: own requests
             if 'driver' in user.role_names or 'helper' in user.role_names:
@@ -86,13 +91,6 @@ class ApprovalRepository:
                 else:
                     role_conditions.append(db.literal(True))
                     
-            if not role_conditions:
-                role_conditions.append(
-                    or_(
-                        ApprovalRequest.assigned_approver_id == user.id,
-                        ApprovalRequest.requested_by_id == user.id
-                    )
-                )
             query = query.filter(or_(*role_conditions))
 
         # Search
@@ -217,7 +215,12 @@ class ApprovalRepository:
 
         # Apply role-based filters
         if user and not user.is_superadmin:
-            role_conditions = []
+            role_conditions = [
+                or_(
+                    ApprovalRequest.assigned_approver_id == user.id,
+                    ApprovalRequest.requested_by_id == user.id
+                )
+            ]
             
             # 1. Driver / Helper
             if 'driver' in user.role_names or 'helper' in user.role_names:
@@ -250,13 +253,6 @@ class ApprovalRepository:
                 else:
                     role_conditions.append(db.literal(True))
                     
-            if not role_conditions:
-                role_conditions.append(
-                    or_(
-                        ApprovalRequest.assigned_approver_id == user.id,
-                        ApprovalRequest.requested_by_id == user.id
-                    )
-                )
             query = query.filter(or_(*role_conditions))
 
         total = query.count()
