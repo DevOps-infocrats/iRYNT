@@ -199,6 +199,13 @@ class AuthService:
                 device_info=user_agent,
             )
 
+        # Ensure driver/helper profile exists so driver_profile_id is returned in login response
+        try:
+            from app.modules.users.services.user_service import ensure_helper_profile
+            ensure_helper_profile(user)
+        except Exception:
+            pass
+
         return {
             'success': True,
             'message': 'Login successful.',

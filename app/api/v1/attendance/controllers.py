@@ -91,3 +91,24 @@ class AttendanceApiController:
             return {'success': False, 'message': error, 'status': 400}
 
         return {'success': True, 'attendance': attendance, 'status': 200}
+
+    def get_history(self, actor, filters, page, per_page):
+        """
+        Retrieves attendance history for the authenticated actor.
+        """
+        driver_profile = DriverProfile.query.filter_by(user_id=actor.id).first()
+        if not driver_profile:
+            return {'success': False, 'message': 'Driver profile could not be found.', 'status': 404}
+
+        filters['driver_id'] = driver_profile.id
+        records, total = self.attendance_service.list_attendance_history(filters, page, per_page)
+
+        return {
+            'success': True,
+            'records': records,
+            'total': total,
+            'page': page,
+            'per_page': per_page,
+            'status': 200
+        }
+

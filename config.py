@@ -16,7 +16,7 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     DRIVER_DOCUMENT_UPLOAD_FOLDER = os.environ.get('DRIVER_DOCUMENT_UPLOAD_FOLDER') or os.path.join(os.path.dirname(__file__), 'instance', 'driver_documents')
 
-    # JWT configuration
+   #jwt
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=20)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=14)
@@ -30,7 +30,7 @@ class Config:
     PASSWORD_EXPIRE_DAYS = int(os.environ.get('PASSWORD_EXPIRE_DAYS', 90))
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or "postgresql://postgres:1234@localhost:5432/VILdatabase"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 class DevelopmentConfig(Config):
     """Development configuration"""

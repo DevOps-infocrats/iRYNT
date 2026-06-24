@@ -185,6 +185,7 @@ class User(UserMixin, db.Model):
             'is_verified': self.is_verified,
             'last_login_at': self.last_login_at.isoformat() if self.last_login_at else None,
             'last_login_ip': self.last_login_ip,
+            'driver_profile_id': self.driver_profile.id if self.driver_profile else None,
         }
 
     def __repr__(self):

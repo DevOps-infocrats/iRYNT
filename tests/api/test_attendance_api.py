@@ -1,7 +1,7 @@
 import pytest
 from app import create_app, db
 from app.modules.auth.models import User, Role
-from app.modules.drivers.models import DriverProfile, DriverVehicleAssignment
+from app.modules.drivers.models import DriverProfile, DriverVehicleAssignment, DriverAttendance
 from app.modules.companies.models import Company
 from app.modules.circles.models import Circle
 from app.modules.clients.models import Client
@@ -324,3 +324,74 @@ def test_gps_sync_success(app, client):
         assert v.current_location == "12.9718,77.5948"
         assert d.current_location == "12.9718,77.5948"
         assert v.last_gps_ping is not None
+
+
+def test_get_attendance_history_success(app, client):
+    with app.app_context():
+        # Setup roles
+        role_driver = Role.query.filter_by(name='Driver').first()
+        if not role_driver:
+            role_driver = Role(name='Driver')
+            db.session.add(role_driver)
+        db.session.commit()
+
+        # Seed data
+        company = Company(company_name='Test Company H', company_code='TCOH', country_id='IN', state_id='KA', city_id='BLR', pincode='560001')
+        db.session.add(company)
+        db.session.commit()
+
+        circle = Circle(company_id=company.id, circle_code='TCIRCH', circle_name='Test Circle H')
+        db.session.add(circle)
+        db.session.commit()
+
+        client_obj = Client(company_id=company.id, circle_id=circle.id, client_code='TCLIH', client_name='Test Client H')
+        db.session.add(client_obj)
+        db.session.commit()
+
+        project = Project(company_id=company.id, circle_id=circle.id, client_id=client_obj.id, project_code='TPROJH', project_name='Test Project H', project_type='Standard', start_date=datetime.date.today())
+        db.session.add(project)
+        db.session.commit()
+
+        subzone = Subzone(company_id=company.id, circle_id=circle.id, client_id=client_obj.id, project_id=project.id, subzone_code='TSUBH', subzone_name='Test Subzone H', subzone_type='Standard', latitude='13.0000', longitude='77.6000', geo_fencing_enabled=False)
+        db.session.add(subzone)
+        db.session.commit()
+
+        user = User(username='history_driver_user', email='history_driver@test.com', company_id=company.id, circle_id=circle.id)
+        user.set_password('Password@123')
+        user.role_id = role_driver.id
+        db.session.add(user)
+        db.session.commit()
+        user.roles.append(role_driver)
+        db.session.commit()
+
+        profile = DriverProfile(user_id=user.id, active=True, circle_id=circle.id, project_id=project.id, subzone_id=subzone.id, client_id=client_obj.id)
+        db.session.add(profile)
+        db.session.commit()
+
+        # Add a DriverAttendance record
+        attendance = DriverAttendance(
+            driver_id=profile.id,
+            date=datetime.date.today(),
+            check_in=datetime.datetime.utcnow(),
+            status='Present',
+            start_odometer=1000.0
+        )
+        db.session.add(attendance)
+        db.session.commit()
+
+        claims = {
+            'role': 'Driver',
+            'permissions': ['attendance.mark'],
+            'username': user.username
+        }
+        token = create_access_token(identity=user.id, additional_claims=claims)
+        headers = {'Authorization': f'Bearer {token}'}
+
+    resp = client.get('/api/v1/attendance/history', headers=headers)
+    assert resp.status_code == 200
+    assert resp.json['success'] is True
+    assert 'records' in resp.json['data']
+    assert len(resp.json['data']['records']) == 1
+    assert resp.json['data']['records'][0]['status'] == 'Present'
+    assert resp.json['data']['records'][0]['start_odometer'] == 1000.0
+

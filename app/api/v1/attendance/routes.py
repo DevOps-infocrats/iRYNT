@@ -112,3 +112,46 @@ def gps_sync():
         return api_error(result.get('message'), status_code=result.get('status', 400))
 
     return api_success(result.get('message'))
+
+
+@api_attendance_bp.route('/history', methods=['GET'])
+@jwt_required()
+@permission_required('attendance.mark')
+def get_attendance_history():
+    """
+    GET /api/v1/attendance/history
+    Returns the attendance history for the authenticated user.
+    """
+    user_id = get_jwt_identity()
+    actor = User.query.get(user_id)
+    if not actor:
+        return api_error('User not found.', status_code=404)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+    date_from = request.args.get('date_from')
+    date_to = request.args.get('date_to')
+    search_query = request.args.get('search_query')
+
+    filters = {
+        'date_from': date_from,
+        'date_to': date_to,
+        'search_query': search_query
+    }
+
+    result = attendance_controller.get_history(actor, filters, page, per_page)
+    if not result.get('success'):
+        return api_error(result.get('message'), status_code=result.get('status', 400))
+
+    serialized_records = AttendanceResponseSchema(many=True).dump(result.get('records'))
+
+    return api_success(
+        'Attendance history retrieved successfully.',
+        data={
+            'records': serialized_records,
+            'total': result.get('total'),
+            'page': result.get('page'),
+            'per_page': result.get('per_page')
+        }
+    )
+
