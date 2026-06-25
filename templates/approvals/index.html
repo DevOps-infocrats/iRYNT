@@ -7,15 +7,15 @@
     /* Command Center Premium Style overrides */
     .kpi-card {
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.85);
+        background: var(--bg-white) !important;
         backdrop-filter: blur(8px);
-        border: 1px solid rgba(220, 224, 230, 0.65);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        border: var(--border-normal) !important;
+        box-shadow: var(--shadow-sm);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .kpi-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        box-shadow: var(--shadow-md) !important;
     }
     .kpi-icon {
         width: 48px;
@@ -38,9 +38,9 @@
         font-weight: 500;
         font-size: 0.875rem;
         transition: all 0.2s ease;
-        border: 1px solid rgba(220, 224, 230, 0.8);
-        background: #fff;
-        color: #495057;
+        border: var(--border-normal);
+        background: var(--bg-white);
+        color: var(--text-secondary);
         margin-right: 8px;
         margin-bottom: 8px;
         display: inline-flex;
@@ -48,15 +48,15 @@
         text-decoration: none;
     }
     .filter-chip:hover {
-        background: #f1f3f5;
-        border-color: #ced4da;
-        color: #212529;
+        background: var(--panel-light);
+        border-color: var(--text-muted);
+        color: var(--text-primary);
     }
     .filter-chip.active {
-        background: #206bc4;
-        color: #fff;
-        border-color: #206bc4;
-        box-shadow: 0 2px 6px rgba(32, 107, 196, 0.25);
+        background: var(--accent-primary) !important;
+        color: var(--text-white) !important;
+        border-color: var(--accent-primary) !important;
+        box-shadow: 0 2px 6px rgba(255, 122, 24, 0.25);
     }
     .filter-chip .badge {
         margin-left: 6px;
@@ -91,14 +91,14 @@
         right: -580px;
         width: 550px;
         height: 100vh;
-        background: #fff;
+        background: var(--bg-white);
         box-shadow: -5px 0 25px rgba(0, 0, 0, 0.12);
         z-index: 1050;
         transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        border-left: 1px solid rgba(220, 224, 230, 0.5);
+        border-left: var(--border-normal);
     }
     @media (max-width: 576px) {
         .detail-drawer {
@@ -111,11 +111,11 @@
     }
     .drawer-header {
         padding: 20px 24px;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: var(--border-light);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #f8f9fa;
+        background: var(--panel-light);
     }
     .drawer-body {
         padding: 24px;
@@ -124,8 +124,8 @@
     }
     .drawer-footer {
         padding: 16px 24px;
-        border-top: 1px solid #e9ecef;
-        background: #f8f9fa;
+        border-top: var(--border-light);
+        background: var(--panel-light);
     }
 
     /* Timeline Styles */
@@ -133,7 +133,7 @@
         position: relative;
         padding-left: 20px;
         margin-left: 10px;
-        border-left: 2px solid #e9ecef;
+        border-left: 2px solid var(--border-normal);
     }
     .timeline-item {
         position: relative;
@@ -148,7 +148,7 @@
         height: 10px;
         border-radius: 50%;
         background: #cbd5e1;
-        border: 2px solid #fff;
+        border: 2px solid var(--bg-white);
     }
     .timeline-item.active::before {
         background: #206bc4;
@@ -165,7 +165,7 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 24px;
-        background: #f1f3f5;
+        background: var(--panel-light);
         border-radius: 8px;
         padding: 12px;
     }
@@ -186,7 +186,7 @@
         height: 24px;
         border-radius: 50%;
         background: #adb5bd;
-        color: #fff;
+        color: var(--text-white);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -206,7 +206,7 @@
     .workflow-step-label {
         font-size: 11px;
         font-weight: 500;
-        color: #495057;
+        color: var(--text-secondary);
         display: block;
     }
 </style>

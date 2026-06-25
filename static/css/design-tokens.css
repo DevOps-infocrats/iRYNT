@@ -128,6 +128,43 @@
     --btn-height-sm: 40px;
     --card-radius: 16px;
     --card-padding: 24px;
+
+    /* ---- TONE-ON-TONE BADGES & UTILITIES (LIGHT MODE) ---- */
+    --badge-success-bg: rgba(47, 191, 113, 0.1);
+    --badge-success-color: #1b7a43;
+    --badge-success-border: rgba(47, 191, 113, 0.25);
+
+    --badge-danger-bg: rgba(230, 57, 70, 0.09);
+    --badge-danger-color: #be123c;
+    --badge-danger-border: rgba(230, 57, 70, 0.25);
+
+    --badge-warning-bg: rgba(244, 162, 97, 0.12);
+    --badge-warning-color: #b45309;
+    --badge-warning-border: rgba(244, 162, 97, 0.3);
+
+    --badge-info-bg: rgba(77, 150, 255, 0.1);
+    --badge-info-color: #1d4ed8;
+    --badge-info-border: rgba(77, 150, 255, 0.25);
+
+    --badge-blue-bg: rgba(77, 150, 255, 0.1);
+    --badge-blue-color: #1d4ed8;
+    --badge-blue-border: rgba(77, 150, 255, 0.25);
+
+    --badge-red-bg: rgba(230, 57, 70, 0.09);
+    --badge-red-color: #be123c;
+    --badge-red-border: rgba(230, 57, 70, 0.25);
+
+    --badge-orange-bg: rgba(244, 162, 97, 0.12);
+    --badge-orange-color: #c2410c;
+    --badge-orange-border: rgba(244, 162, 97, 0.3);
+
+    --badge-green-bg: rgba(47, 191, 113, 0.1);
+    --badge-green-color: #1b7a43;
+    --badge-green-border: rgba(47, 191, 113, 0.25);
+
+    --badge-teal-bg: rgba(20, 184, 166, 0.1);
+    --badge-teal-color: #0f766e;
+    --badge-teal-border: rgba(20, 184, 166, 0.25);
 }
 
 /* ---- DARK THEME ---- */
@@ -163,6 +200,43 @@ html[data-bs-theme="dark"] {
     
     /* ---- SHADOWS ---- */
     --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+    /* ---- TONE-ON-TONE BADGES & UTILITIES (DARK MODE) ---- */
+    --badge-success-bg: rgba(47, 191, 113, 0.15);
+    --badge-success-color: #58d68d;
+    --badge-success-border: rgba(47, 191, 113, 0.3);
+
+    --badge-danger-bg: rgba(230, 57, 70, 0.15);
+    --badge-danger-color: #fca5a5;
+    --badge-danger-border: rgba(230, 57, 70, 0.3);
+
+    --badge-warning-bg: rgba(244, 162, 97, 0.18);
+    --badge-warning-color: #fde047;
+    --badge-warning-border: rgba(244, 162, 97, 0.3);
+
+    --badge-info-bg: rgba(77, 150, 255, 0.15);
+    --badge-info-color: #93c5fd;
+    --badge-info-border: rgba(77, 150, 255, 0.3);
+
+    --badge-blue-bg: rgba(77, 150, 255, 0.15);
+    --badge-blue-color: #93c5fd;
+    --badge-blue-border: rgba(77, 150, 255, 0.3);
+
+    --badge-red-bg: rgba(230, 57, 70, 0.15);
+    --badge-red-color: #fca5a5;
+    --badge-red-border: rgba(230, 57, 70, 0.3);
+
+    --badge-orange-bg: rgba(244, 162, 97, 0.18);
+    --badge-orange-color: #fed7aa;
+    --badge-orange-border: rgba(244, 162, 97, 0.3);
+
+    --badge-green-bg: rgba(47, 191, 113, 0.15);
+    --badge-green-color: #58d68d;
+    --badge-green-border: rgba(47, 191, 113, 0.3);
+
+    --badge-teal-bg: rgba(20, 184, 166, 0.15);
+    --badge-teal-color: #99f6e4;
+    --badge-teal-border: rgba(20, 184, 166, 0.3);
 }
 
 /* ---- GLOBAL COMPONENT OVERRIDES FOR DARK MODE ---- */
@@ -701,26 +775,68 @@ html[data-bs-theme="dark"] .table tbody tr:hover {
     text-transform: capitalize;
 }
 
-.badge.bg-success, .badge-success, .badge-soft-success {
-    background-color: rgba(47, 191, 113, 0.12) !important;
-    color: var(--accent-success) !important;
-    border: 1px solid rgba(47, 191, 113, 0.2) !important;
+/* Light / Soft Badge variants */
+.badge.bg-success, .badge-success, .badge-soft-success, .bg-success-lt {
+    background-color: var(--badge-success-bg) !important;
+    color: var(--badge-success-color) !important;
+    border: 1px solid var(--badge-success-border) !important;
 }
 
-.badge.bg-danger, .badge-danger, .badge-soft-danger {
-    background-color: rgba(230, 57, 70, 0.12) !important;
-    color: var(--accent-danger) !important;
-    border: 1px solid rgba(230, 57, 70, 0.2) !important;
+.badge.bg-danger, .badge-danger, .badge-soft-danger, .bg-danger-lt {
+    background-color: var(--badge-danger-bg) !important;
+    color: var(--badge-danger-color) !important;
+    border: 1px solid var(--badge-danger-border) !important;
 }
 
-.badge.bg-warning, .badge-warning, .badge-soft-warning {
-    background-color: rgba(244, 162, 97, 0.12) !important;
-    color: var(--accent-warning) !important;
-    border: 1px solid rgba(244, 162, 97, 0.2) !important;
+.badge.bg-warning, .badge-warning, .badge-soft-warning, .bg-warning-lt {
+    background-color: var(--badge-warning-bg) !important;
+    color: var(--badge-warning-color) !important;
+    border: 1px solid var(--badge-warning-border) !important;
 }
 
-.badge.bg-info, .badge-info, .badge-soft-info {
-    background-color: rgba(77, 150, 255, 0.12) !important;
-    color: var(--accent-info) !important;
-    border: 1px solid rgba(77, 150, 255, 0.2) !important;
+.badge.bg-info, .badge-info, .badge-soft-info, .bg-info-lt {
+    background-color: var(--badge-info-bg) !important;
+    color: var(--badge-info-color) !important;
+    border: 1px solid var(--badge-info-border) !important;
+}
+
+.bg-blue-lt {
+    background-color: var(--badge-blue-bg) !important;
+    color: var(--badge-blue-color) !important;
+    border: 1px solid var(--badge-blue-border) !important;
+}
+
+.bg-red-lt {
+    background-color: var(--badge-red-bg) !important;
+    color: var(--badge-red-color) !important;
+    border: 1px solid var(--badge-red-border) !important;
+}
+
+.bg-orange-lt {
+    background-color: var(--badge-orange-bg) !important;
+    color: var(--badge-orange-color) !important;
+    border: 1px solid var(--badge-orange-border) !important;
+}
+
+.bg-green-lt {
+    background-color: var(--badge-green-bg) !important;
+    color: var(--badge-green-color) !important;
+    border: 1px solid var(--badge-green-border) !important;
+}
+
+.bg-teal-lt {
+    background-color: var(--badge-teal-bg) !important;
+    color: var(--badge-teal-color) !important;
+    border: 1px solid var(--badge-teal-border) !important;
+}
+
+/* Theme-aware Text Color utilities */
+.text-blue {
+    color: var(--badge-blue-color) !important;
+}
+.text-orange {
+    color: var(--badge-orange-color) !important;
+}
+.text-teal {
+    color: var(--badge-teal-color) !important;
 }
