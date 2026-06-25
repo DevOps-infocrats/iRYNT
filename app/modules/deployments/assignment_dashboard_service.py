@@ -149,11 +149,26 @@ class AssignmentDashboardService:
     @staticmethod
     def get_available_drivers(project_id=None, subzone_id=None):
         """Get list of drivers for assignment."""
+        from flask_login import current_user
+        driver_role = Role.query.filter(Role.name.ilike('driver')).first()
         assigned_driver_ids = db.session.query(Vehicle.assigned_driver_id).filter(Vehicle.assigned_driver_id.isnot(None))
         query = DriverProfile.query.join(User).filter(
             User.is_active.is_(True),
             ~User.id.in_(assigned_driver_ids)
         )
+        if current_user and current_user.is_authenticated and not getattr(current_user, 'is_superadmin', False):
+            if getattr(current_user, 'circle_id', None):
+                query = query.filter(User.circle_id == current_user.circle_id)
+            elif getattr(current_user, 'company_id', None):
+                query = query.filter(User.company_id == current_user.company_id)
+
+        if driver_role:
+            query = query.filter(
+                db.or_(
+                    User.role_id == driver_role.id,
+                    User.roles.any(Role.id == driver_role.id)
+                )
+            )
         
         # Filter by project/subzone if specified
         if project_id:
@@ -182,7 +197,7 @@ class AssignmentDashboardService:
         seen_user_ids = {row['driver_id'] for row in rows}
         driver_role = Role.query.filter(Role.name.ilike('driver')).first()
         if driver_role:
-            role_users = (
+            role_users_query = (
                 User.query
                 .filter(User.is_active.is_(True))
                 .filter(
@@ -191,9 +206,14 @@ class AssignmentDashboardService:
                         User.roles.any(Role.id == driver_role.id),
                     )
                 )
-                .order_by(User.username)
-                .all()
             )
+            if current_user and current_user.is_authenticated and not getattr(current_user, 'is_superadmin', False):
+                if getattr(current_user, 'circle_id', None):
+                    role_users_query = role_users_query.filter(User.circle_id == current_user.circle_id)
+                elif getattr(current_user, 'company_id', None):
+                    role_users_query = role_users_query.filter(User.company_id == current_user.company_id)
+            
+            role_users = role_users_query.order_by(User.username).all()
             assigned_uids = {v[0] for v in db.session.query(Vehicle.assigned_driver_id).filter(Vehicle.assigned_driver_id.isnot(None)).all()}
             for user in role_users:
                 if user.id in seen_user_ids or user.id in assigned_uids:
@@ -228,6 +248,12 @@ class AssignmentDashboardService:
             Vehicle.assigned_driver_id.is_(None),
             ~active_deployment_exists,
         )
+        from flask_login import current_user
+        if current_user and current_user.is_authenticated and not getattr(current_user, 'is_superadmin', False):
+            if getattr(current_user, 'circle_id', None):
+                query = query.filter(Vehicle.circle_id == current_user.circle_id)
+            elif getattr(current_user, 'company_id', None):
+                query = query.filter(Vehicle.company_id == current_user.company_id)
         
         if project_id:
             query = query.filter_by(project_id=project_id)

@@ -13,14 +13,22 @@ subzone_service = SubzoneService()
 
 
 def get_company_choices():
-    companies = Company.query.filter_by(status='Active').order_by(Company.company_name).all()
+    query = Company.query.filter_by(status='Active')
+    if not current_user.is_superadmin:
+        if current_user.company_id:
+            query = query.filter_by(id=current_user.company_id)
+    companies = query.order_by(Company.company_name).all()
     return [('', 'Select company')] + [(c.id, f"{c.company_name} ({c.company_code})") for c in companies]
 
 
 def get_circle_choices(company_id):
     if not company_id:
         return [('', 'Select circle')]
-    circles = Circle.query.filter_by(company_id=company_id, status='Active').order_by(Circle.circle_name).all()
+    query = Circle.query.filter_by(company_id=company_id, status='Active')
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            query = query.filter_by(id=current_user.circle_id)
+    circles = query.order_by(Circle.circle_name).all()
     return [('', 'Select circle')] + [(c.id, f"{c.circle_name} ({c.circle_code})") for c in circles]
 
 
@@ -41,7 +49,15 @@ def get_project_choices(client_id):
 @subzones_bp.route('/')
 @login_required
 def index():
-    subzones = subzone_service.list_subzones()
+    company_id = None
+    circle_id = None
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            circle_id = current_user.circle_id
+        elif current_user.company_id:
+            company_id = current_user.company_id
+
+    subzones = subzone_service.list_subzones(company_id=company_id, circle_id=circle_id)
     return render_template('subzones/list.html', subzones=subzones, active_page='subzones')
 
 

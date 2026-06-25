@@ -18,6 +18,10 @@ from app.api.v1.auth import api_auth_bp
 
 
 def _ensure_database_exists(sqlalchemy_uri):
+    if not sqlalchemy_uri:
+        raise RuntimeError(
+            "SQLALCHEMY_DATABASE_URI is not configured. Please ensure that the DATABASE_URL environment variable is set in your environment (e.g. Render Dashboard)."
+        )
     url = make_url(sqlalchemy_uri)
     if not url.drivername.startswith('postgresql'):
         return

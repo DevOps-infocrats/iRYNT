@@ -19,14 +19,22 @@ vehicle_service = VehicleService()
 
 
 def get_company_choices():
-    companies = Company.query.filter_by(status='Active').order_by(Company.company_name).all()
+    query = Company.query.filter_by(status='Active')
+    if not current_user.is_superadmin:
+        if current_user.company_id:
+            query = query.filter_by(id=current_user.company_id)
+    companies = query.order_by(Company.company_name).all()
     return [('', 'Select company')] + [(c.id, f"{c.company_name} ({c.company_code})") for c in companies]
 
 
 def get_circle_choices(company_id):
     if not company_id:
         return [('', 'Select circle')]
-    circles = Circle.query.filter_by(company_id=company_id, status='Active').order_by(Circle.circle_name).all()
+    query = Circle.query.filter_by(company_id=company_id, status='Active')
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            query = query.filter_by(id=current_user.circle_id)
+    circles = query.order_by(Circle.circle_name).all()
     return [('', 'Select circle')] + [(c.id, f"{c.circle_name} ({c.circle_code})") for c in circles]
 
 
@@ -56,8 +64,17 @@ def get_subzone_choices(project_id):
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = 20
+    company_id = None
+    circle_id = None
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            circle_id = current_user.circle_id
+        elif current_user.company_id:
+            company_id = current_user.company_id
+
     vehicles = vehicle_service.list_vehicles(
-        company_id=current_user.company_id if hasattr(current_user, 'company_id') else None,
+        company_id=company_id,
+        circle_id=circle_id,
         limit=per_page,
         offset=(page - 1) * per_page,
     )

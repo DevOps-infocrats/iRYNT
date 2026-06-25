@@ -30,7 +30,10 @@ class Config:
     PASSWORD_EXPIRE_DAYS = int(os.environ.get('PASSWORD_EXPIRE_DAYS', 90))
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url and db_url.startswith('postgres://'):
+        db_url = db_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = db_url
 
 class DevelopmentConfig(Config):
     """Development configuration"""

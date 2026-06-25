@@ -2,6 +2,24 @@
 
 {% block title %}Assign Driver{% endblock %}
 
+{% block styles %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container .select2-selection--single {
+            height: 38px !important;
+            border: 1px solid var(--tblr-border-color, #dbdbdb);
+            border-radius: 4px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 36px !important;
+            color: inherit;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px !important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="page-wrapper">
     <div class="page-header d-print-none">
@@ -23,7 +41,7 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 {{ form.vehicle_id.label(class='form-label') }}
-                                {{ form.vehicle_id(class='form-select') }}
+                                {{ form.vehicle_id(class='form-select select2') }}
                                 {% if form.vehicle_id.errors %}
                                 <div class="invalid-feedback" style="display:block;">{{ form.vehicle_id.errors[0] }}</div>
                                 {% endif %}
@@ -31,7 +49,7 @@
 
                             <div class="mb-3">
                                 {{ form.driver_id.label(class='form-label') }}
-                                {{ form.driver_id(class='form-select') }}
+                                {{ form.driver_id(class='form-select select2') }}
                                 {% if form.driver_id.errors %}
                                 <div class="invalid-feedback" style="display:block;">{{ form.driver_id.errors[0] }}</div>
                                 {% endif %}
@@ -48,4 +66,17 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%',
+                dropdownParent: $(document.body)
+            });
+        });
+    </script>
 {% endblock %}

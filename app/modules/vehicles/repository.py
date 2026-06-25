@@ -6,10 +6,12 @@ class VehicleRepository:
     def get_vehicle(self, vehicle_id):
         return Vehicle.query.filter_by(id=vehicle_id).first()
 
-    def list_vehicles(self, company_id=None, limit=20, offset=0):
+    def list_vehicles(self, company_id=None, circle_id=None, limit=20, offset=0):
         query = Vehicle.query.order_by(Vehicle.created_at.desc())
         if company_id:
             query = query.filter_by(company_id=company_id)
+        if circle_id:
+            query = query.filter_by(circle_id=circle_id)
         return query.limit(limit).offset(offset).all()
 
     def create_vehicle(self, payload):

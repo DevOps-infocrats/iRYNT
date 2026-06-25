@@ -9,12 +9,46 @@ class UserForm(FlaskForm):
     phone = StringField('Phone', validators=[Optional(), Length(max=24)])
     password = PasswordField('Password', validators=[Optional(), Length(min=8, max=128)])
     confirm_password = PasswordField('Confirm Password', validators=[EqualTo('password', message='Passwords must match'), Optional()])
-    company_id = SelectField('Company', choices=[], validators=[DataRequired()])
-    circle_id = SelectField('Circle', choices=[], validators=[Optional()])
+    company_id = SelectField('Company', choices=[])
+    circle_id = SelectField('Circle', choices=[])
     role_id = SelectField('Primary Role', choices=[], validators=[DataRequired()])
     is_active = BooleanField('Active', default=True)
     is_verified = BooleanField('Verified', default=True)
     submit = SubmitField('Save User')
+
+    def validate_company_id(self, field):
+        from app.modules.auth.models import Role
+        role = Role.query.get(self.role_id.data) if self.role_id.data else None
+        
+        corporate_roles = [
+            'super admin', 'corporate admin', 'director', 
+            'key account manager', 'kam', 'pmo', 'corporate customer'
+        ]
+        is_corporate = False
+        if role:
+            role_name_lower = role.name.lower()
+            if any(cr in role_name_lower for cr in corporate_roles):
+                is_corporate = True
+
+        if not is_corporate and not field.data:
+            raise ValidationError('This field is required.')
+
+    def validate_circle_id(self, field):
+        from app.modules.auth.models import Role
+        role = Role.query.get(self.role_id.data) if self.role_id.data else None
+        
+        corporate_roles = [
+            'super admin', 'corporate admin', 'director', 
+            'key account manager', 'kam', 'pmo', 'corporate customer'
+        ]
+        is_corporate = False
+        if role:
+            role_name_lower = role.name.lower()
+            if any(cr in role_name_lower for cr in corporate_roles):
+                is_corporate = True
+            if not is_corporate and 'circle' in role_name_lower:
+                if not field.data:
+                    raise ValidationError('This field is required.')
 
     def validate_username(self, field):
         from app.modules.auth.models import User

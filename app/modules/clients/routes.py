@@ -15,6 +15,11 @@ client_service = ClientService()
 @login_required
 def index():
     clients = client_service.list_clients()
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            clients = [c for c in clients if c.circle_id == current_user.circle_id]
+        elif current_user.company_id:
+            clients = [c for c in clients if c.company_id == current_user.company_id]
     company_ids = list({client.company_id for client in clients if client.company_id})
     circle_ids = list({client.circle_id for client in clients if client.circle_id})
     companies = Company.query.filter(Company.id.in_(company_ids)).all() if company_ids else []

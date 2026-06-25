@@ -15,8 +15,12 @@ class SubzoneRepository:
         return Subzone.query.filter_by(id=subzone_id).first()
 
     @staticmethod
-    def list_active(limit=None, offset=0):
-        query = Subzone.query.filter_by(status='Active')
+    def list_active(company_id=None, circle_id=None, status='Active', limit=None, offset=0):
+        query = Subzone.query.filter_by(status=status)
+        if company_id:
+            query = query.filter_by(company_id=company_id)
+        if circle_id:
+            query = query.filter_by(circle_id=circle_id)
         query = query.order_by(Subzone.created_at.desc())
         if limit:
             query = query.limit(limit).offset(offset)

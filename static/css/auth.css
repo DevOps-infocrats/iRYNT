@@ -235,17 +235,21 @@ body {
 }
 
 .brand-mark {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     margin: 0 auto;
-    border-radius: 18px;
-    background: linear-gradient(135deg, rgba(255,122,24,0.15), rgba(255,77,141,0.15));
-    color: var(--accent-orange);
-    font-weight: 800;
-    letter-spacing: 0.18em;
+    border-radius: 20px;
+    background: #FFF3ED;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+
+.brand-mark img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
 }
 
 .auth-form__header h2 {

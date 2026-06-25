@@ -125,8 +125,8 @@ class UserService:
 
     def create_user(self, payload):
         role_id = payload.get('role_id')
-        company_id = payload.get('company_id')
-        circle_id = payload.get('circle_id')
+        company_id = payload.get('company_id') or None
+        circle_id = payload.get('circle_id') or None
         project_id = payload.get('project_id')
         password = payload.get('password') or 'ChangeMe@123'
         user = User(
@@ -172,8 +172,8 @@ class UserService:
         user.username = payload['username']
         user.email = payload['email']
         user.phone = payload.get('phone')
-        user.company_id = payload.get('company_id')
-        user.circle_id = payload.get('circle_id')
+        user.company_id = payload.get('company_id') or None
+        user.circle_id = payload.get('circle_id') or None
         user.is_active = payload.get('is_active', True)
         user.is_verified = payload.get('is_verified', False)
 

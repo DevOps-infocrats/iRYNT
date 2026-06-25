@@ -29,11 +29,13 @@ class ProjectRepository:
         ).first()
 
     @staticmethod
-    def list_by_company(company_id=None, status=None, limit=None, offset=0):
-        """Get all projects for a company"""
+    def list_by_company(company_id=None, circle_id=None, status=None, limit=None, offset=0):
+        """Get all projects for a company / circle"""
         query = Project.query
         if company_id:
             query = query.filter_by(company_id=company_id)
+        if circle_id:
+            query = query.filter_by(circle_id=circle_id)
         if status:
             query = query.filter_by(status=status)
         query = query.order_by(Project.created_at.desc())

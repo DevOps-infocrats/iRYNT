@@ -42,6 +42,12 @@ def index():
         'search_query': request.args.get('q', '').strip() or None,
     }
 
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
+
     drivers, total = service.list_drivers(filters, page, per_page)
     payload = service.get_filter_payload(filters)
 

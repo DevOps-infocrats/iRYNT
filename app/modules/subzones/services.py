@@ -19,8 +19,8 @@ class SubzoneService:
     def get_subzone(self, subzone_id):
         return self.repository.get_by_id(subzone_id)
 
-    def list_subzones(self, status='Active', limit=None, offset=0):
-        return self.repository.list_active(limit=limit, offset=offset)
+    def list_subzones(self, status='Active', company_id=None, circle_id=None, limit=None, offset=0):
+        return self.repository.list_active(company_id=company_id, circle_id=circle_id, status=status, limit=limit, offset=offset)
 
     def exists_by_code(self, company_id, circle_id, client_id, project_id, code):
         return self.repository.exists_by_code(company_id, circle_id, client_id, project_id, code)

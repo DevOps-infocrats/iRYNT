@@ -31,16 +31,30 @@ class AttendanceService:
     def get_monitoring_summary(self, filters):
         return self.repository.get_monitoring_summary(filters)
 
-    def get_attendance_approvals(self):
-        return (
-            ApprovalRequest.query.filter_by(
-                module_name='attendance',
-                entity_type='driver_attendance',
-            )
-            .filter(ApprovalRequest.approval_status.in_(['Pending', 'Under Review', 'Escalated']))
-            .order_by(ApprovalRequest.submitted_at.desc())
-            .all()
-        )
+    def get_attendance_approvals(self, user=None):
+        from sqlalchemy import or_
+        query = ApprovalRequest.query.filter_by(
+            module_name='attendance',
+            entity_type='driver_attendance',
+        ).filter(ApprovalRequest.approval_status.in_(['Pending', 'Under Review', 'Escalated']))
+
+        if user and not user.is_superadmin:
+            conditions = [
+                or_(
+                    ApprovalRequest.assigned_approver_id == user.id,
+                    ApprovalRequest.requested_by_id == user.id
+                )
+            ]
+            if 'circle kam' in user.role_names or 'circle admin' in user.role_names:
+                conditions.append(ApprovalRequest.circle_id == user.circle_id)
+            elif any(r in user.role_names for r in ['corporate admin', 'corporate kam', 'cbh', 'key account manager', 'corporate customer']):
+                if user.company_id:
+                    conditions.append(ApprovalRequest.company_id == user.company_id)
+                else:
+                    conditions.append(db.literal(True))
+            query = query.filter(or_(*conditions))
+
+        return query.order_by(ApprovalRequest.submitted_at.desc()).all()
 
     def get_shift_reports(self):
         # Placeholder for future attendance reporting integration.

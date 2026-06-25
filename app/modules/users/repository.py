@@ -147,8 +147,9 @@ class UserRepository:
         query = query.filter(User.sessions.any(and_(UserSession.active.is_(True), UserSession.revoked.is_(False))))
         return query.distinct().count()
 
-    def count_by_role_name(self, role_name):
-        return self.base_query().filter(
+    def count_by_role_name(self, role_name, filters=None):
+        query = self._apply_filters(self.base_query(), filters or {})
+        return query.filter(
             or_(
                 User.primary_role.has(Role.name.ilike(role_name)),
                 User.roles.any(Role.name.ilike(role_name)),

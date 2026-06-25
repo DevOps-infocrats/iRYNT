@@ -12,7 +12,7 @@ class DashboardAnalyticsService:
     def get_kpis(self, filters=None):
         filters = filters or {}
         total_vehicles = self._count_total_vehicles(filters)
-        active_drivers = self.user_repo.count_by_role_name('driver')
+        active_drivers = self.user_repo.count_by_role_name('driver', filters)
         today_attendance = self._count_today_attendance(filters)
         active_deployments = self._count_active_deployments(filters)
         pending_approvals = self._count_pending_approvals(filters)
@@ -45,7 +45,12 @@ class DashboardAnalyticsService:
             from app.modules.vehicles.models import Vehicle
 
             counts = {label: 0 for label in default['labels']}
-            rows = db.session.query(Vehicle.status, db.func.count(Vehicle.id)).group_by(Vehicle.status).all()
+            q = db.session.query(Vehicle.status, db.func.count(Vehicle.id))
+            if filters and filters.get('circle_id'):
+                q = q.filter(Vehicle.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(Vehicle.company_id == filters['company_id'])
+            rows = q.group_by(Vehicle.status).all()
             for status, count in rows:
                 if status in counts:
                     counts[status] = count
@@ -59,12 +64,17 @@ class DashboardAnalyticsService:
             from app.extensions import db
             from app.modules.vehicles.models import Vehicle
 
-            query = db.session.query(
+            q = db.session.query(
                 Vehicle.current_deployment,
                 Vehicle.status,
                 db.func.count(Vehicle.id),
                 db.func.count(db.func.distinct(Vehicle.assigned_driver)),
-            ).filter(Vehicle.current_deployment.isnot(None)).group_by(Vehicle.current_deployment, Vehicle.status).limit(6)
+            ).filter(Vehicle.current_deployment.isnot(None))
+            if filters and filters.get('circle_id'):
+                q = q.filter(Vehicle.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(Vehicle.company_id == filters['company_id'])
+            query = q.group_by(Vehicle.current_deployment, Vehicle.status).limit(6)
 
             operations = []
             for deployment, status, vehicle_count, driver_count in query.all():
@@ -185,17 +195,26 @@ class DashboardAnalyticsService:
         try:
             from app.extensions import db
             from app.modules.vehicles.models import Vehicle
-            return db.session.query(Vehicle).count()
+            q = db.session.query(Vehicle)
+            if filters and filters.get('circle_id'):
+                q = q.filter(Vehicle.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(Vehicle.company_id == filters['company_id'])
+            return q.count()
         except Exception:
             return 0
 
     def _count_today_attendance(self, filters=None):
         try:
             from app.extensions import db
-            from app.modules.auth.models import LoginAttempt
+            from app.modules.auth.models import LoginAttempt, User
             now = datetime.now(timezone.utc)
             start = datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
-            q = db.session.query(LoginAttempt.user_id).filter(LoginAttempt.success.is_(True), LoginAttempt.created_at >= start)
+            q = db.session.query(LoginAttempt.user_id).join(User, User.id == LoginAttempt.user_id).filter(LoginAttempt.success.is_(True), LoginAttempt.created_at >= start)
+            if filters and filters.get('circle_id'):
+                q = q.filter(User.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(User.company_id == filters['company_id'])
             return q.distinct().count()
         except Exception:
             return 0
@@ -204,7 +223,12 @@ class DashboardAnalyticsService:
         try:
             from app.extensions import db
             from app.modules.vehicles.models import Vehicle
-            return db.session.query(Vehicle).filter(Vehicle.current_deployment.isnot(None)).count()
+            q = db.session.query(Vehicle).filter(Vehicle.current_deployment.isnot(None))
+            if filters and filters.get('circle_id'):
+                q = q.filter(Vehicle.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(Vehicle.company_id == filters['company_id'])
+            return q.count()
         except Exception:
             return 0
 
@@ -212,7 +236,12 @@ class DashboardAnalyticsService:
         try:
             from app.extensions import db
             from app.modules.auth.models import User
-            return db.session.query(User).filter(User.is_verified.is_(False)).count()
+            q = db.session.query(User).filter(User.is_verified.is_(False))
+            if filters and filters.get('circle_id'):
+                q = q.filter(User.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(User.company_id == filters['company_id'])
+            return q.count()
         except Exception:
             return 0
 
@@ -222,24 +251,34 @@ class DashboardAnalyticsService:
             from app.extensions import db
             from app.modules.vehicles.models import Vehicle
 
-            return db.session.query(Vehicle).filter(
+            q = db.session.query(Vehicle).filter(
                 or_(
                     Vehicle.insurance_status != 'Valid',
                     Vehicle.permit_status != 'Valid',
                     Vehicle.fitness_status != 'Valid',
                     Vehicle.puc_status != 'Valid',
                 )
-            ).count()
+            )
+            if filters and filters.get('circle_id'):
+                q = q.filter(Vehicle.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(Vehicle.company_id == filters['company_id'])
+            return q.count()
         except Exception:
             return 0
 
     def get_attendance_trend(self, days=7, filters=None):
         try:
             from app.extensions import db
-            from app.modules.auth.models import LoginAttempt
+            from app.modules.auth.models import LoginAttempt, User
             now = datetime.now(timezone.utc)
             start = (now - timedelta(days=days - 1)).replace(hour=0, minute=0, second=0, microsecond=0)
-            attempts = db.session.query(LoginAttempt.created_at).filter(LoginAttempt.success.is_(True), LoginAttempt.created_at >= start).all()
+            q = db.session.query(LoginAttempt.created_at).join(User, User.id == LoginAttempt.user_id).filter(LoginAttempt.success.is_(True), LoginAttempt.created_at >= start)
+            if filters and filters.get('circle_id'):
+                q = q.filter(User.circle_id == filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                q = q.filter(User.company_id == filters['company_id'])
+            attempts = q.all()
             counts = [0] * days
             labels = []
             for i in range(days):
@@ -269,7 +308,12 @@ class DashboardAnalyticsService:
             today = date.today()
             thirty_days = today + timedelta(days=30)
             
-            vehicles = Vehicle.query.all()
+            v_query = Vehicle.query
+            if filters and filters.get('circle_id'):
+                v_query = v_query.filter_by(circle_id=filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                v_query = v_query.filter_by(company_id=filters['company_id'])
+            vehicles = v_query.all()
             near_odo = 0
             above_odo = 0
             near_age = 0
@@ -295,7 +339,13 @@ class DashboardAnalyticsService:
                     except (ValueError, TypeError):
                         pass
             
-            drivers = DriverProfile.query.all()
+            d_query = DriverProfile.query
+            if filters and filters.get('circle_id'):
+                d_query = d_query.filter_by(circle_id=filters['circle_id'])
+            elif filters and filters.get('company_id'):
+                from app.modules.auth.models import User
+                d_query = d_query.join(User).filter(User.company_id == filters['company_id'])
+            drivers = d_query.all()
             expiring_soon_dl = 0
             expired_dl = 0
             

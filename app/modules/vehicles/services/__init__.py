@@ -19,8 +19,8 @@ def normalize_vehicle_payload(payload):
 
 
 class VehicleService:
-    def list_vehicles(self, company_id=None, limit=20, offset=0):
-        return vehicle_repository.list_vehicles(company_id=company_id, limit=limit, offset=offset)
+    def list_vehicles(self, company_id=None, circle_id=None, limit=20, offset=0):
+        return vehicle_repository.list_vehicles(company_id=company_id, circle_id=circle_id, limit=limit, offset=offset)
 
     def get_vehicle(self, vehicle_id):
         return vehicle_repository.get_vehicle(vehicle_id)

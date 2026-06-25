@@ -180,7 +180,7 @@
                             <h4 class="card-title mb-4">Approval Actions</h4>
 
                             {% if approval.approval_status in ['Pending', 'Under Review', 'Escalated'] %}
-                                {% if has_permission('workflows.approve') and approval.assigned_approver_id == current_user.id %}
+                                {% if has_permission('workflows.approve') and (approval.assigned_approver_id == current_user.id or current_user.is_superadmin or ('circle kam' in current_user.role_names and approval.circle_id == current_user.circle_id) or ('circle admin' in current_user.role_names and approval.circle_id == current_user.circle_id)) %}
                                 <form method="POST" action="{{ url_for('approvals.approve', approval_id=approval.id) }}" class="mb-3">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <div class="form-group mb-3">

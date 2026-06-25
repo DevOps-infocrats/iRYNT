@@ -38,7 +38,10 @@ CITIES = {
 @companies_bp.route('/')
 @login_required
 def index():
-    companies = company_service.list_companies()
+    if not current_user.is_superadmin and current_user.company_id:
+        companies = [c for c in company_service.list_companies() if c.id == current_user.company_id]
+    else:
+        companies = company_service.list_companies()
     return render_template('companies/index.html', companies=companies, active_page='companies')
 
 

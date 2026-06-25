@@ -29,6 +29,11 @@ def render_dashboard():
 
     # provide dynamic KPI metrics and dashboard payload for the dashboard
     filters = {}
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
     
     kpis = _dashboard_service.get_kpis(filters)
     dashboard_payload = _dashboard_service.get_dashboard_payload(filters)

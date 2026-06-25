@@ -33,6 +33,13 @@ class DeploymentRepository:
             query = query.filter_by(project_id=filters['project_id'])
         if filters.get('subzone_id'):
             query = query.filter_by(subzone_id=filters['subzone_id'])
+        if filters.get('circle_id') or filters.get('company_id'):
+            from app.modules.projects.models import Project
+            query = query.join(Project, Project.id == VehicleDeployment.project_id)
+            if filters.get('circle_id'):
+                query = query.filter(Project.circle_id == filters['circle_id'])
+            elif filters.get('company_id'):
+                query = query.filter(Project.company_id == filters['company_id'])
 
         total = query.count()
         deployments = query.offset(offset).limit(limit).all()

@@ -138,8 +138,20 @@ class ValidationService:
             company_val = row.get("Company")
             company_str = str(company_val or "").strip()
             resolved_company = None
+            
+            corporate_roles = [
+                'super admin', 'corporate admin', 'director', 
+                'key account manager', 'kam', 'pmo', 'corporate customer'
+            ]
+            is_corporate = False
+            if resolved_role:
+                role_name_lower = resolved_role.name.lower()
+                if any(cr in role_name_lower for cr in corporate_roles):
+                    is_corporate = True
+
             if not company_str:
-                add_error("Company", company_val, "Company is required.", f"Available companies: {', '.join(available_company_names[:5])}")
+                if not is_corporate:
+                    add_error("Company", company_val, "Company is required.", f"Available companies: {', '.join(available_company_names[:5])}")
             else:
                 resolved_company = companies_by_name.get(company_str.lower())
                 if not resolved_company:
@@ -156,8 +168,16 @@ class ValidationService:
             circle_val = row.get("Circle")
             circle_str = str(circle_val or "").strip()
             resolved_circle = None
+            
+            is_circle_role = False
+            if resolved_role:
+                role_name_lower = resolved_role.name.lower()
+                if 'circle' in role_name_lower:
+                    is_circle_role = True
+
             if not circle_str:
-                add_error("Circle", circle_val, "Circle is required.", f"Available circles: {', '.join(available_circle_names[:5])}")
+                if not is_corporate and is_circle_role:
+                    add_error("Circle", circle_val, "Circle is required.", f"Available circles: {', '.join(available_circle_names[:5])}")
             else:
                 # If company is resolved, check if circle is under that company
                 if resolved_company:

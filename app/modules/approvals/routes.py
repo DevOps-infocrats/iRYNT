@@ -37,6 +37,12 @@ def index():
         'assigned_approver_id': assigned_approver_id if assigned_approver_id else None,
     }
 
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
+
     # Apply category translation
     if category == 'documents':
         filters['approval_types'] = ['license_verification', 'insurance_verification', 'compliance_approval', 'medical_certificate', 'vehicle_document']

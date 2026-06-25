@@ -29,6 +29,12 @@ def index():
         'access_scope': request.args.get('access_scope') or None,
     }
 
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
+
     users, total = user_service.search_users(filters, page, per_page)
     kpis = user_service.get_dashboard_metrics(filters)
     filters_payload = user_service.get_filter_payload(filters)

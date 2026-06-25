@@ -26,7 +26,13 @@ deployment_service = DeploymentService()
 
 def get_vehicle_choices():
     """Get available vehicles for deployment"""
-    vehicles = Vehicle.query.filter(Vehicle.status.in_(['Available', 'Assigned'])).order_by(Vehicle.vehicle_number).all()
+    query = Vehicle.query.filter(Vehicle.status.in_(['Available', 'Assigned']))
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            query = query.filter_by(circle_id=current_user.circle_id)
+        elif current_user.company_id:
+            query = query.filter_by(company_id=current_user.company_id)
+    vehicles = query.order_by(Vehicle.vehicle_number).all()
     return [('', 'Select vehicle')] + [(v.id, f"{v.vehicle_number} ({v.vehicle_type})") for v in vehicles]
 
 
@@ -63,7 +69,13 @@ def ensure_driver_profile(driver, vehicle=None):
 
 def get_project_choices():
     """Get active projects for deployment"""
-    projects = Project.query.filter_by(status='Active').order_by(Project.project_name).all()
+    query = Project.query.filter_by(status='Active')
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            query = query.filter_by(circle_id=current_user.circle_id)
+        elif current_user.company_id:
+            query = query.filter_by(company_id=current_user.company_id)
+    projects = query.order_by(Project.project_name).all()
     return [('', 'Select project')] + [(p.id, f"{p.project_name} ({p.project_code})") for p in projects]
 
 
@@ -71,7 +83,13 @@ def get_subzone_choices(project_id):
     """Get subzones for project"""
     if not project_id:
         return [('', 'Select subzone')]
-    subzones = Subzone.query.filter_by(project_id=project_id, status='Active').order_by(Subzone.subzone_name).all()
+    query = Subzone.query.filter_by(project_id=project_id, status='Active')
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            query = query.filter_by(circle_id=current_user.circle_id)
+        elif current_user.company_id:
+            query = query.filter_by(company_id=current_user.company_id)
+    subzones = query.order_by(Subzone.subzone_name).all()
     return [('', 'Select subzone')] + [(s.id, f"{s.subzone_name} ({s.subzone_code})") for s in subzones]
 
 
@@ -101,6 +119,12 @@ def index():
     if has_role('Driver') and not has_role('Super Admin') and not has_role('Admin'):
         # Deployments use user_id, not driver_profile_id
         filters['driver_id'] = current_user.id
+
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
 
     result = deployment_service.list_deployments(filters, page, per_page=20)
     

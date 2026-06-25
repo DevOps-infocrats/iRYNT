@@ -34,9 +34,9 @@ class ProjectService:
         """Delete a project"""
         return self.repository.delete(project_id)
 
-    def list_projects_by_company(self, company_id, status=None, limit=None, offset=0):
-        """List all projects for a company"""
-        return self.repository.list_by_company(company_id, status, limit, offset)
+    def list_projects_by_company(self, company_id=None, circle_id=None, status=None, limit=None, offset=0):
+        """List all projects for a company / circle"""
+        return self.repository.list_by_company(company_id=company_id, circle_id=circle_id, status=status, limit=limit, offset=offset)
 
     def list_projects_by_circle(self, company_id, circle_id, status='Active', limit=None, offset=0):
         """List all projects for a circle"""

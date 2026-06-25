@@ -13,6 +13,11 @@ circle_service = CircleService()
 @login_required
 def index():
     circles = circle_service.list_circles()
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            circles = [c for c in circles if c.id == current_user.circle_id]
+        elif current_user.company_id:
+            circles = [c for c in circles if c.company_id == current_user.company_id]
     # build a small company map to show names in the list
     company_ids = list({c.company_id for c in circles if c.company_id})
     companies = Company.query.filter(Company.id.in_(company_ids)).all() if company_ids else []

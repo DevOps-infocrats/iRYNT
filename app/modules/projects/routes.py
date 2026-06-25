@@ -18,8 +18,17 @@ def index():
     page = request.args.get('page', 1, type=int)
     per_page = 20
     
+    company_id = None
+    circle_id = None
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            circle_id = current_user.circle_id
+        elif current_user.company_id:
+            company_id = current_user.company_id
+
     projects = project_service.list_projects_by_company(
-        current_user.company_id if hasattr(current_user, 'company_id') else None,
+        company_id=company_id,
+        circle_id=circle_id,
         limit=per_page,
         offset=(page - 1) * per_page
     )
@@ -38,7 +47,11 @@ def create():
     form = ProjectForm()
     
     # Load companies for dropdown
-    companies = Company.query.filter_by(status='Active').order_by(Company.company_name).all()
+    comp_query = Company.query.filter_by(status='Active')
+    if not current_user.is_superadmin:
+        if current_user.company_id:
+            comp_query = comp_query.filter_by(id=current_user.company_id)
+    companies = comp_query.order_by(Company.company_name).all()
     form.company_id.choices = [('', 'Select company')] + [(c.id, f"{c.company_name} ({c.company_code})") for c in companies]
     
     # Populate dependent dropdown choices on POST (before validation) or on GET if company_id/circle_id are preset

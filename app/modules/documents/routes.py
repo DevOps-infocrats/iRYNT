@@ -58,17 +58,18 @@ def drivers():
     if has_role(['Driver']) and not has_permission('documents.view'):
         profiles = [own_profile] if own_profile else []
     else:
-        profiles = (
-            DriverProfile.query.options(
-                joinedload(DriverProfile.user),
-                joinedload(DriverProfile.circle),
-                joinedload(DriverProfile.project),
-                joinedload(DriverProfile.subzone),
-            )
-            .order_by(DriverProfile.updated_at.desc())
-            .limit(100)
-            .all()
+        query = DriverProfile.query.options(
+            joinedload(DriverProfile.user),
+            joinedload(DriverProfile.circle),
+            joinedload(DriverProfile.project),
+            joinedload(DriverProfile.subzone),
         )
+        if not current_user.is_superadmin:
+            if current_user.circle_id:
+                query = query.filter(DriverProfile.circle_id == current_user.circle_id)
+            elif current_user.company_id:
+                query = query.join(User).filter(User.company_id == current_user.company_id)
+        profiles = query.order_by(DriverProfile.updated_at.desc()).limit(100).all()
 
     profile_ids = [profile.id for profile in profiles if profile]
     documents = DriverDocument.query.filter(DriverDocument.driver_id.in_(profile_ids)).all() if profile_ids else []
@@ -219,8 +220,11 @@ def vehicles():
         joinedload(Vehicle.subzone),
         joinedload(Vehicle.assigned_driver_user),
     )
-    if getattr(current_user, 'company_id', None) and not has_role(['Super Admin']):
-        query = query.filter(Vehicle.company_id == current_user.company_id)
+    if not current_user.is_superadmin:
+        if getattr(current_user, 'circle_id', None):
+            query = query.filter(Vehicle.circle_id == current_user.circle_id)
+        elif getattr(current_user, 'company_id', None):
+            query = query.filter(Vehicle.company_id == current_user.company_id)
     rows = []
     totals = defaultdict(int)
     for vehicle in query.order_by(Vehicle.updated_at.desc()).limit(150).all():

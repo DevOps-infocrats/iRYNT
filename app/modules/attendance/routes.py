@@ -28,6 +28,12 @@ def live():
         'circle_id': request.args.get('circle_id') or None,
     }
 
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
+
     is_driver_user = has_role('Driver') and not has_role('Super Admin') and not has_role('Admin')
     is_helper_user = has_role('Helper') and not has_role('Super Admin') and not has_role('Admin')
     if is_helper_user:
@@ -164,7 +170,15 @@ def history():
         'search_query': request.args.get('q', '').strip() or None,
         'date_from': request.args.get('date_from') or None,
         'date_to': request.args.get('date_to') or None,
+        'company_id': None,
+        'circle_id': None,
     }
+
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
 
     # If user is ONLY a driver (not admin), only show their own attendance history
     if has_role('Driver') and not has_role('Super Admin') and not has_role('Admin'):
@@ -206,6 +220,12 @@ def monitoring():
         'circle_id': request.args.get('circle_id') or None,
     }
 
+    if not current_user.is_superadmin:
+        if current_user.circle_id:
+            filters['circle_id'] = current_user.circle_id
+        elif current_user.company_id:
+            filters['company_id'] = current_user.company_id
+
     summary = attendance_service.get_monitoring_summary(filters)
 
     return render_template(
@@ -219,7 +239,7 @@ def monitoring():
 @login_required
 @permission_required('attendance.approve')
 def approvals():
-    approvals = attendance_service.get_attendance_approvals()
+    approvals = attendance_service.get_attendance_approvals(user=current_user)
     total = len(approvals)
 
     return render_template(
