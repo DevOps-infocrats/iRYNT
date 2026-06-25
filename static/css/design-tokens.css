@@ -788,7 +788,7 @@ html[data-bs-theme="dark"] .table tbody tr:hover {
     border: 1px solid var(--badge-danger-border) !important;
 }
 
-.badge.bg-warning, .badge-warning, .badge-soft-warning, .bg-warning-lt {
+.badge.bg-warning, .badge-warning, .badge-soft-warning, .bg-warning-lt, .bg-yellow, .badge.bg-yellow {
     background-color: var(--badge-warning-bg) !important;
     color: var(--badge-warning-color) !important;
     border: 1px solid var(--badge-warning-border) !important;
@@ -806,13 +806,13 @@ html[data-bs-theme="dark"] .table tbody tr:hover {
     border: 1px solid var(--badge-blue-border) !important;
 }
 
-.bg-red-lt {
+.bg-red-lt, .bg-red, .badge.bg-red {
     background-color: var(--badge-red-bg) !important;
     color: var(--badge-red-color) !important;
     border: 1px solid var(--badge-red-border) !important;
 }
 
-.bg-orange-lt {
+.bg-orange-lt, .bg-orange, .badge.bg-orange {
     background-color: var(--badge-orange-bg) !important;
     color: var(--badge-orange-color) !important;
     border: 1px solid var(--badge-orange-border) !important;
