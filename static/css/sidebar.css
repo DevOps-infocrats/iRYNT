@@ -212,10 +212,31 @@ body.permissions-page {
     min-width: 0;
 }
 
-.nav-link:hover,
+.nav-link {
+    position: relative;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-orange) !important;
+}
+
 .nav-link.active {
-    background: rgba(255,255,255,0.08);
-    color: var(--text-white) !important;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--accent-orange) !important;
+    font-weight: var(--font-weight-semibold);
+}
+
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 4px;
+    background: var(--gradient-primary);
+    border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
 }
 
 .nav-link .material-symbols-outlined {
