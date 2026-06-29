@@ -63,7 +63,7 @@ body.permissions-page {
    ======================================= */
 
 .dashboard-sidebar {
-    background: linear-gradient(180deg, rgba(42,33,30,0.96), rgba(27,20,18,0.98));
+    background: linear-gradient(180deg, rgba(42, 33, 30, 0.96), rgba(27, 20, 18, 0.98));
     color: var(--text-white);
     font-family: inherit;
     width: var(--sidebar-width);
@@ -75,7 +75,7 @@ body.permissions-page {
     height: 100vh;
     overflow: hidden;
     flex: 0 0 var(--sidebar-width);
-    border-right: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 12px 0 48px rgba(14, 10, 8, 0.12);
     transition: width 0.28s ease, min-width 0.28s ease, max-width 0.28s ease;
     z-index: 1050;
@@ -89,7 +89,7 @@ body.permissions-page {
 }
 
 .sidebar-brand {
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     position: relative;
     z-index: 2000;
     padding: 0.75rem 0.75rem;
@@ -107,7 +107,7 @@ body.permissions-page {
     border-radius: 10px;
     display: grid;
     place-items: center;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--accent-orange);
     font-weight: 800;
     letter-spacing: 0.15em;
@@ -122,7 +122,7 @@ body.permissions-page {
 
 .brand-title small {
     display: block;
-    color: rgba(255,255,255,0.64);
+    color: rgba(255, 255, 255, 0.64);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-size: 9px;
@@ -130,7 +130,7 @@ body.permissions-page {
 }
 
 .sidebar-toggle {
-    color: rgba(255,255,255,0.72);
+    color: rgba(255, 255, 255, 0.72);
     background: transparent;
     border: none;
     position: relative;
@@ -281,7 +281,7 @@ body.permissions-page {
     align-items: center;
     gap: 0.7rem;
     padding: 0.6rem 0.8rem;
-    color: rgba(255,255,255,0.82);
+    color: rgba(255, 255, 255, 0.82);
     border-radius: 12px;
     transition: background 0.2s ease, color 0.2s ease;
     border: none;
@@ -299,7 +299,7 @@ body.permissions-page {
 
 .section-toggle:hover,
 .section-toggle.active {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-white);
 }
 
@@ -401,6 +401,7 @@ body.permissions-page {
 }
 
 @media (max-width: 991px) {
+
     /* Switch to overlay drawer mode on mobile */
     .dashboard-sidebar {
         position: fixed;
@@ -433,7 +434,7 @@ body.permissions-page {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1040;
         pointer-events: all;
     }
@@ -466,7 +467,7 @@ body.permissions-page {
     font-size: 1.2rem;
 }
 
-.nav-dropdown > .nav-link {
+.nav-dropdown>.nav-link {
     justify-content: space-between;
     width: 100%;
     flex: 0 1 auto;
@@ -530,8 +531,7 @@ body.permissions-page {
     display: none;
 }
 
-.dashboard-sidebar.collapsed .sidebar-toggle {
-}
+.dashboard-sidebar.collapsed .sidebar-toggle {}
 
 .btn-icon {
     width: 42px;
@@ -539,7 +539,5 @@ body.permissions-page {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.82);
+    color: rgba(255, 255, 255, 0.82);
 }
-
-
