@@ -31,13 +31,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker run -d \
-                  --name ${CONTAINER_NAME} \
+                   docker rm -f irynt-app || true
 
-                  --restart unless-stopped \
-    
-                  -p 5004:5000 \
-                  ${IMAGE_NAME}:${BUILD_NUMBER}
+                   docker run -d \
+                   --name irynt-app \
+                   -p 5002:5000 \
+                   ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
