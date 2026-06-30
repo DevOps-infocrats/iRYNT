@@ -30,7 +30,9 @@ class Config:
     PASSWORD_EXPIRE_DAYS = int(os.environ.get('PASSWORD_EXPIRE_DAYS', 90))
     
     # Database
-    db_url = os.environ.get('DATABASE_URL')
+  #  db_url = os.environ.get('DATABASE_URL')
+    db_url = 'postgresql://vil_db_user:BQCFnKyxbtKGFaVM0IXVkE8xnF5PqtUM@dpg-d8ojac0js32c738e6kkg-a.oregon-postgres.render.com/vil_db'
+
     if db_url and db_url.startswith('postgres://'):
         db_url = db_url.replace('postgres://', 'postgresql://', 1)
     SQLALCHEMY_DATABASE_URI = db_url
