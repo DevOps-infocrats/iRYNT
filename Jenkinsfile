@@ -35,7 +35,9 @@ pipeline {
 
                 docker run -d \
                   --name ${CONTAINER_NAME} \
-                  --restart unless-stopped \      
+
+                  --restart unless-stopped \
+    
                   -p 5004:5000 \
                   ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
