@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 5000
 
 # Define the default command to run the application
-CMD ["python", "run.py"]
+CMD ["python3", "run.py"]
