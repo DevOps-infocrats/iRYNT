@@ -35,7 +35,7 @@ pipeline {
 
                    docker run -d \
                    --name irynt-app \
-                   -p 5002:5000 \
+                   -p 8004:5000 \
                    ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
