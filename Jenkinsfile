@@ -31,8 +31,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker rm -f ${CONTAINER_NAME} || true
-
                 docker run -d \
                   --name ${CONTAINER_NAME} \
 
