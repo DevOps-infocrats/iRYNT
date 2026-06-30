@@ -108,6 +108,14 @@ def _ensure_attendance_verification_schema():
                 connection.execute(
                     text('ALTER TABLE driver_attendance ADD COLUMN dashboard_storage_path VARCHAR(512) NULL')
                 )
+            if 'selfie_image_data' not in columns:
+                connection.execute(
+                    text('ALTER TABLE driver_attendance ADD COLUMN selfie_image_data TEXT NULL')
+                )
+            if 'dashboard_image_data' not in columns:
+                connection.execute(
+                    text('ALTER TABLE driver_attendance ADD COLUMN dashboard_image_data TEXT NULL')
+                )
             if 'start_odometer' not in columns:
                 connection.execute(
                     text('ALTER TABLE driver_attendance ADD COLUMN start_odometer FLOAT NULL')
@@ -120,6 +128,8 @@ def _ensure_attendance_verification_schema():
                 connection.execute(
                     text('ALTER TABLE driver_attendance ADD COLUMN verification_status VARCHAR(30) NULL')
                 )
+
+    _ensure_attendance_approval_schema(inspector)
 
     if inspector.has_table('vehicles'):
         columns = [col['name'] for col in inspector.get_columns('vehicles')]
@@ -155,6 +165,38 @@ def _ensure_attendance_verification_schema():
             if 'circle_id' not in columns:
                 connection.execute(
                     text('ALTER TABLE notifications ADD COLUMN circle_id VARCHAR(36) NULL')
+                )
+
+
+def _ensure_attendance_approval_schema(inspector=None):
+    if inspector is None:
+        inspector = inspect(db.engine)
+    if not inspector.has_table('driver_attendance'):
+        return
+
+    columns = [col['name'] for col in inspector.get_columns('driver_attendance')]
+    approval_columns = {
+        'approval_status': 'VARCHAR(30) NULL',
+        'seatbelt_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'selfie_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'dashboard_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'odometer_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'helmet_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'safety_shoes_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'safety_jacket_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'id_card_verified': 'BOOLEAN DEFAULT FALSE NOT NULL',
+        'mis_verified_by': 'VARCHAR(36) NULL',
+        'mis_verified_at': 'TIMESTAMP NULL',
+        'mis_remarks': 'VARCHAR(512) NULL',
+        'kam_verified_by': 'VARCHAR(36) NULL',
+        'kam_verified_at': 'TIMESTAMP NULL',
+        'kam_remarks': 'VARCHAR(512) NULL',
+    }
+    with db.engine.begin() as connection:
+        for column_name, column_type in approval_columns.items():
+            if column_name not in columns:
+                connection.execute(
+                    text(f'ALTER TABLE driver_attendance ADD COLUMN {column_name} {column_type}')
                 )
 
 

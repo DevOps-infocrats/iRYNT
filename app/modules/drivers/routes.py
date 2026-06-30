@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, send_from_directory, url_for
+from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, send_file, url_for
 from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 
@@ -246,14 +246,17 @@ def create():
             form.join_date.errors.append('Join date must be after date of birth.')
             has_validation_errors = True
 
-        # Validate Driving License, Aadhaar, PAN
+        # Validate Driving License, Aadhaar, PAN, Medical Certificate, Police Verification, Training Certificate
         document_file = form.document_file.data
         document_type = form.document_type.data
         
         for field_name, name in [
             ('driving_license_file', 'Driving License'),
             ('aadhaar_file', 'Aadhaar'),
-            ('pan_file', 'PAN')
+            ('pan_file', 'PAN'),
+            ('medical_certificate_file', 'Medical Certificate'),
+            ('police_verification_file', 'Police Verification'),
+            ('training_certificate_file', 'Training Certificate')
         ]:
             file_field = getattr(form, field_name).data
             if file_field and file_field.filename:
@@ -312,8 +315,12 @@ def create():
             for field_name, doc_type in [
                 ('driving_license_file', 'Driving License'),
                 ('aadhaar_file', 'Aadhaar'),
-                ('pan_file', 'PAN')
+                ('pan_file', 'PAN'),
+                ('medical_certificate_file', 'Medical Certificate'),
+                ('police_verification_file', 'Police Verification'),
+                ('training_certificate_file', 'Training Certificate')
             ]:
+
                 file_field = getattr(form, field_name).data
                 if file_field and file_field.filename:
                     storage_name = save_driver_document_file(file_field, upload_folder, new_profile.id)
@@ -556,9 +563,12 @@ def download_document(driver_id, document_id):
     if not document:
         abort(404)
 
-    return send_from_directory(
-        current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'],
-        document.storage_path,
+    file_path = os.path.abspath(os.path.join(current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'], document.storage_path))
+    if not os.path.exists(file_path):
+        abort(404)
+
+    return send_file(
+        file_path,
         as_attachment=True,
         download_name=document.file_name,
     )

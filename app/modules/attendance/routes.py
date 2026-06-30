@@ -1,17 +1,36 @@
 from datetime import date
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for, current_app, send_from_directory
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for, current_app, send_from_directory, Response
 from flask_login import current_user, login_required
 
 from app.core.decorators import permission_required
 from app.domain.auth.policies.auth_policy import has_permission, has_role
 from app.modules.attendance.services import AttendanceService
+from app.modules.attendance.approval_service import AttendanceApprovalService
 from app.modules.attendance.utils import get_india_today
 from app.modules.drivers.models import DriverProfile, DriverAttendance
-from app.modules.attendance.verification_helpers import decode_base64_image, save_verification_image, validate_verification_image
+from app.modules.attendance.verification_helpers import decode_base64_image, encode_verification_image, save_verification_image, validate_verification_image
 
 attendance_bp = Blueprint('attendance', __name__, url_prefix='/attendance')
 attendance_service = AttendanceService()
+approval_service = AttendanceApprovalService()
+
+
+def _resolve_attendance_display_status(driver_row):
+    approval = driver_row.get('approval_status')
+    if approval == 'SUBMITTED':
+        return 'Waiting for Circle MIS Approval'
+    if approval == 'MIS_APPROVED':
+        return 'Waiting for Circle KAM Approval'
+    if approval == 'KAM_APPROVED':
+        return 'Attendance Approved Successfully'
+    if approval == 'REJECTED':
+        return 'Rejected'
+    if driver_row.get('geo_status') == 'OUTSIDE_GEOFENCE':
+        return 'Outside Geofence'
+    if driver_row.get('today_status') in ('Present', 'Completed'):
+        return 'Present'
+    return 'Absent'
 
 
 @attendance_bp.route('/live')
@@ -117,13 +136,14 @@ def live():
         
         if drivers:
             helper_driver = drivers[0]
-            if helper_driver.get('attendance_id'):
+            attendance_status = _resolve_attendance_display_status(helper_driver)
+            if attendance_status == 'Present' and helper_driver.get('attendance_id'):
                 from app.modules.approvals.models import ApprovalRequest
                 app_req = ApprovalRequest.query.filter_by(
                     entity_type='driver_attendance',
                     entity_id=helper_driver['attendance_id']
                 ).filter(ApprovalRequest.approval_status.in_(['Pending', 'Under Review', 'Escalated', 'Approved', 'Rejected'])).first()
-                
+
                 if app_req:
                     if app_req.approval_status in ['Pending', 'Under Review', 'Escalated']:
                         attendance_status = 'Pending Approval'
@@ -131,11 +151,6 @@ def live():
                         attendance_status = 'Approved'
                     elif app_req.approval_status == 'Rejected':
                         attendance_status = 'Rejected'
-                else:
-                    if helper_driver.get('geo_status') == 'OUTSIDE_GEOFENCE':
-                        attendance_status = 'Outside Geofence'
-                    else:
-                        attendance_status = 'Present'
 
     return render_template(
         'attendance/live.html',
@@ -170,6 +185,7 @@ def history():
         'search_query': request.args.get('q', '').strip() or None,
         'date_from': request.args.get('date_from') or None,
         'date_to': request.args.get('date_to') or None,
+        'approval_status': request.args.get('approval_status') or None,
         'company_id': None,
         'circle_id': None,
     }
@@ -250,6 +266,114 @@ def approvals():
     )
 
 
+@attendance_bp.route('/mis-approvals')
+@login_required
+@permission_required('attendance.approve')
+def mis_approvals():
+    if not approval_service.user_is_mis(current_user) and not current_user.is_superadmin:
+        abort(403)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    records, total = approval_service.list_mis_pending(current_user, page, per_page)
+    items = [approval_service.get_attendance_context(record) for record in records]
+
+    return render_template(
+        'attendance/mis_dashboard.html',
+        items=items,
+        total=total,
+        page=page,
+        per_page=per_page,
+        active_page='mis_attendance_approvals',
+    )
+
+
+@attendance_bp.route('/kam-approvals')
+@login_required
+@permission_required('attendance.approve')
+def kam_approvals():
+    if not approval_service.user_is_circle_kam(current_user) and not current_user.is_superadmin:
+        abort(403)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    records, total = approval_service.list_kam_pending(current_user, page, per_page)
+    items = [approval_service.get_attendance_context(record) for record in records]
+
+    return render_template(
+        'attendance/kam_dashboard.html',
+        items=items,
+        total=total,
+        page=page,
+        per_page=per_page,
+        active_page='kam_attendance_approvals',
+    )
+
+
+@attendance_bp.route('/mis-approvals/<attendance_id>/action', methods=['POST'])
+@login_required
+@permission_required('attendance.approve')
+def mis_approval_action(attendance_id):
+    if not approval_service.user_is_mis(current_user) and not current_user.is_superadmin:
+        abort(403)
+
+    attendance = DriverAttendance.query.get_or_404(attendance_id)
+    action = request.form.get('action')
+    remarks = request.form.get('remarks', '').strip() or None
+    checklist = {
+        'seatbelt_verified': request.form.get('seatbelt_verified') == 'on',
+        'selfie_verified': request.form.get('selfie_verified') == 'on',
+        'dashboard_verified': request.form.get('dashboard_verified') == 'on',
+        'odometer_verified': request.form.get('odometer_verified') == 'on',
+        'helmet_verified': request.form.get('helmet_verified') == 'on',
+        'safety_shoes_verified': request.form.get('safety_shoes_verified') == 'on',
+        'safety_jacket_verified': request.form.get('safety_jacket_verified') == 'on',
+        'id_card_verified': request.form.get('id_card_verified') == 'on',
+    }
+
+    if action == 'approve':
+        _, error = approval_service.mis_approve(attendance, current_user, checklist, remarks)
+    elif action == 'reject':
+        _, error = approval_service.mis_reject(attendance, current_user, remarks)
+    elif action == 'resubmit':
+        _, error = approval_service.mis_request_resubmission(attendance, current_user, remarks)
+    else:
+        flash('Invalid action.', 'danger')
+        return redirect(url_for('attendance.mis_approvals'))
+
+    if error:
+        flash(error, 'danger')
+    else:
+        flash('Attendance updated successfully.', 'success')
+    return redirect(url_for('attendance.mis_approvals'))
+
+
+@attendance_bp.route('/kam-approvals/<attendance_id>/action', methods=['POST'])
+@login_required
+@permission_required('attendance.approve')
+def kam_approval_action(attendance_id):
+    if not approval_service.user_is_circle_kam(current_user) and not current_user.is_superadmin:
+        abort(403)
+
+    attendance = DriverAttendance.query.get_or_404(attendance_id)
+    action = request.form.get('action')
+    remarks = request.form.get('remarks', '').strip() or None
+
+    if action == 'approve':
+        _, error = approval_service.kam_approve(attendance, current_user, remarks)
+    elif action == 'reject':
+        _, error = approval_service.kam_reject(attendance, current_user, remarks)
+    else:
+        flash('Invalid action.', 'danger')
+        return redirect(url_for('attendance.kam_approvals'))
+
+    if error:
+        flash(error, 'danger')
+    else:
+        flash('Attendance updated successfully.', 'success')
+    return redirect(url_for('attendance.kam_approvals'))
+
+
 @attendance_bp.route('/shift-reports')
 @login_required
 @permission_required('reports.view')
@@ -321,12 +445,16 @@ def mark_attendance():
     upload_folder = current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER']
     selfie_path = None
     dashboard_path = None
+    selfie_image_data = None
+    dashboard_image_data = None
 
     try:
         if selfie_file and selfie_file.filename:
             selfie_path = save_verification_image(selfie_file, upload_folder, driver_profile.id)
+            selfie_image_data = encode_verification_image(selfie_file)
         if dashboard_file and dashboard_file.filename:
             dashboard_path = save_verification_image(dashboard_file, upload_folder, driver_profile.id)
+            dashboard_image_data = encode_verification_image(dashboard_file)
     except Exception as exc:
         flash(f"Failed to save verification images: {str(exc)}", 'danger')
         return redirect(url_for('attendance.live'))
@@ -352,6 +480,8 @@ def mark_attendance():
         actor_id=current_user.id,
         selfie_path=selfie_path,
         dashboard_path=dashboard_path,
+        selfie_image_data=selfie_image_data,
+        dashboard_image_data=dashboard_image_data,
         odometer=odometer
     )
     if error:
@@ -365,6 +495,8 @@ def mark_attendance():
 @attendance_bp.route('/verification-image/<attendance_id>/<image_type>')
 @login_required
 def view_verification_image(attendance_id, image_type):
+    import base64
+
     from app.domain.auth.policies.auth_policy import has_role
     
     attendance = DriverAttendance.query.get_or_404(attendance_id)
@@ -374,24 +506,40 @@ def view_verification_image(attendance_id, image_type):
         
     # RBAC logic
     # DRIVER: Can view own captures.
-    # KAM-CIRCLE, KAM-CORPORATE, SUPERADMIN, ADMIN: Can view any.
+    # MIS / Circle KAM (same circle), KAM-CORPORATE, SUPERADMIN, ADMIN: Can view permitted records.
     is_driver = has_role('Driver') and not has_role('Super Admin') and not has_role('Admin')
     if is_driver:
         if profile.user_id != current_user.id:
             abort(403)
+    elif not current_user.is_superadmin and not has_role('Admin'):
+        if approval_service.user_is_mis(current_user) or approval_service.user_is_circle_kam(current_user):
+            if not approval_service.user_can_access_attendance(current_user, attendance):
+                abort(403)
             
     if image_type == 'selfie':
-        path = attendance.selfie_storage_path
+        image_data = attendance.selfie_image_data or attendance.selfie_storage_path
     elif image_type == 'dashboard':
-        path = attendance.dashboard_storage_path
+        image_data = attendance.dashboard_image_data or attendance.dashboard_storage_path
     else:
         abort(404)
-        
-    if not path:
-        abort(404)
-        
-    return send_from_directory(
-        current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'],
-        path,
-        as_attachment=False
-    )
+
+    if isinstance(image_data, str) and image_data.startswith('data:'):
+        header, encoded = image_data.split(',', 1)
+        mime_type = header.split(';', 1)[0].split(':', 1)[1] if ':' in header else 'image/jpeg'
+        image_bytes = base64.b64decode(encoded)
+        return Response(image_bytes, mimetype=mime_type)
+
+    if isinstance(image_data, str) and image_data:
+        try:
+            image_bytes = base64.b64decode(image_data)
+            return Response(image_bytes, mimetype='image/jpeg')
+        except Exception:
+            pass
+
+        return send_from_directory(
+            current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'],
+            image_data,
+            as_attachment=False
+        )
+
+    abort(404)

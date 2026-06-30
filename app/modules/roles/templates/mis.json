@@ -6,12 +6,13 @@
   "permissions": [
     "deployments.view",
     "attendance.view",
+    "attendance.approve",
     "reports.view", "reports.export", "reports.analytics",
     "users.view",
     "vehicles.view"
   ],
   "workflow_rights": {
-    "can_approve": false,
+    "can_approve": true,
     "can_reject": false,
     "can_escalate": false,
     "can_override": false,

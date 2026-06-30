@@ -1,6 +1,7 @@
 from collections import defaultdict
 
-from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_from_directory, url_for
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_file, url_for
+import os
 from flask_login import current_user, login_required
 from sqlalchemy.orm import joinedload
 
@@ -146,9 +147,13 @@ def view_driver_document(driver_profile_id, document_id):
         abort(403)
     if has_role(['Driver']) and profile.user_id != current_user.id and not has_permission('documents.view'):
         abort(403)
-    return send_from_directory(
-        current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'],
-        document.storage_path,
+    
+    file_path = os.path.abspath(os.path.join(current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER'], document.storage_path))
+    if not os.path.exists(file_path):
+        abort(404)
+        
+    return send_file(
+        file_path,
         as_attachment=False,
         download_name=document.file_name,
     )

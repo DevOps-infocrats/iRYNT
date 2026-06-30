@@ -6,7 +6,8 @@
         <div>
             <p class="dashboard-title-label">Attendance Management</p>
             <h1 class="dashboard-title">{{ page_title or 'Live Attendance' }}</h1>
-            <p class="dashboard-subtitle text-soft">Track today's attendance, check-in and check-out actions, and review current shift status.</p>
+            <p class="dashboard-subtitle text-soft">Track today's attendance, check-in and check-out actions, and review
+                current shift status.</p>
         </div>
         {% if not is_driver_user %}
         <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
@@ -23,7 +24,8 @@
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                 <div>
                     <h2 class="card-title mb-1">Location Verification</h2>
-                    <p class="text-soft mb-0" id="geoStatusMessage">Live GPS will be requested when attendance is marked.</p>
+                    <p class="text-soft mb-0" id="geoStatusMessage">Live GPS will be requested when attendance is
+                        marked.</p>
                 </div>
                 <div class="d-flex flex-wrap gap-2 align-items-center">
                     <span class="badge bg-success">GEO VERIFIED</span>
@@ -38,33 +40,37 @@
     <div class="card filter-card mb-4">
         <div class="card-body p-4">
             {% if not is_driver_user %}
-                <form id="attendanceFilterForm" class="row g-3" method="get" action="{{ url_for('attendance.live') }}">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Search drivers</label>
-                        <input type="search" name="q" value="{{ filters.search_query or '' }}" class="form-control" placeholder="Username, email, phone" autocomplete="off">
-                    </div>
-                    <div class="col-12 col-md-4 d-grid">
-                        <button type="submit" class="btn btn-gradient">Apply Filters</button>
-                    </div>
-                </form>
-            {% else %}
-                <div class="row g-3">
-                    <div class="col-12 col-md-8">
-                        <h5 class="mb-2">Your Attendance</h5>
-                        <p class="text-soft mb-0">This page shows only your attendance records and allows you to mark today's attendance.</p>
-                    </div>
-                    <div class="col-12 col-md-4 d-grid">
-                        <a href="#attendance-history" class="btn btn-gradient">View Previous Attendance</a>
-                    </div>
+            <form id="attendanceFilterForm" class="row g-3" method="get" action="{{ url_for('attendance.live') }}">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Search drivers</label>
+                    <input type="search" name="q" value="{{ filters.search_query or '' }}" class="form-control"
+                        placeholder="Username, email, phone" autocomplete="off">
                 </div>
+                <div class="col-12 col-md-4 d-grid">
+                    <button type="submit" class="btn btn-gradient">Apply Filters</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="row g-3">
+                <div class="col-12 col-md-8">
+                    <h5 class="mb-2">Your Attendance</h5>
+                    <p class="text-soft mb-0">This page shows only your attendance records and allows you to mark
+                        today's attendance.</p>
+                </div>
+                <div class="col-12 col-md-4 d-grid">
+                    <a href="#attendance-history" class="btn btn-gradient">View Previous Attendance</a>
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
 
     <div class="card table-card mb-4">
-        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <div
+            class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
             <div>
-                <h2 class="card-title mb-1">{{ page_title == 'Mark Attendance' and 'Your Attendance' or 'Live Attendance Dashboard' }}</h2>
+                <h2 class="card-title mb-1">{{ page_title == 'Mark Attendance' and 'Your Attendance' or 'Live Attendance
+                    Dashboard' }}</h2>
                 <p class="text-soft mb-0">{{ total }} driver records matched.</p>
             </div>
             <div class="badge bg-info text-white py-2 px-3">Today: {{ current_date.strftime('%Y-%m-%d') }}</div>
@@ -87,94 +93,112 @@
                 </thead>
                 <tbody>
                     {% if drivers %}
-                        {% for driver in drivers %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar avatar-small {{ 'online' if driver.today_status == 'Present' else 'offline' }}">{{ driver.name[0]|upper }}</div>
-                                        <div>
-                                            <strong>{{ driver.name }}</strong>
-                                            <div class="text-soft small">{{ driver.email }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ driver.driver_code or 'N/A' }}</td>
-                                <td><span class="status-chip status-{{ driver.today_status|lower|replace(' ', '-') }}">{{ driver.today_status }}</span></td>
-                                <td>{{ to_india_datetime(driver.check_in).strftime('%H:%M:%S') if driver.check_in else '-' }}</td>
-                                <td>{{ to_india_datetime(driver.check_out).strftime('%H:%M:%S') if driver.check_out else '-' }}</td>
-                                <td>{{ driver.hours_worked if driver.hours_worked else '-' }}</td>
-                                <td>
-                                    <div class="small">
-                                        <strong>In:</strong> {{ driver.start_odometer if driver.start_odometer is not none else '-' }} km
-                                    </div>
-                                    <div class="small">
-                                        <strong>Out:</strong> {{ driver.end_odometer if driver.end_odometer is not none else '-' }} km
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if driver.geo_status == 'GEO_VERIFIED' %}
-                                        <span class="badge bg-success">GEO VERIFIED</span>
-                                    {% elif driver.geo_status == 'OUTSIDE_GEOFENCE' %}
-                                        <span class="badge bg-warning text-dark">OUTSIDE GEOFENCE</span>
-                                    {% elif driver.geo_status == 'LOW_ACCURACY' %}
-                                        <span class="badge bg-info text-white">LOW ACCURACY</span>
-                                    {% elif driver.geo_status == 'MANUAL_OVERRIDE' %}
-                                        <span class="badge bg-secondary">MANUAL OVERRIDE</span>
-                                    {% else %}
-                                        <span class="text-soft">Pending</span>
-                                    {% endif %}
-                                    <div class="small text-soft">
-                                        {{ driver.subzone_name or 'No subzone' }}
-                                        {% if driver.allowed_radius %} / Radius {{ driver.allowed_radius }}m{% endif %}
-                                        {% if driver.geo_distance_meters is not none %} / Distance {{ driver.geo_distance_meters }}m{% endif %}
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if driver.attendance_id %}
-                                        {% if driver.selfie_storage_path %}
-                                            <a href="{{ url_for('attendance.view_verification_image', attendance_id=driver.attendance_id, image_type='selfie') }}" target="_blank" class="badge bg-info text-decoration-none">Selfie</a>
-                                        {% endif %}
-                                        {% if driver.dashboard_storage_path %}
-                                            <a href="{{ url_for('attendance.view_verification_image', attendance_id=driver.attendance_id, image_type='dashboard') }}" target="_blank" class="badge bg-secondary text-decoration-none">Dashboard</a>
-                                        {% endif %}
-                                        {% if not driver.selfie_storage_path and not driver.dashboard_storage_path %}
-                                            <span class="text-soft">—</span>
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="text-soft">—</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end">
-                                    {% if has_permission('attendance.mark') and (driver.id == current_user.id or has_permission('attendance.override')) %}
-                                        <form method="post" action="{{ url_for('attendance.mark') }}" class="attendance-geo-form d-inline-flex gap-2">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="driver_profile_id" value="{{ driver.driver_profile_id }}">
-                                            <input type="hidden" name="latitude" class="geo-latitude">
-                                            <input type="hidden" name="longitude" class="geo-longitude">
-                                            <input type="hidden" name="accuracy" class="geo-accuracy">
-                                            {% if is_driver_user %}
-                                                {% if driver.today_status == 'Absent' %}
-                                                    <button type="submit" name="action" value="check_in" class="btn btn-sm btn-outline-success">Check In</button>
-                                                {% elif driver.today_status == 'Present' %}
-                                                    <button type="submit" name="action" value="check_out" class="btn btn-sm btn-outline-primary">Check Out</button>
-                                                {% else %}
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Completed</button>
-                                                {% endif %}
-                                            {% else %}
-                                                <button type="submit" name="action" value="check_in" class="btn btn-sm btn-outline-success">Check In</button>
-                                                <button type="submit" name="action" value="check_out" class="btn btn-sm btn-outline-primary">Check Out</button>
-                                            {% endif %}
-                                        </form>
-                                    {% else %}
-                                        <span class="text-soft">No action</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
+                    {% for driver in drivers %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="avatar avatar-small {{ 'online' if driver.today_status == 'Present' else 'offline' }}">
+                                    {{ driver.name[0]|upper }}</div>
+                                <div>
+                                    <strong>{{ driver.name }}</strong>
+                                    <div class="text-soft small">{{ driver.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ driver.driver_code or 'N/A' }}</td>
+                        <td><span class="status-chip status-{{ driver.today_status|lower|replace(' ', '-') }}">{{
+                                driver.today_status }}</span></td>
+                        <td>{{ to_india_datetime(driver.check_in).strftime('%H:%M:%S') if driver.check_in else '-' }}
+                        </td>
+                        <td>{{ to_india_datetime(driver.check_out).strftime('%H:%M:%S') if driver.check_out else '-' }}
+                        </td>
+                        <td>{{ driver.hours_worked if driver.hours_worked else '-' }}</td>
+                        <td>
+                            <div class="small">
+                                <strong>In:</strong> {{ driver.start_odometer if driver.start_odometer is not none else
+                                '-' }} km
+                            </div>
+                            <div class="small">
+                                <strong>Out:</strong> {{ driver.end_odometer if driver.end_odometer is not none else '-'
+                                }} km
+                            </div>
+                        </td>
+                        <td>
+                            {% if driver.geo_status == 'GEO_VERIFIED' %}
+                            <span class="badge bg-success">GEO VERIFIED</span>
+                            {% elif driver.geo_status == 'OUTSIDE_GEOFENCE' %}
+                            <span class="badge bg-warning text-dark">OUTSIDE GEOFENCE</span>
+                            {% elif driver.geo_status == 'LOW_ACCURACY' %}
+                            <span class="badge bg-info text-white">LOW ACCURACY</span>
+                            {% elif driver.geo_status == 'MANUAL_OVERRIDE' %}
+                            <span class="badge bg-secondary">MANUAL OVERRIDE</span>
+                            {% else %}
+                            <span class="text-soft">Pending</span>
+                            {% endif %}
+                            <div class="small text-soft">
+                                {{ driver.subzone_name or 'No subzone' }}
+                                {% if driver.allowed_radius %} / Radius {{ driver.allowed_radius }}m{% endif %}
+                                {% if driver.geo_distance_meters is not none %} / Distance {{ driver.geo_distance_meters
+                                }}m{% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if driver.attendance_id %}
+                            {% if driver.selfie_storage_path %}
+                            <a href="{{ url_for('attendance.view_verification_image', attendance_id=driver.attendance_id, image_type='selfie') }}"
+                                target="_blank" class="badge bg-info text-decoration-none">Selfie</a>
+                            {% endif %}
+                            {% if driver.dashboard_storage_path %}
+                            <a href="{{ url_for('attendance.view_verification_image', attendance_id=driver.attendance_id, image_type='dashboard') }}"
+                                target="_blank" class="badge bg-secondary text-decoration-none">Dashboard</a>
+                            {% endif %}
+                            {% if not driver.selfie_storage_path and not driver.dashboard_storage_path %}
+                            <span class="text-soft">—</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="text-soft">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if has_permission('attendance.mark') and (driver.id == current_user.id or
+                            has_permission('attendance.override')) %}
+                            <form method="post" action="{{ url_for('attendance.mark') }}"
+                                class="attendance-geo-form d-inline-flex gap-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="driver_profile_id" value="{{ driver.driver_profile_id }}">
+                                <input type="hidden" name="latitude" class="geo-latitude">
+                                <input type="hidden" name="longitude" class="geo-longitude">
+                                <input type="hidden" name="accuracy" class="geo-accuracy">
+                                {% if is_driver_user %}
+                                {% if driver.today_status == 'Absent' %}
+                                <button type="submit" name="action" value="check_in"
+                                    class="btn btn-sm btn-outline-success">Check In</button>
+                                {% elif driver.today_status == 'Present' %}
+                                <button type="submit" name="action" value="check_out"
+                                    class="btn btn-sm btn-outline-primary">Check Out</button>
+                                {% else %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    disabled>Completed</button>
+                                {% endif %}
+                                {% else %}
+                                <button type="submit" name="action" value="check_in"
+                                    class="btn btn-sm btn-outline-success">Check In</button>
+                                <button type="submit" name="action" value="check_out"
+                                    class="btn btn-sm btn-outline-primary">Check Out</button>
+                                {% endif %}
+                            </form>
+                            {% else %}
+                            <span class="text-soft">No action</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">No attendance records available for the selected filters.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">No attendance records available for the
+                            selected filters.</td>
+                    </tr>
                     {% endif %}
                 </tbody>
             </table>
@@ -184,15 +208,21 @@
             <nav aria-label="Attendance pagination">
                 <ul class="pagination mb-0">
                     {% set page_count = ((total + per_page - 1) // per_page) if per_page else 1 %}
-                    <li class="page-item {% if page <= 1 %}disabled{% endif %}"><a class="page-link" href="?page={{ page - 1 }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">Previous</a></li>
+                    <li class="page-item {% if page <= 1 %}disabled{% endif %}"><a class="page-link"
+                            href="?page={{ page - 1 }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">Previous</a>
+                    </li>
                     {% for p in range(1, page_count + 1) %}
-                        {% if p <= 5 or p == page or p > page_count - 2 %}
-                            <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="?page={{ p }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">{{ p }}</a></li>
+                    {% if p <= 5 or p==page or p> page_count - 2 %}
+                        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link"
+                                href="?page={{ p }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">{{
+                                p }}</a></li>
                         {% elif p == 6 %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
                         {% endif %}
-                    {% endfor %}
-                    <li class="page-item {% if page >= page_count %}disabled{% endif %}"><a class="page-link" href="?page={{ page + 1 }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">Next</a></li>
+                        {% endfor %}
+                        <li class="page-item {% if page >= page_count %}disabled{% endif %}"><a class="page-link"
+                                href="?page={{ page + 1 }}{% if filters.search_query %}&q={{ filters.search_query }}{% endif %}">Next</a>
+                        </li>
                 </ul>
             </nav>
         </div>
@@ -209,32 +239,32 @@
             </div>
 
             {% if driver_history %}
-                <div class="table-responsive">
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Check-in</th>
-                                <th>Check-out</th>
-                                <th>Hours</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for record in driver_history %}
-                                <tr>
-                                    <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
-                                    <td>{{ record.status or 'N/A' }}</td>
-                                    <td>{{ record.check_in.strftime('%H:%M:%S') if record.check_in else '-' }}</td>
-                                    <td>{{ record.check_out.strftime('%H:%M:%S') if record.check_out else '-' }}</td>
-                                    <td>{{ record.hours_worked if record.hours_worked else '-' }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in driver_history %}
+                        <tr>
+                            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ record.status or 'N/A' }}</td>
+                            <td>{{ record.check_in.strftime('%H:%M:%S') if record.check_in else '-' }}</td>
+                            <td>{{ record.check_out.strftime('%H:%M:%S') if record.check_out else '-' }}</td>
+                            <td>{{ record.hours_worked if record.hours_worked else '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-                <p class="text-muted mb-0">No previous attendance records found.</p>
+            <p class="text-muted mb-0">No previous attendance records found.</p>
             {% endif %}
         </div>
     </div>
@@ -244,12 +274,15 @@
     {% if is_helper_user %}
     <!-- Active Deployment Warnings -->
     {% if not active_helper_assignment %}
-    <div class="alert alert-warning border-0 shadow-sm mb-4" style="background: rgba(245, 158, 11, 0.15); color: #fef3c7; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.25);">
+    <div class="alert alert-warning border-0 shadow-sm mb-4"
+        style="background: rgba(245, 158, 11, 0.15); color: #fef3c7; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.25);">
         <div class="d-flex align-items-center gap-3 p-2">
-            <span class="material-symbols-outlined fs-2 text-warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+            <span class="material-symbols-outlined fs-2 text-warning"
+                style="font-variation-settings: 'FILL' 1;">warning</span>
             <div>
                 <h5 class="alert-heading text-warning mb-1" style="font-weight: 600;">Active Assignment Missing</h5>
-                <p class="mb-0 small text-soft">No active deployment assignment found. Please contact your supervisor.</p>
+                <p class="mb-0 small text-soft">No active deployment assignment found. Please contact your supervisor.
+                </p>
             </div>
         </div>
     </div>
@@ -259,121 +292,165 @@
         <!-- Left Column: Attendance Verification & Safety Kit -->
         <div class="col-12 col-lg-7">
             <!-- Mark Attendance Card -->
-            <div class="card mb-4 border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
-                <div class="card-header border-0 bg-transparent pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+            <div class="card mb-4 border-0 shadow-lg"
+                style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <div
+                    class="card-header border-0 bg-transparent pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
                     <div>
                         <h4 class="mb-1" style="font-weight: 700; color: #fff;">Mark Attendance</h4>
                         <p class="text-soft mb-0 small" id="liveTimeClock">Loading current time...</p>
                     </div>
                     <div>
-                        {% if attendance_status == 'Approved' %}
-                            <span class="badge bg-success px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Approved</span>
+                        {% if attendance_status == 'Attendance Approved Successfully' %}
+                        <span class="badge bg-success px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Approved</span>
+                        {% elif attendance_status == 'Waiting for Circle KAM Approval' %}
+                        <span class="badge bg-info px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">MIS Approved</span>
+                        {% elif attendance_status == 'Waiting for Circle MIS Approval' %}
+                        <span class="badge bg-warning text-dark px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Pending MIS</span>
+                        {% elif attendance_status == 'Approved' %}
+                        <span class="badge bg-success px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Approved</span>
                         {% elif attendance_status == 'Rejected' %}
-                            <span class="badge bg-danger px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Rejected</span>
+                        <span class="badge bg-danger px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Rejected</span>
                         {% elif attendance_status == 'Pending Approval' %}
-                            <span class="badge bg-warning text-dark px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Pending Approval</span>
+                        <span class="badge bg-warning text-dark px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Pending Approval</span>
                         {% elif attendance_status == 'Outside Geofence' %}
-                            <span class="badge bg-danger px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Outside Geofence</span>
+                        <span class="badge bg-danger px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Outside
+                            Geofence</span>
                         {% elif attendance_status == 'Present' %}
-                            <span class="badge bg-success px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Present</span>
+                        <span class="badge bg-success px-3 py-2"
+                            style="font-size: 0.85rem; border-radius: 20px;">Present</span>
                         {% else %}
-                            <span class="badge bg-secondary px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Not Marked</span>
+                        <span class="badge bg-secondary px-3 py-2" style="font-size: 0.85rem; border-radius: 20px;">Not
+                            Marked</span>
                         {% endif %}
                     </div>
                 </div>
-                
+
                 <div class="card-body p-4">
                     {% if drivers and drivers[0].today_status == 'Completed' %}
-                        <div class="text-center py-4">
-                            <span class="material-symbols-outlined text-success display-1 mb-3">check_circle</span>
-                            <h5 style="color: #fff; font-weight: 600;">Shift Completed for Today</h5>
-                            <p class="text-soft small mb-0">You have checked in and checked out for today. See you tomorrow!</p>
-                        </div>
+                    <div class="text-center py-4">
+                        <span class="material-symbols-outlined text-success display-1 mb-3">check_circle</span>
+                        <h5 style="color: #fff; font-weight: 600;">Shift Completed for Today</h5>
+                        <p class="text-soft small mb-0">You have checked in and checked out for today. See you tomorrow!
+                        </p>
+                    </div>
                     {% elif active_helper_assignment %}
-                        <!-- Form to submit check-in / check-out -->
-                        <form id="helperAttendanceForm" method="post" action="{{ url_for('attendance.mark') }}" enctype="multipart/form-data">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="driver_profile_id" value="{{ drivers[0].driver_profile_id if drivers else '' }}">
-                            <input type="hidden" name="action" value="{{ 'check_out' if (drivers and drivers[0].today_status == 'Present') else 'check_in' }}">
-                            <input type="hidden" name="latitude" id="helperLatitude">
-                            <input type="hidden" name="longitude" id="helperLongitude">
-                            <input type="hidden" name="accuracy" id="helperAccuracy">
-                            <input type="hidden" name="selfie_data" id="helperSelfieData">
+                    <!-- Form to submit check-in / check-out -->
+                    <form id="helperAttendanceForm" method="post" action="{{ url_for('attendance.mark') }}"
+                        enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="driver_profile_id"
+                            value="{{ drivers[0].driver_profile_id if drivers else '' }}">
+                        <input type="hidden" name="action"
+                            value="{{ 'check_out' if (drivers and drivers[0].today_status == 'Present') else 'check_in' }}">
+                        <input type="hidden" name="latitude" id="helperLatitude">
+                        <input type="hidden" name="longitude" id="helperLongitude">
+                        <input type="hidden" name="accuracy" id="helperAccuracy">
+                        <input type="hidden" name="selfie_data" id="helperSelfieData">
 
-                            <!-- Camera Area -->
-                            <div class="mb-4">
-                                <label class="form-label small text-soft mb-2" style="font-weight: 600;">Helper Verification Selfie</label>
-                                
-                                <div id="helperCameraAlert" class="alert alert-info py-2 px-3 small border-0 mb-3" style="background: rgba(99, 102, 241, 0.15); color: #c7d2fe; display: none;"></div>
-                                
-                                <div class="position-relative bg-black rounded overflow-hidden shadow-inner d-flex align-items-center justify-content-center" style="height: 320px; border: 1px solid rgba(255, 255, 255, 0.15);">
-                                    <!-- Video stream -->
-                                    <video id="helperVideo" autoplay playsinline class="w-100 h-100" style="object-fit: cover; background: #000;"></video>
-                                    
-                                    <!-- Photo Preview -->
-                                    <img id="helperPreview" src="" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; display: none;">
-                                    
-                                    <!-- Camera Overlay / Grid helper -->
-                                    <div id="cameraOverlay" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events: none; border: 2px dashed rgba(255,255,255,0.2); border-radius: 8px;">
-                                        <div class="small text-white text-center py-1 px-2 rounded" style="background: rgba(0,0,0,0.6); margin-top: auto; margin-bottom: 15px;">
-                                            Position Face within Frame
-                                        </div>
+                        <!-- Camera Area -->
+                        <div class="mb-4">
+                            <label class="form-label small text-soft mb-2" style="font-weight: 600;">Helper Verification
+                                Selfie</label>
+
+                            <div id="helperCameraAlert" class="alert alert-info py-2 px-3 small border-0 mb-3"
+                                style="background: rgba(99, 102, 241, 0.15); color: #c7d2fe; display: none;"></div>
+
+                            <div class="position-relative bg-black rounded overflow-hidden shadow-inner d-flex align-items-center justify-content-center"
+                                style="height: 320px; border: 1px solid rgba(255, 255, 255, 0.15);">
+                                <!-- Video stream -->
+                                <video id="helperVideo" autoplay playsinline class="w-100 h-100"
+                                    style="object-fit: cover; background: #000;"></video>
+
+                                <!-- Photo Preview -->
+                                <img id="helperPreview" src="" class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="object-fit: cover; display: none;">
+
+                                <!-- Camera Overlay / Grid helper -->
+                                <div id="cameraOverlay"
+                                    class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
+                                    style="pointer-events: none; border: 2px dashed rgba(255,255,255,0.2); border-radius: 8px;">
+                                    <div class="small text-white text-center py-1 px-2 rounded"
+                                        style="background: rgba(0,0,0,0.6); margin-top: auto; margin-bottom: 15px;">
+                                        Position Face within Frame
                                     </div>
                                 </div>
-                                
-                                <!-- Canvas to capture picture -->
-                                <canvas id="helperCanvas" style="display: none;"></canvas>
-                                
-                                <!-- Controls -->
-                                <div class="d-flex gap-2 justify-content-center mt-3">
-                                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-4 py-2" id="btnHelperCapture" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; border-radius: 8px; font-weight: 600;">
-                                        <span class="material-symbols-outlined fs-6">photo_camera</span> Take Selfie
-                                    </button>
-                                    <button type="button" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 px-4 py-2" id="btnHelperRetake" style="display: none; border-radius: 8px; font-weight: 600;">
-                                        <span class="material-symbols-outlined fs-6">refresh</span> Retake Selfie
-                                    </button>
-                                </div>
                             </div>
 
-                            <!-- Manual Upload Fallback -->
-                            <div class="mb-4">
-                                <label class="form-label small text-soft" style="font-weight: 600;">Or Upload Selfie (If Camera is Blocked)</label>
-                                <input type="file" name="selfie_file" id="helperFileInput" accept="image/*" class="form-control bg-transparent border-secondary text-white small" style="border-radius: 8px;">
-                            </div>
+                            <!-- Canvas to capture picture -->
+                            <canvas id="helperCanvas" style="display: none;"></canvas>
 
-                            <!-- Submit Action -->
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-gradient btn-lg py-3 text-white" id="btnHelperSubmit" style="font-weight: 700; border-radius: 10px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
-                                    {% if drivers and drivers[0].today_status == 'Present' %}
-                                        Submit Check Out
-                                    {% else %}
-                                        Submit Check In
-                                    {% endif %}
+                            <!-- Controls -->
+                            <div class="d-flex gap-2 justify-content-center mt-3">
+                                <button type="button"
+                                    class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-4 py-2"
+                                    id="btnHelperCapture"
+                                    style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; border-radius: 8px; font-weight: 600;">
+                                    <span class="material-symbols-outlined fs-6">photo_camera</span> Take Selfie
                                 </button>
-                                <span class="text-soft text-center small mt-2 d-block" id="gpsStatusHelper">GPS Status: Pending capture...</span>
+                                <button type="button"
+                                    class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 px-4 py-2"
+                                    id="btnHelperRetake" style="display: none; border-radius: 8px; font-weight: 600;">
+                                    <span class="material-symbols-outlined fs-6">refresh</span> Retake Selfie
+                                </button>
                             </div>
-                        </form>
-                    {% else %}
-                        <div class="text-center py-4 text-muted">
-                            <span class="material-symbols-outlined display-1 mb-3">lock</span>
-                            <h5 style="font-weight: 600;">Attendance Locked</h5>
-                            <p class="text-soft small mb-0">No active deployment assignment found. Please contact your supervisor.</p>
                         </div>
+
+                        <!-- Manual Upload Fallback -->
+                        <div class="mb-4">
+                            <label class="form-label small text-soft" style="font-weight: 600;">Or Upload Selfie (If
+                                Camera is Blocked)</label>
+                            <input type="file" name="selfie_file" id="helperFileInput" accept="image/*"
+                                class="form-control bg-transparent border-secondary text-white small"
+                                style="border-radius: 8px;">
+                        </div>
+
+                        <!-- Submit Action -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-gradient btn-lg py-3 text-white" id="btnHelperSubmit"
+                                style="font-weight: 700; border-radius: 10px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
+                                {% if drivers and drivers[0].today_status == 'Present' %}
+                                Submit Check Out
+                                {% else %}
+                                Submit Check In
+                                {% endif %}
+                            </button>
+                            <span class="text-soft text-center small mt-2 d-block" id="gpsStatusHelper">GPS Status:
+                                Pending capture...</span>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <span class="material-symbols-outlined display-1 mb-3">lock</span>
+                        <h5 style="font-weight: 600;">Attendance Locked</h5>
+                        <p class="text-soft small mb-0">No active deployment assignment found. Please contact your
+                            supervisor.</p>
+                    </div>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Safety Reminder Card -->
-            <div class="card border-0 shadow-lg mb-4" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2) !important; border-radius: 16px;">
+            <div class="card border-0 shadow-lg mb-4"
+                style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2) !important; border-radius: 16px;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-start gap-3">
-                        <span class="material-symbols-outlined text-warning fs-3" style="font-variation-settings: 'FILL' 1;">warning</span>
+                        <span class="material-symbols-outlined text-warning fs-3"
+                            style="font-variation-settings: 'FILL' 1;">warning</span>
                         <div>
                             <h5 class="text-warning mb-2" style="font-weight: 700;">⚠ Safety Reminder</h5>
-                            <p class="text-soft mb-3 small" style="color: #fef3c7 !important;">Make sure you are wearing the complete safety kit before marking attendance.</p>
-                            
+                            <p class="text-soft mb-3 small" style="color: #fef3c7 !important;">Make sure you are wearing
+                                the complete safety kit before marking attendance.</p>
+
                             <h6 class="text-white mb-2 small" style="font-weight: 600;">Required Safety Equipment:</h6>
-                            <ul class="mb-0 text-soft small ps-3" style="color: #fbd58d !important; list-style-type: disc;">
+                            <ul class="mb-0 text-soft small ps-3"
+                                style="color: #fbd58d !important; list-style-type: disc;">
                                 <li class="mb-1">Safety Helmet</li>
                                 <li class="mb-1">Reflective Jacket</li>
                                 <li class="mb-1">Safety Shoes</li>
@@ -388,7 +465,8 @@
         <!-- Right Column: Current Deployment Details & History -->
         <div class="col-12 col-lg-5">
             <!-- Deployment Details Card -->
-            <div class="card mb-4 border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div class="card mb-4 border-0 shadow-lg"
+                style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
                 <div class="card-header border-0 bg-transparent pt-4 px-4 pb-0">
                     <h4 class="mb-1" style="font-weight: 700; color: #fff;">Deployment Details</h4>
                     <p class="text-soft mb-0 small">Your assigned operational mapping.</p>
@@ -398,20 +476,23 @@
                         <table class="table table-borderless align-middle mb-0 text-white small">
                             <tbody>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                    <td class="text-soft py-2 px-0" style="font-weight: 600; width: 40%;">Helper Name</td>
-                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{ current_user.username }}</td>
+                                    <td class="text-soft py-2 px-0" style="font-weight: 600; width: 40%;">Helper Name
+                                    </td>
+                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{ current_user.username }}
+                                    </td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Employee ID</td>
-                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{ driver_profile.driver_code if driver_profile else 'N/A' }}</td>
+                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{
+                                        driver_profile.driver_code if driver_profile else 'N/A' }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Circle</td>
                                     <td class="text-end py-2 px-0" style="font-weight: 500;">
                                         {% if active_helper_assignment and active_helper_assignment.circle %}
-                                            {{ active_helper_assignment.circle.circle_name }}
+                                        {{ active_helper_assignment.circle.circle_name }}
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -419,9 +500,9 @@
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Project</td>
                                     <td class="text-end py-2 px-0" style="font-weight: 500;">
                                         {% if active_helper_assignment and active_helper_assignment.project %}
-                                            {{ active_helper_assignment.project.project_name }}
+                                        {{ active_helper_assignment.project.project_name }}
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -429,9 +510,9 @@
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Subzone</td>
                                     <td class="text-end py-2 px-0" style="font-weight: 500;">
                                         {% if active_helper_assignment and active_helper_assignment.subzone %}
-                                            {{ active_helper_assignment.subzone.subzone_name }}
+                                        {{ active_helper_assignment.subzone.subzone_name }}
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -439,31 +520,35 @@
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Shift</td>
                                     <td class="text-end py-2 px-0" style="font-weight: 500;">
                                         {% if active_helper_assignment %}
-                                            {{ active_helper_assignment.shift or 'N/A' }}
+                                        {{ active_helper_assignment.shift or 'N/A' }}
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Date</td>
-                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{ current_date.strftime('%Y-%m-%d') }}</td>
+                                    <td class="text-end py-2 px-0" style="font-weight: 500;">{{
+                                        current_date.strftime('%Y-%m-%d') }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">CHECK IN</td>
                                     <td class="text-end py-2 px-0 text-success" style="font-weight: 600;">
-                                        {{ to_india_datetime(drivers[0].check_in).strftime('%H:%M:%S') if (drivers and drivers[0].check_in) else 'Not Marked' }}
+                                        {{ to_india_datetime(drivers[0].check_in).strftime('%H:%M:%S') if (drivers and
+                                        drivers[0].check_in) else 'Not Marked' }}
                                     </td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">CHECK OUT</td>
                                     <td class="text-end py-2 px-0 text-primary" style="font-weight: 600;">
-                                        {{ to_india_datetime(drivers[0].check_out).strftime('%H:%M:%S') if (drivers and drivers[0].check_out) else 'Not Marked' }}
+                                        {{ to_india_datetime(drivers[0].check_out).strftime('%H:%M:%S') if (drivers and
+                                        drivers[0].check_out) else 'Not Marked' }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="text-soft py-2 px-0" style="font-weight: 600;">Current Time</td>
-                                    <td class="text-end py-2 px-0 text-warning" id="liveTimeText" style="font-weight: 600;">--:--:--</td>
+                                    <td class="text-end py-2 px-0 text-warning" id="liveTimeText"
+                                        style="font-weight: 600;">--:--:--</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -472,55 +557,63 @@
             </div>
 
             <!-- Last 7 Days Attendance History Card -->
-            <div class="card border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div class="card border-0 shadow-lg"
+                style="background: rgba(30, 34, 45, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08);">
                 <div class="card-header border-0 bg-transparent pt-4 px-4 pb-0">
                     <h5 class="card-title mb-1" style="font-weight: 700; color: #fff;">Last 7 Days Attendance</h5>
                     <p class="text-soft mb-0 small">Review your recent check-in/out records.</p>
                 </div>
                 <div class="card-body p-4">
                     {% if driver_history %}
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover align-middle mb-0 text-white small" style="background: transparent;">
-                                <thead>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.15);">
-                                        <th class="py-2 px-1 text-soft">Date</th>
-                                        <th class="py-2 px-1 text-soft">Time In</th>
-                                        <th class="py-2 px-1 text-soft">Circle</th>
-                                        <th class="py-2 px-1 text-soft">Project</th>
-                                        <th class="py-2 px-1 text-soft">Subzone</th>
-                                        <th class="py-2 px-1 text-soft">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for record in driver_history %}
-                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                            <td class="py-2 px-1">{{ record.date.strftime('%Y-%m-%d') }}</td>
-                                            <td class="py-2 px-1">{{ record.check_in.strftime('%H:%M:%S') if record.check_in else '-' }}</td>
-                                            <td class="py-2 px-1">{{ record.driver.circle.circle_name if (record.driver and record.driver.circle) else '-' }}</td>
-                                            <td class="py-2 px-1">{{ record.driver.project.project_name if (record.driver and record.driver.project) else '-' }}</td>
-                                            <td class="py-2 px-1">{{ record.driver.subzone.subzone_name if (record.driver and record.driver.subzone) else '-' }}</td>
-                                            <td class="py-2 px-1">
-                                                {% if record.verification_status == 'Approved' %}
-                                                    <span class="badge bg-success" style="border-radius: 4px;">Approved</span>
-                                                {% elif record.verification_status == 'Rejected' %}
-                                                    <span class="badge bg-danger" style="border-radius: 4px;">Rejected</span>
-                                                {% elif record.verification_status == 'Requires Review' %}
-                                                    <span class="badge bg-warning text-dark" style="border-radius: 4px;">Requires Review</span>
-                                                {% else %}
-                                                    {% if record.geo_status == 'OUTSIDE_GEOFENCE' %}
-                                                        <span class="badge bg-danger" style="border-radius: 4px;">Outside Geo</span>
-                                                    {% else %}
-                                                        <span class="badge bg-secondary" style="border-radius: 4px;">{{ record.status or 'Present' }}</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0 text-white small"
+                            style="background: transparent;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.15);">
+                                    <th class="py-2 px-1 text-soft">Date</th>
+                                    <th class="py-2 px-1 text-soft">Time In</th>
+                                    <th class="py-2 px-1 text-soft">Circle</th>
+                                    <th class="py-2 px-1 text-soft">Project</th>
+                                    <th class="py-2 px-1 text-soft">Subzone</th>
+                                    <th class="py-2 px-1 text-soft">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in driver_history %}
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="py-2 px-1">{{ record.date.strftime('%Y-%m-%d') }}</td>
+                                    <td class="py-2 px-1">{{ record.check_in.strftime('%H:%M:%S') if record.check_in
+                                        else '-' }}</td>
+                                    <td class="py-2 px-1">{{ record.driver.circle.circle_name if (record.driver and
+                                        record.driver.circle) else '-' }}</td>
+                                    <td class="py-2 px-1">{{ record.driver.project.project_name if (record.driver and
+                                        record.driver.project) else '-' }}</td>
+                                    <td class="py-2 px-1">{{ record.driver.subzone.subzone_name if (record.driver and
+                                        record.driver.subzone) else '-' }}</td>
+                                    <td class="py-2 px-1">
+                                        {% if record.verification_status == 'Approved' %}
+                                        <span class="badge bg-success" style="border-radius: 4px;">Approved</span>
+                                        {% elif record.verification_status == 'Rejected' %}
+                                        <span class="badge bg-danger" style="border-radius: 4px;">Rejected</span>
+                                        {% elif record.verification_status == 'Requires Review' %}
+                                        <span class="badge bg-warning text-dark" style="border-radius: 4px;">Requires
+                                            Review</span>
+                                        {% else %}
+                                        {% if record.geo_status == 'OUTSIDE_GEOFENCE' %}
+                                        <span class="badge bg-danger" style="border-radius: 4px;">Outside Geo</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary" style="border-radius: 4px;">{{ record.status or
+                                            'Present' }}</span>
+                                        {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     {% else %}
-                        <p class="text-muted mb-0 small">No attendance records found for the last 7 days.</p>
+                    <p class="text-muted mb-0 small">No attendance records found for the last 7 days.</p>
                     {% endif %}
                 </div>
             </div>
@@ -531,42 +624,55 @@
 
 {% if not is_helper_user %}
 <!-- Glassmorphic Camera Verification Modal -->
-<div class="modal fade" id="verificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+<div class="modal fade" id="verificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="verificationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg" style="background: rgba(30, 34, 45, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; color: #fff; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+        <div class="modal-content border-0 shadow-lg"
+            style="background: rgba(30, 34, 45, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; color: #fff; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title" id="verificationModalLabel" style="font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Identity & Vehicle Verification</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="btnCancelVerification"></button>
+                <h5 class="modal-title" id="verificationModalLabel"
+                    style="font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Identity & Vehicle Verification</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+                    id="btnCancelVerification"></button>
             </div>
             <div class="modal-body p-4">
-                <form id="verificationForm" method="post" action="{{ url_for('attendance.mark') }}" enctype="multipart/form-data">
+                <form id="verificationForm" method="post" action="{{ url_for('attendance.mark') }}"
+                    enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="driver_profile_id" id="modalDriverProfileId">
                     <input type="hidden" name="action" id="modalAction">
                     <input type="hidden" name="latitude" id="modalLatitude">
                     <input type="hidden" name="longitude" id="modalLongitude">
                     <input type="hidden" name="accuracy" id="modalAccuracy">
-                    
+
                     <input type="hidden" name="selfie_data" id="modalSelfieData">
                     <input type="hidden" name="dashboard_data" id="modalDashboardData">
 
                     <!-- Camera status indicator -->
-                    <div id="cameraAlert" class="alert alert-info py-2 px-3 small border-0 mb-3" style="background: rgba(99, 102, 241, 0.15); color: #c7d2fe; display: none;"></div>
+                    <div id="cameraAlert" class="alert alert-info py-2 px-3 small border-0 mb-3"
+                        style="background: rgba(99, 102, 241, 0.15); color: #c7d2fe; display: none;"></div>
 
                     <div class="row g-4">
                         <!-- Left Side: Live Capture / Stream -->
                         <div class="col-12 col-md-6">
-                            <div class="card bg-dark text-white border-0 overflow-hidden" style="border-radius: 12px; height: 280px; position: relative;">
-                                <video id="videoElement" autoplay playsinline class="w-100 h-100" style="object-fit: cover; background: #000;"></video>
+                            <div class="card bg-dark text-white border-0 overflow-hidden"
+                                style="border-radius: 12px; height: 280px; position: relative;">
+                                <video id="videoElement" autoplay playsinline class="w-100 h-100"
+                                    style="object-fit: cover; background: #000;"></video>
                                 <canvas id="canvasElement" style="display: none;"></canvas>
-                                
-                                <div class="camera-overlay-text small text-center w-100 py-1" style="position: absolute; bottom: 0; background: rgba(0,0,0,0.6); color: #fff;">
+
+                                <div class="camera-overlay-text small text-center w-100 py-1"
+                                    style="position: absolute; bottom: 0; background: rgba(0,0,0,0.6); color: #fff;">
                                     Live Camera Feed
                                 </div>
                             </div>
-                            
+
                             <div class="d-flex justify-content-center gap-2 mt-3">
-                                <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 py-2" id="btnCapture" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; border-radius: 8px; font-weight: 500;">
+                                <button type="button"
+                                    class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 py-2"
+                                    id="btnCapture"
+                                    style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; border-radius: 8px; font-weight: 500;">
                                     <span class="material-symbols-outlined fs-6">photo_camera</span> Capture Frame
                                 </button>
                             </div>
@@ -577,12 +683,18 @@
                             <!-- Tabs Navigation -->
                             <ul class="nav nav-pills mb-3 gap-2" id="verificationTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active px-3 py-2 small" id="selfie-capture-tab" data-bs-toggle="pill" data-bs-target="#selfie-capture-pane" type="button" role="tab" style="border-radius: 8px; color: #fff; background: rgba(255,255,255,0.08);">
+                                    <button class="nav-link active px-3 py-2 small" id="selfie-capture-tab"
+                                        data-bs-toggle="pill" data-bs-target="#selfie-capture-pane" type="button"
+                                        role="tab"
+                                        style="border-radius: 8px; color: #fff; background: rgba(255,255,255,0.08);">
                                         1. Driver Selfie
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link px-3 py-2 small" id="dashboard-capture-tab" data-bs-toggle="pill" data-bs-target="#dashboard-capture-pane" type="button" role="tab" style="border-radius: 8px; color: #fff; background: rgba(255,255,255,0.08);">
+                                    <button class="nav-link px-3 py-2 small" id="dashboard-capture-tab"
+                                        data-bs-toggle="pill" data-bs-target="#dashboard-capture-pane" type="button"
+                                        role="tab"
+                                        style="border-radius: 8px; color: #fff; background: rgba(255,255,255,0.08);">
                                         2. Vehicle Dashboard
                                     </button>
                                 </li>
@@ -590,28 +702,41 @@
 
                             <div class="tab-content" id="verificationTabsContent">
                                 <!-- Tab 1: Selfie -->
-                                <div class="tab-pane fade show active" id="selfie-capture-pane" role="tabpanel" aria-labelledby="selfie-capture-tab">
-                                    <div class="preview-container border rounded d-flex align-items-center justify-content-center bg-black overflow-hidden" style="height: 150px; border-color: rgba(255,255,255,0.15) !important;">
-                                        <img id="selfiePreview" src="" class="img-fluid h-100" style="object-fit: contain; display: none;">
-                                        <span id="selfiePlaceholder" class="text-muted small">No selfie captured yet</span>
+                                <div class="tab-pane fade show active" id="selfie-capture-pane" role="tabpanel"
+                                    aria-labelledby="selfie-capture-tab">
+                                    <div class="preview-container border rounded d-flex align-items-center justify-content-center bg-black overflow-hidden"
+                                        style="height: 150px; border-color: rgba(255,255,255,0.15) !important;">
+                                        <img id="selfiePreview" src="" class="img-fluid h-100"
+                                            style="object-fit: contain; display: none;">
+                                        <span id="selfiePlaceholder" class="text-muted small">No selfie captured
+                                            yet</span>
                                     </div>
-                                    
+
                                     <div class="mt-3">
-                                        <label class="form-label small text-soft">Or manual file upload (JPG/PNG/WEBP)</label>
-                                        <input type="file" name="selfie_file" id="selfieFileInput" accept="image/*" class="form-control form-control-sm bg-transparent border-secondary text-white">
+                                        <label class="form-label small text-soft">Or manual file upload
+                                            (JPG/PNG/WEBP)</label>
+                                        <input type="file" name="selfie_file" id="selfieFileInput" accept="image/*"
+                                            class="form-control form-control-sm bg-transparent border-secondary text-white">
                                     </div>
                                 </div>
 
                                 <!-- Tab 2: Dashboard -->
-                                <div class="tab-pane fade" id="dashboard-capture-pane" role="tabpanel" aria-labelledby="dashboard-capture-tab">
-                                    <div class="preview-container border rounded d-flex align-items-center justify-content-center bg-black overflow-hidden" style="height: 150px; border-color: rgba(255,255,255,0.15) !important;">
-                                        <img id="dashboardPreview" src="" class="img-fluid h-100" style="object-fit: contain; display: none;">
-                                        <span id="dashboardPlaceholder" class="text-muted small">No dashboard captured yet</span>
+                                <div class="tab-pane fade" id="dashboard-capture-pane" role="tabpanel"
+                                    aria-labelledby="dashboard-capture-tab">
+                                    <div class="preview-container border rounded d-flex align-items-center justify-content-center bg-black overflow-hidden"
+                                        style="height: 150px; border-color: rgba(255,255,255,0.15) !important;">
+                                        <img id="dashboardPreview" src="" class="img-fluid h-100"
+                                            style="object-fit: contain; display: none;">
+                                        <span id="dashboardPlaceholder" class="text-muted small">No dashboard captured
+                                            yet</span>
                                     </div>
-                                    
+
                                     <div class="mt-3">
-                                        <label class="form-label small text-soft">Or manual file upload (JPG/PNG/WEBP)</label>
-                                        <input type="file" name="dashboard_file" id="dashboardFileInput" accept="image/*" class="form-control form-control-sm bg-transparent border-secondary text-white">
+                                        <label class="form-label small text-soft">Or manual file upload
+                                            (JPG/PNG/WEBP)</label>
+                                        <input type="file" name="dashboard_file" id="dashboardFileInput"
+                                            accept="image/*"
+                                            class="form-control form-control-sm bg-transparent border-secondary text-white">
                                     </div>
                                 </div>
                             </div>
@@ -620,16 +745,22 @@
 
                     <!-- Odometer Reading Input -->
                     <div class="mb-3 mt-3 px-1">
-                        <label id="odoLabel" class="form-label small text-soft" style="font-weight: 600;">Odometer Reading (Total Distance Travelled) in km</label>
-                        <input type="number" step="0.1" name="odometer" id="modalOdometer" class="form-control form-control-sm bg-transparent border-secondary text-white" placeholder="Enter manual distance reading (e.g., 10250.8)" required>
+                        <label id="odoLabel" class="form-label small text-soft" style="font-weight: 600;">Odometer
+                            Reading (Total Distance Travelled) in km</label>
+                        <input type="number" step="0.1" name="odometer" id="modalOdometer"
+                            class="form-control form-control-sm bg-transparent border-secondary text-white"
+                            placeholder="Enter manual distance reading (e.g., 10250.8)" required>
                     </div>
 
                     <!-- Footer Warning & Controls -->
-                    <div class="border-top border-secondary mt-4 pt-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                    <div
+                        class="border-top border-secondary mt-4 pt-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
                         <span class="text-soft small" id="gpsStatusModal">GPS location status: Pending</span>
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal" id="btnModalClose">Cancel</button>
-                            <button type="submit" class="btn btn-success btn-sm px-4" id="btnSubmitAttendance" style="background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 8px;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                                id="btnModalClose">Cancel</button>
+                            <button type="submit" class="btn btn-success btn-sm px-4" id="btnSubmitAttendance"
+                                style="background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 8px;">
                                 Confirm & Submit
                             </button>
                         </div>
@@ -641,365 +772,368 @@
 </div>
 
 <style>
-/* Glassmorphism modal styling */
-#verificationModal .nav-link.active {
-    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
-    font-weight: 600;
-}
-.camera-overlay-text {
-    font-weight: 500;
-    letter-spacing: 0.5px;
-}
-.preview-container {
-    transition: all 0.3s ease;
-}
-.preview-container:hover {
-    border-color: rgba(99, 102, 241, 0.4) !important;
-}
+    /* Glassmorphism modal styling */
+    #verificationModal .nav-link.active {
+        background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+        font-weight: 600;
+    }
+
+    .camera-overlay-text {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .preview-container {
+        transition: all 0.3s ease;
+    }
+
+    .preview-container:hover {
+        border-color: rgba(99, 102, 241, 0.4) !important;
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const statusMessage = document.getElementById('geoStatusMessage');
-    const modal = new bootstrap.Modal(document.getElementById('verificationModal'));
-    
-    let activeStream = null;
-    let currentTab = 'selfie'; // 'selfie' or 'dashboard'
-    
-    const video = document.getElementById('videoElement');
-    const canvas = document.getElementById('canvasElement');
-    const cameraAlert = document.getElementById('cameraAlert');
-    
-    // UI elements for tab states
-    const selfiePreview = document.getElementById('selfiePreview');
-    const selfiePlaceholder = document.getElementById('selfiePlaceholder');
-    const dashboardPreview = document.getElementById('dashboardPreview');
-    const dashboardPlaceholder = document.getElementById('dashboardPlaceholder');
-    
-    // Hidden data storage fields
-    const modalSelfieData = document.getElementById('modalSelfieData');
-    const modalDashboardData = document.getElementById('modalDashboardData');
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusMessage = document.getElementById('geoStatusMessage');
+        const modal = new bootstrap.Modal(document.getElementById('verificationModal'));
 
-    function stopCamera() {
-        if (activeStream) {
-            activeStream.getTracks().forEach(track => track.stop());
-            activeStream = null;
+        let activeStream = null;
+        let currentTab = 'selfie'; // 'selfie' or 'dashboard'
+
+        const video = document.getElementById('videoElement');
+        const canvas = document.getElementById('canvasElement');
+        const cameraAlert = document.getElementById('cameraAlert');
+
+        // UI elements for tab states
+        const selfiePreview = document.getElementById('selfiePreview');
+        const selfiePlaceholder = document.getElementById('selfiePlaceholder');
+        const dashboardPreview = document.getElementById('dashboardPreview');
+        const dashboardPlaceholder = document.getElementById('dashboardPlaceholder');
+
+        // Hidden data storage fields
+        const modalSelfieData = document.getElementById('modalSelfieData');
+        const modalDashboardData = document.getElementById('modalDashboardData');
+
+        function stopCamera() {
+            if (activeStream) {
+                activeStream.getTracks().forEach(track => track.stop());
+                activeStream = null;
+            }
         }
-    }
 
-    function startCamera(facingMode) {
-        stopCamera();
-        
-        // Browser media query constraints
-        const constraints = {
-            video: { 
-                facingMode: facingMode,
-                width: { ideal: 640 },
-                height: { ideal: 480 }
-            }
-        };
-        
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                activeStream = stream;
-                video.srcObject = stream;
-                cameraAlert.style.display = 'none';
-            })
-            .catch(err => {
-                console.warn("Camera access denied or unavailable: ", err);
-                cameraAlert.textContent = "Camera unavailable. You can upload files manually below.";
-                cameraAlert.style.display = 'block';
-            });
-    }
+        function startCamera(facingMode) {
+            stopCamera();
 
-    // Intercept row actions
-    document.querySelectorAll('.attendance-geo-form').forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            
-            const submitter = event.submitter;
-            const action = submitter ? submitter.value : 'check_in';
-            const driverId = form.querySelector('input[name="driver_profile_id"]').value;
-            
-            // Set modal values
-            document.getElementById('modalDriverProfileId').value = driverId;
-            document.getElementById('modalAction').value = action;
-            
-            // Dynamic odometer label and placeholder
-            const odoLabel = document.getElementById('odoLabel');
-            const odoInput = document.getElementById('modalOdometer');
-            if (odoLabel && odoInput) {
-                if (action === 'check_in') {
-                    odoLabel.textContent = "Start Odometer Reading (Total Distance Travelled) in km";
-                    odoInput.placeholder = "Enter starting odometer reading (e.g. 12450.0)";
-                } else {
-                    odoLabel.textContent = "End Odometer Reading (Total Distance Travelled) in km";
-                    odoInput.placeholder = "Enter ending odometer reading (e.g. 12580.0)";
+            // Browser media query constraints
+            const constraints = {
+                video: {
+                    facingMode: facingMode,
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
                 }
-                odoInput.value = ''; // clear previous value
-            }
-            
-            // Clear prior modal state
-            modalSelfieData.value = '';
-            modalDashboardData.value = '';
-            selfiePreview.style.display = 'none';
-            selfiePlaceholder.style.display = 'block';
-            dashboardPreview.style.display = 'none';
-            dashboardPlaceholder.style.display = 'block';
-            document.getElementById('selfieFileInput').value = '';
-            document.getElementById('dashboardFileInput').value = '';
-            document.getElementById('gpsStatusModal').textContent = 'GPS location status: Pending';
-            
-            // Default back to selfie tab
-            const triggerEl = document.querySelector('#verificationTabs button[data-bs-target="#selfie-capture-pane"]');
-            bootstrap.Tab.getInstance(triggerEl)?.show() || new bootstrap.Tab(triggerEl).show();
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    activeStream = stream;
+                    video.srcObject = stream;
+                    cameraAlert.style.display = 'none';
+                })
+                .catch(err => {
+                    console.warn("Camera access denied or unavailable: ", err);
+                    cameraAlert.textContent = "Camera unavailable. You can upload files manually below.";
+                    cameraAlert.style.display = 'block';
+                });
+        }
+
+        // Intercept row actions
+        document.querySelectorAll('.attendance-geo-form').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const submitter = event.submitter;
+                const action = submitter ? submitter.value : 'check_in';
+                const driverId = form.querySelector('input[name="driver_profile_id"]').value;
+
+                // Set modal values
+                document.getElementById('modalDriverProfileId').value = driverId;
+                document.getElementById('modalAction').value = action;
+
+                // Dynamic odometer label and placeholder
+                const odoLabel = document.getElementById('odoLabel');
+                const odoInput = document.getElementById('modalOdometer');
+                if (odoLabel && odoInput) {
+                    if (action === 'check_in') {
+                        odoLabel.textContent = "Start Odometer Reading (Total Distance Travelled) in km";
+                        odoInput.placeholder = "Enter starting odometer reading (e.g. 12450.0)";
+                    } else {
+                        odoLabel.textContent = "End Odometer Reading (Total Distance Travelled) in km";
+                        odoInput.placeholder = "Enter ending odometer reading (e.g. 12580.0)";
+                    }
+                    odoInput.value = ''; // clear previous value
+                }
+
+                // Clear prior modal state
+                modalSelfieData.value = '';
+                modalDashboardData.value = '';
+                selfiePreview.style.display = 'none';
+                selfiePlaceholder.style.display = 'block';
+                dashboardPreview.style.display = 'none';
+                dashboardPlaceholder.style.display = 'block';
+                document.getElementById('selfieFileInput').value = '';
+                document.getElementById('dashboardFileInput').value = '';
+                document.getElementById('gpsStatusModal').textContent = 'GPS location status: Pending';
+
+                // Default back to selfie tab
+                const triggerEl = document.querySelector('#verificationTabs button[data-bs-target="#selfie-capture-pane"]');
+                bootstrap.Tab.getInstance(triggerEl)?.show() || new bootstrap.Tab(triggerEl).show();
+                currentTab = 'selfie';
+
+                modal.show();
+                startCamera('user');
+            });
+        });
+
+        // Handle Tab toggling
+        document.getElementById('selfie-capture-tab').addEventListener('shown.bs.tab', function () {
             currentTab = 'selfie';
-            
-            modal.show();
             startCamera('user');
         });
-    });
 
-    // Handle Tab toggling
-    document.getElementById('selfie-capture-tab').addEventListener('shown.bs.tab', function () {
-        currentTab = 'selfie';
-        startCamera('user');
-    });
+        document.getElementById('dashboard-capture-tab').addEventListener('shown.bs.tab', function () {
+            currentTab = 'dashboard';
+            startCamera('environment');
+        });
 
-    document.getElementById('dashboard-capture-tab').addEventListener('shown.bs.tab', function () {
-        currentTab = 'dashboard';
-        startCamera('environment');
-    });
-
-    // Capture Frame Action
-    document.getElementById('btnCapture').addEventListener('click', function () {
-        if (!activeStream) {
-            alert("Camera feed is not active. Please use the manual file upload fallback.");
-            return;
-        }
-        
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to base64 jpeg with compression quality 0.8
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        
-        if (currentTab === 'selfie') {
-            modalSelfieData.value = dataUrl;
-            selfiePreview.src = dataUrl;
-            selfiePreview.style.display = 'block';
-            selfiePlaceholder.style.display = 'none';
-        } else {
-            modalDashboardData.value = dataUrl;
-            dashboardPreview.src = dataUrl;
-            dashboardPreview.style.display = 'block';
-            dashboardPlaceholder.style.display = 'none';
-        }
-    });
-
-    // Stop camera on modal close
-    document.getElementById('verificationModal').addEventListener('hidden.bs.modal', function () {
-        stopCamera();
-    });
-
-    // Form Submission with Geolocation Fetch
-    document.getElementById('verificationForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const statusText = document.getElementById('gpsStatusModal');
-        statusText.textContent = "Acquiring live GPS coordinates for verification...";
-        
-        const submitBtn = document.getElementById('btnSubmitAttendance');
-        submitBtn.disabled = true;
-        
-        if (!navigator.geolocation) {
-            statusText.textContent = "GPS is not supported. Submitting...";
-            form.submit();
-            return;
-        }
-        
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                document.getElementById('modalLatitude').value = position.coords.latitude;
-                document.getElementById('modalLongitude').value = position.coords.longitude;
-                document.getElementById('modalAccuracy').value = position.coords.accuracy;
-                statusText.textContent = "GPS captured successfully! Submitting...";
-                form.submit();
-            },
-            function () {
-                statusText.textContent = "GPS capture failed. Submitting for manual review...";
-                form.submit();
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 12000,
-                maximumAge: 0
-            }
-        );
-    });
-});
-</script>
-{% endif %}
-
-{% if is_helper_user %}
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // 1. Digital Clock
-    function updateClock() {
-        const clockEl = document.getElementById('liveTimeClock');
-        const textEl = document.getElementById('liveTimeText');
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        
-        if (clockEl) clockEl.textContent = `${dateStr} • ${timeStr}`;
-        if (textEl) textEl.textContent = timeStr;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // 2. Camera Setup
-    let activeStream = null;
-    const video = document.getElementById('helperVideo');
-    const preview = document.getElementById('helperPreview');
-    const fileInput = document.getElementById('helperFileInput');
-    const captureBtn = document.getElementById('btnHelperCapture');
-    const retakeBtn = document.getElementById('btnHelperRetake');
-    const selfieDataInput = document.getElementById('helperSelfieData');
-    const cameraAlert = document.getElementById('helperCameraAlert');
-    const canvas = document.getElementById('helperCanvas');
-
-    function startCamera() {
-        if (!video) return;
-        const constraints = {
-            video: {
-                facingMode: 'user',
-                width: { ideal: 640 },
-                height: { ideal: 480 }
-            }
-        };
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                activeStream = stream;
-                video.srcObject = stream;
-                cameraAlert.style.display = 'none';
-            })
-            .catch(err => {
-                console.warn("Camera denied or unavailable: ", err);
-                cameraAlert.textContent = "Live camera is unavailable. Please use the manual file upload fallback.";
-                cameraAlert.style.display = 'block';
-                if (video) video.style.display = 'none';
-                if (captureBtn) captureBtn.style.display = 'none';
-            });
-    }
-
-    // Auto-start camera if form is active
-    if (video) {
-        startCamera();
-    }
-
-    // Capture selfie action
-    if (captureBtn) {
-        captureBtn.addEventListener('click', function () {
+        // Capture Frame Action
+        document.getElementById('btnCapture').addEventListener('click', function () {
             if (!activeStream) {
-                alert("Camera feed is not active. Please upload a selfie manually.");
+                alert("Camera feed is not active. Please use the manual file upload fallback.");
                 return;
             }
-            
+
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-            selfieDataInput.value = dataUrl;
-            preview.src = dataUrl;
-            preview.style.display = 'block';
-            video.style.display = 'none';
-            
-            captureBtn.style.display = 'none';
-            retakeBtn.style.display = 'inline-flex';
-            document.getElementById('cameraOverlay').style.display = 'none';
-        });
-    }
 
-    // Retake selfie action
-    if (retakeBtn) {
-        retakeBtn.addEventListener('click', function () {
-            selfieDataInput.value = '';
-            preview.style.display = 'none';
-            video.style.display = 'block';
-            
-            captureBtn.style.display = 'inline-flex';
-            retakeBtn.style.display = 'none';
-            document.getElementById('cameraOverlay').style.display = 'flex';
-            
-            if (!activeStream) {
-                startCamera();
+            // Convert to base64 jpeg with compression quality 0.8
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+            if (currentTab === 'selfie') {
+                modalSelfieData.value = dataUrl;
+                selfiePreview.src = dataUrl;
+                selfiePreview.style.display = 'block';
+                selfiePlaceholder.style.display = 'none';
+            } else {
+                modalDashboardData.value = dataUrl;
+                dashboardPreview.src = dataUrl;
+                dashboardPreview.style.display = 'block';
+                dashboardPlaceholder.style.display = 'none';
             }
         });
-    }
 
-    // Form Submit with Geolocation Capture
-    const form = document.getElementById('helperAttendanceForm');
-    if (form) {
-        form.addEventListener('submit', function (event) {
+        // Stop camera on modal close
+        document.getElementById('verificationModal').addEventListener('hidden.bs.modal', function () {
+            stopCamera();
+        });
+
+        // Form Submission with Geolocation Fetch
+        document.getElementById('verificationForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            
-            const selfieData = selfieDataInput.value;
-            const selfieFile = fileInput ? fileInput.value : '';
-            
-            if (!selfieData && !selfieFile) {
-                alert("Please take a selfie or select a file to upload before submitting.");
-                return;
-            }
 
-            const gpsStatus = document.getElementById('gpsStatusHelper');
-            gpsStatus.textContent = "Acquiring live GPS coordinates...";
-            
-            const submitBtn = document.getElementById('btnHelperSubmit');
-            if (submitBtn) submitBtn.disabled = true;
+            const form = event.target;
+            const statusText = document.getElementById('gpsStatusModal');
+            statusText.textContent = "Acquiring live GPS coordinates for verification...";
+
+            const submitBtn = document.getElementById('btnSubmitAttendance');
+            submitBtn.disabled = true;
 
             if (!navigator.geolocation) {
-                gpsStatus.textContent = "GPS is not supported. Submitting...";
+                statusText.textContent = "GPS is not supported. Submitting...";
                 form.submit();
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    document.getElementById('helperLatitude').value = position.coords.latitude;
-                    document.getElementById('helperLongitude').value = position.coords.longitude;
-                    document.getElementById('helperAccuracy').value = position.coords.accuracy;
-                    gpsStatus.textContent = "GPS captured! Submitting attendance...";
-                    
-                    // Stop camera before submit
-                    if (activeStream) {
-                        activeStream.getTracks().forEach(track => track.stop());
-                    }
+                    document.getElementById('modalLatitude').value = position.coords.latitude;
+                    document.getElementById('modalLongitude').value = position.coords.longitude;
+                    document.getElementById('modalAccuracy').value = position.coords.accuracy;
+                    statusText.textContent = "GPS captured successfully! Submitting...";
                     form.submit();
                 },
-                function (err) {
-                    gpsStatus.textContent = "GPS capture failed. Submitting for review...";
-                    
-                    // Stop camera before submit
-                    if (activeStream) {
-                        activeStream.getTracks().forEach(track => track.stop());
-                    }
+                function () {
+                    statusText.textContent = "GPS capture failed. Submitting for manual review...";
                     form.submit();
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 12000,
                     maximumAge: 0
                 }
             );
         });
-    }
-});
+    });
+</script>
+{% endif %}
+
+{% if is_helper_user %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1. Digital Clock
+        function updateClock() {
+            const clockEl = document.getElementById('liveTimeClock');
+            const textEl = document.getElementById('liveTimeText');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            if (clockEl) clockEl.textContent = `${dateStr} • ${timeStr}`;
+            if (textEl) textEl.textContent = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. Camera Setup
+        let activeStream = null;
+        const video = document.getElementById('helperVideo');
+        const preview = document.getElementById('helperPreview');
+        const fileInput = document.getElementById('helperFileInput');
+        const captureBtn = document.getElementById('btnHelperCapture');
+        const retakeBtn = document.getElementById('btnHelperRetake');
+        const selfieDataInput = document.getElementById('helperSelfieData');
+        const cameraAlert = document.getElementById('helperCameraAlert');
+        const canvas = document.getElementById('helperCanvas');
+
+        function startCamera() {
+            if (!video) return;
+            const constraints = {
+                video: {
+                    facingMode: 'user',
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    activeStream = stream;
+                    video.srcObject = stream;
+                    cameraAlert.style.display = 'none';
+                })
+                .catch(err => {
+                    console.warn("Camera denied or unavailable: ", err);
+                    cameraAlert.textContent = "Live camera is unavailable. Please use the manual file upload fallback.";
+                    cameraAlert.style.display = 'block';
+                    if (video) video.style.display = 'none';
+                    if (captureBtn) captureBtn.style.display = 'none';
+                });
+        }
+
+        // Auto-start camera if form is active
+        if (video) {
+            startCamera();
+        }
+
+        // Capture selfie action
+        if (captureBtn) {
+            captureBtn.addEventListener('click', function () {
+                if (!activeStream) {
+                    alert("Camera feed is not active. Please upload a selfie manually.");
+                    return;
+                }
+
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                selfieDataInput.value = dataUrl;
+                preview.src = dataUrl;
+                preview.style.display = 'block';
+                video.style.display = 'none';
+
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'inline-flex';
+                document.getElementById('cameraOverlay').style.display = 'none';
+            });
+        }
+
+        // Retake selfie action
+        if (retakeBtn) {
+            retakeBtn.addEventListener('click', function () {
+                selfieDataInput.value = '';
+                preview.style.display = 'none';
+                video.style.display = 'block';
+
+                captureBtn.style.display = 'inline-flex';
+                retakeBtn.style.display = 'none';
+                document.getElementById('cameraOverlay').style.display = 'flex';
+
+                if (!activeStream) {
+                    startCamera();
+                }
+            });
+        }
+
+        // Form Submit with Geolocation Capture
+        const form = document.getElementById('helperAttendanceForm');
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const selfieData = selfieDataInput.value;
+                const selfieFile = fileInput ? fileInput.value : '';
+
+                if (!selfieData && !selfieFile) {
+                    alert("Please take a selfie or select a file to upload before submitting.");
+                    return;
+                }
+
+                const gpsStatus = document.getElementById('gpsStatusHelper');
+                gpsStatus.textContent = "Acquiring live GPS coordinates...";
+
+                const submitBtn = document.getElementById('btnHelperSubmit');
+                if (submitBtn) submitBtn.disabled = true;
+
+                if (!navigator.geolocation) {
+                    gpsStatus.textContent = "GPS is not supported. Submitting...";
+                    form.submit();
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        document.getElementById('helperLatitude').value = position.coords.latitude;
+                        document.getElementById('helperLongitude').value = position.coords.longitude;
+                        document.getElementById('helperAccuracy').value = position.coords.accuracy;
+                        gpsStatus.textContent = "GPS captured! Submitting attendance...";
+
+                        // Stop camera before submit
+                        if (activeStream) {
+                            activeStream.getTracks().forEach(track => track.stop());
+                        }
+                        form.submit();
+                    },
+                    function (err) {
+                        gpsStatus.textContent = "GPS capture failed. Submitting for review...";
+
+                        // Stop camera before submit
+                        if (activeStream) {
+                            activeStream.getTracks().forEach(track => track.stop());
+                        }
+                        form.submit();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+    });
 </script>
 {% endif %}
 {% endblock %}

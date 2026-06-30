@@ -1,5 +1,8 @@
 from marshmallow import Schema, fields, validate
 
+from app.modules.attendance.approval_constants import approval_status_label
+
+
 class CheckInRequestSchema(Schema):
     """Schema to validate check-in payload"""
     driver_profile_id = fields.Str(required=True, validate=validate.Length(min=1))
@@ -57,3 +60,8 @@ class AttendanceResponseSchema(Schema):
     start_odometer = fields.Float(allow_none=True)
     end_odometer = fields.Float(allow_none=True)
     verification_status = fields.Str(allow_none=True)
+    approval_status = fields.Str(allow_none=True)
+    approval_status_label = fields.Method('serialize_approval_status_label')
+
+    def serialize_approval_status_label(self, obj):
+        return approval_status_label(getattr(obj, 'approval_status', None))

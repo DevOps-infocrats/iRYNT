@@ -72,6 +72,29 @@ def decode_base64_image(base64_data_str, default_filename='captured_image.jpg'):
     return file_storage
 
 
+def encode_verification_image(file_storage):
+    if not file_storage or not file_storage.filename:
+        return None
+
+    validate_verification_image(file_storage)
+    try:
+        file_storage.stream.seek(0)
+        image_bytes = file_storage.stream.read()
+        file_storage.stream.seek(0)
+    except Exception:
+        image_bytes = b''
+
+    if not image_bytes:
+        return None
+
+    mime_type = getattr(file_storage, 'content_type', '') or 'image/jpeg'
+    if not mime_type.startswith('image/'):
+        mime_type = 'image/jpeg'
+
+    encoded = base64.b64encode(image_bytes).decode('ascii')
+    return f'data:{mime_type};base64,{encoded}'
+
+
 def save_verification_image(file_storage, upload_folder, driver_id):
     if not file_storage or not file_storage.filename:
         return None

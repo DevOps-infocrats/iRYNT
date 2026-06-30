@@ -3,6 +3,7 @@ from datetime import date
 from app.extensions import db
 from app.modules.approvals.models import ApprovalRequest
 from app.modules.attendance.repository import AttendanceRepository
+from app.modules.attendance.approval_service import AttendanceApprovalService
 from app.modules.attendance.utils import get_india_now, get_india_today
 from app.modules.drivers.models import DriverAttendance, DriverProfile
 from app.services.geolocation.attendance_geo_service import AttendanceGeoService
@@ -21,6 +22,7 @@ class AttendanceService:
     def __init__(self):
         self.repository = AttendanceRepository()
         self.geo_service = AttendanceGeoService()
+        self.approval_service = AttendanceApprovalService()
 
     def list_live_attendance(self, filters, page, per_page):
         return self.repository.list_live_attendance(filters, page, per_page)
@@ -60,7 +62,7 @@ class AttendanceService:
         # Placeholder for future attendance reporting integration.
         return {}
 
-    def mark_attendance(self, driver_profile_id, action, location_payload=None, actor_id=None, selfie_path=None, dashboard_path=None, odometer=None):
+    def mark_attendance(self, driver_profile_id, action, location_payload=None, actor_id=None, selfie_path=None, dashboard_path=None, selfie_image_data=None, dashboard_image_data=None, odometer=None):
         driver_profile = DriverProfile.query.get(driver_profile_id)
         if not driver_profile:
             return None, 'Driver profile could not be found.'
@@ -118,7 +120,12 @@ class AttendanceService:
 
         if action == 'check_in':
             if attendance and attendance.check_in:
-                return attendance, 'Driver is already checked in for today.'
+                if attendance.approval_status == 'REJECTED':
+                    attendance.check_in = None
+                    attendance.check_out = None
+                    attendance.hours_worked = None
+                else:
+                    return attendance, 'Driver is already checked in for today.'
 
             if not attendance:
                 attendance = DriverAttendance(
@@ -131,10 +138,15 @@ class AttendanceService:
 
             attendance.check_in = get_india_now()
             attendance.status = 'Present'
+            self.approval_service.initialize_submission(attendance)
             if selfie_path:
                 attendance.selfie_storage_path = selfie_path
             if dashboard_path:
                 attendance.dashboard_storage_path = dashboard_path
+            if selfie_image_data:
+                attendance.selfie_image_data = selfie_image_data
+            if dashboard_image_data:
+                attendance.dashboard_image_data = dashboard_image_data
             if odometer is not None:
                 attendance.start_odometer = odometer
             self._process_attendance_odometer(attendance, driver_profile, odometer)
@@ -169,6 +181,12 @@ class AttendanceService:
                 pass
             self.geo_service.log_geo_audit(attendance, driver_profile, geo_result, action, actor_id)
             self._trigger_attendance_notifications(attendance, driver_profile, geo_result, action)
+            self.approval_service.sync_workflow_on_submission(
+                attendance,
+                driver_profile,
+                actor_id or driver_profile.user_id,
+            )
+            self.approval_service.notify_mis_users(attendance, driver_profile)
             db.session.commit()
             return attendance, None
 
@@ -193,6 +211,10 @@ class AttendanceService:
                 attendance.selfie_storage_path = selfie_path
             if dashboard_path:
                 attendance.dashboard_storage_path = dashboard_path
+            if selfie_image_data:
+                attendance.selfie_image_data = selfie_image_data
+            if dashboard_image_data:
+                attendance.dashboard_image_data = dashboard_image_data
             if odometer is not None:
                 attendance.end_odometer = odometer
             self._process_attendance_odometer(attendance, driver_profile, odometer)

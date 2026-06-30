@@ -1,0 +1,93 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+    <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+        <div>
+            <p class="dashboard-title-label">Attendance Management</p>
+            <h1 class="dashboard-title">Circle KAM Attendance Approval</h1>
+            <p class="dashboard-subtitle text-soft">Final approval for MIS-verified attendance in your circle.</p>
+        </div>
+        <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ url_for('attendance.live') }}" class="btn btn-outline-secondary">Live Attendance</a>
+        </div>
+    </div>
+
+    <div class="card table-card mb-4">
+        <div class="card-header">
+            <h2 class="card-title mb-1">MIS-Approved Attendance</h2>
+            <p class="text-soft mb-0">{{ total }} record(s) awaiting KAM approval.</p>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Employee</th>
+                        <th>Employee ID</th>
+                        <th>Circle</th>
+                        <th>Project</th>
+                        <th>Vehicle</th>
+                        <th>MIS Remarks</th>
+                        <th>MIS Verified At</th>
+                        <th>Summary</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if items %}
+                    {% for item in items %}
+                    {% set attendance = item.attendance %}
+                    {% set profile = item.profile %}
+                    {% set employee = item.user %}
+                    <tr>
+                        <td>{{ employee.username if employee else '—' }}</td>
+                        <td>{{ profile.driver_code or '—' }}</td>
+                        <td>{{ item.circle.circle_name if item.circle else '—' }}</td>
+                        <td>{{ item.project.project_name if item.project else '—' }}</td>
+                        <td>{{ item.vehicle.vehicle_number if item.vehicle else '—' }}</td>
+                        <td>{{ attendance.mis_remarks or '—' }}</td>
+                        <td>{{ to_india_datetime(attendance.mis_verified_at).strftime('%Y-%m-%d %H:%M') if attendance.mis_verified_at else '—' }}</td>
+                        <td>
+                            <div class="mb-2">
+                                {{ attendance.date.strftime('%Y-%m-%d') }} ·
+                                {{ 'Helper' if item.is_helper else 'Driver' }} ·
+                                {{ attendance.geo_status or '—' }}
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if attendance.selfie_storage_path %}
+                                <a href="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='selfie') }}" target="_blank" class="d-inline-block" title="Open selfie">
+                                    <img src="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='selfie') }}"
+                                         alt="Selfie" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
+                                </a>
+                                {% endif %}
+                                {% if attendance.dashboard_storage_path and not item.is_helper %}
+                                <a href="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='dashboard') }}" target="_blank" class="d-inline-block" title="Open dashboard image">
+                                    <img src="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='dashboard') }}"
+                                         alt="Dashboard" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <form method="post" action="{{ url_for('attendance.kam_approval_action', attendance_id=attendance.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="text" name="remarks" class="form-control form-control-sm d-inline-block mb-1" placeholder="Remarks" style="width: 140px;">
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <button type="submit" name="action" value="approve" class="btn btn-sm btn-success">Approve</button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-sm btn-danger">Reject</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">No MIS-approved attendance pending KAM review.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

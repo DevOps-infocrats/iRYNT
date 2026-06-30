@@ -1,0 +1,141 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<section class="dashboard-content container-fluid px-3 px-lg-4 pb-5">
+    <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+        <div>
+            <p class="dashboard-title-label">Attendance Management</p>
+            <h1 class="dashboard-title">Circle MIS Attendance Verification</h1>
+            <p class="dashboard-subtitle text-soft">Review submitted attendance for employees in your circle.</p>
+        </div>
+        <div class="action-panel d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ url_for('attendance.live') }}" class="btn btn-outline-secondary">Live Attendance</a>
+        </div>
+    </div>
+
+    {% for item in items %}
+    {% set attendance = item.attendance %}
+    {% set profile = item.profile %}
+    {% set employee = item.user %}
+    <div class="card table-card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+                <h2 class="card-title mb-1">{{ employee.username if employee else 'Employee' }}</h2>
+                <p class="text-soft mb-0">
+                    {{ profile.driver_code or '—' }} ·
+                    {{ item.circle.circle_name if item.circle else 'Circle N/A' }} ·
+                    {{ 'Helper' if item.is_helper else 'Driver' }}
+                </p>
+            </div>
+            <span class="badge bg-warning text-dark">Pending MIS Review</span>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h6>Selfie</h6>
+                    {% if attendance.selfie_storage_path %}
+                    <a href="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='selfie') }}" target="_blank" class="d-block">
+                        <img src="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='selfie') }}"
+                             alt="Selfie" class="img-fluid rounded border" style="max-height: 220px; object-fit: cover;">
+                    </a>
+                    {% else %}
+                    <p class="text-muted">No selfie uploaded.</p>
+                    {% endif %}
+                </div>
+                {% if not item.is_helper %}
+                <div class="col-md-4">
+                    <h6>Dashboard Image</h6>
+                    {% if attendance.dashboard_storage_path %}
+                    <a href="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='dashboard') }}" target="_blank" class="d-block">
+                        <img src="{{ url_for('attendance.view_verification_image', attendance_id=attendance.id, image_type='dashboard') }}"
+                             alt="Dashboard" class="img-fluid rounded border" style="max-height: 220px; object-fit: cover;">
+                    </a>
+                    {% else %}
+                    <p class="text-muted">No dashboard image uploaded.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <h6>OCR / Odometer</h6>
+                    <p class="mb-1"><strong>Start:</strong> {{ attendance.start_odometer or '—' }}</p>
+                    <p class="mb-1"><strong>End:</strong> {{ attendance.end_odometer or '—' }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>Check-in:</strong> {{ to_india_datetime(attendance.check_in).strftime('%Y-%m-%d %H:%M') if attendance.check_in else '—' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>GPS:</strong>
+                        {% if attendance.checkin_latitude and attendance.checkin_longitude %}
+                        {{ attendance.checkin_latitude }}, {{ attendance.checkin_longitude }}
+                        {% else %}—{% endif %}
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>Geo Status:</strong> {{ attendance.geo_status or '—' }}</p>
+                </div>
+            </div>
+
+            <form method="post" action="{{ url_for('attendance.mis_approval_action', attendance_id=attendance.id) }}" class="mt-4 border-top pt-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <h5 class="mb-3">Verification Checklist</h5>
+                <div class="row g-2 mb-3">
+                    {% if item.is_helper %}
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="helmet_verified" id="helmet_{{ attendance.id }}">
+                        <label class="form-check-label" for="helmet_{{ attendance.id }}">Helmet visible</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="safety_shoes_verified" id="shoes_{{ attendance.id }}">
+                        <label class="form-check-label" for="shoes_{{ attendance.id }}">Safety shoes visible</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="safety_jacket_verified" id="jacket_{{ attendance.id }}">
+                        <label class="form-check-label" for="jacket_{{ attendance.id }}">Safety jacket visible</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="id_card_verified" id="idcard_{{ attendance.id }}">
+                        <label class="form-check-label" for="id_card_{{ attendance.id }}">ID card visible</label>
+                    </div>
+                    {% else %}
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="seatbelt_verified" id="seatbelt_{{ attendance.id }}">
+                        <label class="form-check-label" for="seatbelt_{{ attendance.id }}">Seatbelt visible</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="selfie_verified" id="selfie_{{ attendance.id }}">
+                        <label class="form-check-label" for="selfie_{{ attendance.id }}">Selfie verified</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="dashboard_verified" id="dashboard_{{ attendance.id }}">
+                        <label class="form-check-label" for="dashboard_{{ attendance.id }}">Dashboard image verified</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="odometer_verified" id="odometer_{{ attendance.id }}">
+                        <label class="form-check-label" for="odometer_{{ attendance.id }}">Odometer verified</label>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Remarks</label>
+                    <textarea name="remarks" class="form-control" rows="2" placeholder="Optional remarks"></textarea>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                    <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
+                    <button type="submit" name="action" value="resubmit" class="btn btn-outline-warning">Request Resubmission</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="card table-card mb-4">
+        <div class="card-body text-center py-5 text-muted">
+            No attendance records pending MIS verification in your circle.
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

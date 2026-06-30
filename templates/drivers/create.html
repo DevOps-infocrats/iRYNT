@@ -196,7 +196,7 @@
                                         <span class="material-symbols-outlined align-middle me-2" style="font-size: 24px; color: #FF7A18;">folder_shared</span>
                                         Driver Documents
                                     </h5>
-                                    <p class="text-soft small mb-3">Please upload mandatory verification documents. Supported files: PDF, PNG, JPG, JPEG. Max file size: 4MB.</p>
+                                    <p class="text-soft small mb-3">Please upload mandatory verification documents. At least one Photo ID (Aadhaar or PAN) is required. Supported files: PDF, PNG, JPG, JPEG. Max file size: 4MB.</p>
                                     
                                     <div class="row g-3">
                                         <!-- Driving License Card -->
@@ -220,7 +220,7 @@
                                                 <div class="mb-2">
                                                     <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">fingerprint</span>
                                                 </div>
-                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Aadhaar Card *</h6>
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Aadhaar Card (Photo ID) *</h6>
                                                 <p class="text-muted small mb-2" style="font-size: 11px;">Upload Aadhaar copy</p>
                                                 {{ form.aadhaar_file(id=form.aadhaar_file.id, class="form-control form-control-sm") }}
                                                 {% if form.aadhaar_file.errors %}
@@ -235,7 +235,7 @@
                                                 <div class="mb-2">
                                                     <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">credit_card</span>
                                                 </div>
-                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">PAN Card *</h6>
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">PAN Card (Photo ID) *</h6>
                                                 <p class="text-muted small mb-2" style="font-size: 11px;">Upload PAN copy</p>
                                                 {{ form.pan_file(id=form.pan_file.id, class="form-control form-control-sm") }}
                                                 {% if form.pan_file.errors %}
@@ -244,39 +244,48 @@
                                             </div>
                                         </div>
 
-                                        <!-- Medical Certificate (Placeholder) -->
+                                        <!-- Medical Certificate -->
                                         <div class="col-12 col-md-4">
-                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
                                                 <div class="mb-2">
-                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">medical_services</span>
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">medical_services</span>
                                                 </div>
-                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Medical Certificate</h6>
-                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
-                                                {{ form.medical_certificate_file(id=form.medical_certificate_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Medical Certificate *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload Medical Certificate</p>
+                                                {{ form.medical_certificate_file(id=form.medical_certificate_file.id, class="form-control form-control-sm") }}
+                                                {% if form.medical_certificate_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.medical_certificate_file.errors[0] }}</div>
+                                                {% endif %}
                                             </div>
                                         </div>
 
-                                        <!-- Police Verification (Placeholder) -->
+                                        <!-- Police Verification -->
                                         <div class="col-12 col-md-4">
-                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
                                                 <div class="mb-2">
-                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">local_police</span>
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">local_police</span>
                                                 </div>
-                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Police Verification</h6>
-                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
-                                                {{ form.police_verification_file(id=form.police_verification_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Police Verification *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload Police Verification</p>
+                                                {{ form.police_verification_file(id=form.police_verification_file.id, class="form-control form-control-sm") }}
+                                                {% if form.police_verification_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.police_verification_file.errors[0] }}</div>
+                                                {% endif %}
                                             </div>
                                         </div>
 
-                                        <!-- Training Certificate (Placeholder) -->
+                                        <!-- Training Certificate -->
                                         <div class="col-12 col-md-4">
-                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 1px dashed rgba(0, 0, 0, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.02); opacity: 0.7;">
+                                            <div class="card h-100 upload-card border-dashed p-3 text-center" style="border: 2px dashed rgba(255, 122, 24, 0.3); border-radius: 12px; background: rgba(255, 255, 255, 0.5); transition: all 0.2s ease;">
                                                 <div class="mb-2">
-                                                    <span class="material-symbols-outlined text-muted" style="font-size: 36px;">workspace_premium</span>
+                                                    <span class="material-symbols-outlined text-primary" style="font-size: 36px; color: #FF7A18 !important;">workspace_premium</span>
                                                 </div>
-                                                <h6 class="mb-1 text-muted" style="font-weight: 600; font-size: 14px;">Training Certificate</h6>
-                                                <span class="badge bg-secondary mb-2" style="font-size: 10px;">Coming Soon</span>
-                                                {{ form.training_certificate_file(id=form.training_certificate_file.id, class="form-control form-control-sm", disabled="disabled") }}
+                                                <h6 class="mb-1 text-dark" style="font-weight: 600; font-size: 14px;">Training Certificate *</h6>
+                                                <p class="text-muted small mb-2" style="font-size: 11px;">Upload Training Certificate</p>
+                                                {{ form.training_certificate_file(id=form.training_certificate_file.id, class="form-control form-control-sm") }}
+                                                {% if form.training_certificate_file.errors %}
+                                                    <div class="invalid-feedback d-block mt-2" style="font-size: 11px;">{{ form.training_certificate_file.errors[0] }}</div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

@@ -2,7 +2,7 @@ from app.modules.attendance.services import AttendanceService
 from app.modules.drivers.models import DriverProfile
 from app.modules.auth.models import User
 from app.domain.auth.policies.auth_policy import has_permission
-from app.modules.attendance.verification_helpers import decode_base64_image, save_verification_image
+from app.modules.attendance.verification_helpers import decode_base64_image, encode_verification_image, save_verification_image
 from flask import current_app
 
 class AttendanceApiController:
@@ -49,16 +49,20 @@ class AttendanceApiController:
         except ValueError as exc:
             return {'success': False, 'message': f"Image decoding failed: {str(exc)}", 'status': 400}
 
-        # Save files to disk
+        # Save files to disk and store a database-backed copy for web rendering
         upload_folder = current_app.config['DRIVER_DOCUMENT_UPLOAD_FOLDER']
         selfie_path = None
         dashboard_path = None
+        selfie_image_data = None
+        dashboard_image_data = None
 
         try:
             if selfie_file:
                 selfie_path = save_verification_image(selfie_file, upload_folder, driver_profile.id)
+                selfie_image_data = encode_verification_image(selfie_file)
             if dashboard_file:
                 dashboard_path = save_verification_image(dashboard_file, upload_folder, driver_profile.id)
+                dashboard_image_data = encode_verification_image(dashboard_file)
         except Exception as exc:
             return {'success': False, 'message': f"Failed to save verification images: {str(exc)}", 'status': 500}
 
@@ -84,6 +88,8 @@ class AttendanceApiController:
             actor_id=actor.id,
             selfie_path=selfie_path,
             dashboard_path=dashboard_path,
+            selfie_image_data=selfie_image_data,
+            dashboard_image_data=dashboard_image_data,
             odometer=odometer
         )
 

@@ -20,6 +20,7 @@ APPROVAL_TYPE_CHOICES = [
     ('frt_activation', 'FRT Activation'),
     ('vehicle_assignment', 'Vehicle Assignment'),
     ('attendance_correction', 'Attendance Correction'),
+    ('attendance_verification', 'Attendance Verification'),
     ('leave_approval', 'Leave Approval'),
     ('overtime_approval', 'Overtime Approval'),
     ('payroll_verification', 'Payroll Verification'),
@@ -92,6 +93,10 @@ DEFAULT_APPROVAL_WORKFLOW = {
     'attendance_correction': [
         {'approval_level': 1, 'role_name': 'Line Supervisor', 'escalation_after_minutes': 120, 'auto_escalate': True},
         {'approval_level': 2, 'role_name': 'HR Manager', 'escalation_after_minutes': 360, 'auto_escalate': False},
+    ],
+    'attendance_verification': [
+        {'approval_level': 1, 'role_name': 'MIS', 'escalation_after_minutes': 480, 'auto_escalate': True},
+        {'approval_level': 2, 'role_name': 'Circle KAM', 'escalation_after_minutes': 480, 'auto_escalate': False},
     ],
     'leave_approval': [
         {'approval_level': 1, 'role_name': 'Supervisor', 'escalation_after_minutes': 120, 'auto_escalate': True},

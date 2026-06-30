@@ -64,10 +64,19 @@ class ApprovalRepository:
             if 'driver' in user.role_names or 'helper' in user.role_names:
                 role_conditions.append(ApprovalRequest.requested_by_id == user.id)
                 
-            # 2. Circle KAM / Circle Admin
+            # 2. MIS (circle-scoped attendance verification)
+            if 'mis' in user.role_names:
+                role_conditions.append(
+                    and_(
+                        ApprovalRequest.circle_id == user.circle_id,
+                        ApprovalRequest.approval_type.in_(['attendance_verification', 'attendance_correction']),
+                    )
+                )
+
+            # 3. Circle KAM / Circle Admin
             if 'circle kam' in user.role_names or 'circle admin' in user.role_names:
                 allowed_types = [
-                    'attendance_correction', 'leave_approval', 'overtime_approval', 'payroll_verification',
+                    'attendance_correction', 'attendance_verification', 'leave_approval', 'overtime_approval', 'payroll_verification',
                     'driver_verification', 'license_verification', 'compliance_approval', 'medical_certificate',
                     'vehicle_document', 'insurance_verification', 'vehicle_assignment',
                     'escalation_closure', 'sla_override', 'critical_incident', 'escalation_reassignment'
@@ -226,10 +235,19 @@ class ApprovalRepository:
             if 'driver' in user.role_names or 'helper' in user.role_names:
                 role_conditions.append(ApprovalRequest.requested_by_id == user.id)
                 
-            # 2. Circle KAM / Circle Admin
+            # 2. MIS (circle-scoped attendance verification)
+            if 'mis' in user.role_names:
+                role_conditions.append(
+                    and_(
+                        ApprovalRequest.circle_id == user.circle_id,
+                        ApprovalRequest.approval_type.in_(['attendance_verification', 'attendance_correction']),
+                    )
+                )
+
+            # 3. Circle KAM / Circle Admin
             if 'circle kam' in user.role_names or 'circle admin' in user.role_names:
                 allowed_types = [
-                    'attendance_correction', 'leave_approval', 'overtime_approval', 'payroll_verification',
+                    'attendance_correction', 'attendance_verification', 'leave_approval', 'overtime_approval', 'payroll_verification',
                     'driver_verification', 'license_verification', 'compliance_approval', 'medical_certificate',
                     'vehicle_document', 'insurance_verification', 'vehicle_assignment',
                     'escalation_closure', 'sla_override', 'critical_incident', 'escalation_reassignment'

@@ -122,6 +122,7 @@ class AttendanceRepository:
                     'dashboard_storage_path': attendance.dashboard_storage_path if attendance else None,
                     'start_odometer': attendance.start_odometer if attendance else None,
                     'end_odometer': attendance.end_odometer if attendance else None,
+                    'approval_status': attendance.approval_status if attendance else None,
                 }
             )
 
@@ -157,6 +158,9 @@ class AttendanceRepository:
                 query = query.filter(DriverAttendance.date <= datetime.strptime(filters['date_to'], '%Y-%m-%d').date())
             except ValueError:
                 pass
+
+        if filters.get('approval_status'):
+            query = query.filter(DriverAttendance.approval_status == filters['approval_status'])
 
         total = query.count()
         offset = (page - 1) * per_page

@@ -208,19 +208,19 @@ class DriverCreateForm(FlaskForm):
     medical_certificate_file = FileField(
         'Medical Certificate',
         validators=[FileAllowed(ALLOWED_DRIVER_DOCUMENT_EXTENSIONS, 'Only PDF, JPG, JPEG, and PNG files are allowed.')],
-        render_kw={'class': 'form-control', 'disabled': 'disabled'},
+        render_kw={'class': 'form-control'},
     )
 
     police_verification_file = FileField(
         'Police Verification',
         validators=[FileAllowed(ALLOWED_DRIVER_DOCUMENT_EXTENSIONS, 'Only PDF, JPG, JPEG, and PNG files are allowed.')],
-        render_kw={'class': 'form-control', 'disabled': 'disabled'},
+        render_kw={'class': 'form-control'},
     )
 
     training_certificate_file = FileField(
         'Training Certificate',
         validators=[FileAllowed(ALLOWED_DRIVER_DOCUMENT_EXTENSIONS, 'Only PDF, JPG, JPEG, and PNG files are allowed.')],
-        render_kw={'class': 'form-control', 'disabled': 'disabled'},
+        render_kw={'class': 'form-control'},
     )
 
     submit = SubmitField('Create Driver Profile', render_kw={'class': 'btn btn-gradient'})
@@ -230,12 +230,26 @@ class DriverCreateForm(FlaskForm):
             raise ValidationError('Driving License document is mandatory.')
 
     def validate_aadhaar_file(self, field):
-        if not field.data or not field.data.filename:
-            raise ValidationError('Aadhaar document is mandatory.')
+        # Either Aadhaar or PAN is required as Photo ID
+        if (not field.data or not field.data.filename) and (not self.pan_file.data or not self.pan_file.data.filename):
+            raise ValidationError('Either Aadhaar Card or PAN Card is required (Photo ID).')
 
     def validate_pan_file(self, field):
+        if (not field.data or not field.data.filename) and (not self.aadhaar_file.data or not self.aadhaar_file.data.filename):
+            raise ValidationError('Either Aadhaar Card or PAN Card is required (Photo ID).')
+
+    def validate_medical_certificate_file(self, field):
         if not field.data or not field.data.filename:
-            raise ValidationError('PAN document is mandatory.')
+            raise ValidationError('Medical Certificate is mandatory.')
+
+    def validate_police_verification_file(self, field):
+        if not field.data or not field.data.filename:
+            raise ValidationError('Police Verification is mandatory.')
+
+    def validate_training_certificate_file(self, field):
+        if not field.data or not field.data.filename:
+            raise ValidationError('Training Certificate is mandatory.')
+
 
 
 class DriverEditForm(FlaskForm):

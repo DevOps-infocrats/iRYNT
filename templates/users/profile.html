@@ -240,7 +240,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/users/users.js') }}"></script>
     <script>
-        const profileAnalytics = JSON.parse('{{ profile.analytics|tojson|escapejs }}');
+        const profileAnalytics = {{ profile.analytics|tojson }};
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('profileAttendanceChart');
             if (ctx) {

@@ -47,7 +47,7 @@ def index():
     if category == 'documents':
         filters['approval_types'] = ['license_verification', 'insurance_verification', 'compliance_approval', 'medical_certificate', 'vehicle_document']
     elif category == 'attendance':
-        filters['approval_types'] = ['attendance_correction', 'leave_approval', 'overtime_approval']
+        filters['approval_types'] = ['attendance_correction', 'attendance_verification', 'leave_approval', 'overtime_approval']
     elif category == 'compliance':
         filters['approval_types'] = ['driver_verification', 'license_verification', 'compliance_approval', 'medical_certificate', 'vehicle_document', 'insurance_verification']
     elif category == 'deployments':
@@ -329,9 +329,12 @@ def ajax_detail(approval_id):
         is_allowed = True
     elif 'driver' in current_user.role_names or 'helper' in current_user.role_names:
         is_allowed = (approval.requested_by_id == current_user.id)
+    elif 'mis' in current_user.role_names:
+        allowed_types = ['attendance_verification', 'attendance_correction']
+        is_allowed = (approval.circle_id == current_user.circle_id and approval.approval_type in allowed_types)
     elif 'circle kam' in current_user.role_names or 'circle admin' in current_user.role_names:
         allowed_types = [
-            'attendance_correction', 'leave_approval', 'overtime_approval', 'payroll_verification',
+            'attendance_correction', 'attendance_verification', 'leave_approval', 'overtime_approval', 'payroll_verification',
             'driver_verification', 'license_verification', 'compliance_approval', 'medical_certificate',
             'vehicle_document', 'insurance_verification', 'vehicle_assignment',
             'escalation_closure', 'sla_override', 'critical_incident', 'escalation_reassignment'
